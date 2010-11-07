@@ -1,0 +1,371 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Chinese (P.R.C.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+#ifdef _WIN32
+LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
+#pragma code_page(936)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)\r\n"
+    "#ifdef _WIN32\r\n"
+    "LANGUAGE 4, 2\r\n"
+    "#pragma code_page(936)\r\n"
+    "#endif //_WIN32\r\n"
+    "#include ""res\\LSC.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""l.chs\\afxres.rc""          // Standard components\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON    DISCARDABLE     "res\\LSC.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_LSC_DIALOG DIALOGEX 0, 0, 461, 303
+STYLE DS_MODALFRAME | WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | 
+    WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "LSC"
+FONT 9, "宋体"
+BEGIN
+END
+
+IDD_DIALOG_DATA_COLLECTION DIALOG DISCARDABLE  0, 0, 345, 152
+STYLE WS_CHILD
+FONT 9, "宋体"
+BEGIN
+    PUSHBUTTON      "File Setting",IDC_BUTTON_FILE_SETTING,18,19,67,15
+    PUSHBUTTON      "Spectrum",IDC_BUTTON_SPECTRUM,18,49,67,15
+    PUSHBUTTON      "AWS Factor",IDC_BUTTON_AWS_FACTOR,18,81,67,15
+    PUSHBUTTON      "Shut down",IDC_BUTTON_SHUT_DOWN,18,115,67,15
+    GROUPBOX        "",IDC_STATIC,7,7,92,138
+    GROUPBOX        "",IDC_STATIC,105,7,233,138
+    LTEXT           "MY No",IDC_STATIC,112,18,21,8
+    LTEXT           "Start Time",IDC_STATIC,200,17,41,8
+    LTEXT           "Status",IDC_STATIC,111,37,25,8
+    LTEXT           "Current Time",IDC_STATIC,200,35,49,8
+    LTEXT           "File Name",IDC_STATIC,112,59,37,8
+    EDITTEXT        IDC_EDIT_START_TIME,253,15,76,12,ES_CENTER | 
+                    ES_AUTOHSCROLL | ES_READONLY
+    EDITTEXT        IDC_EDIT_CURRENT_TIME,253,34,76,12,ES_CENTER | 
+                    ES_AUTOHSCROLL | ES_READONLY
+    EDITTEXT        IDC_EDIT_MYNO,142,17,52,12,ES_CENTER | ES_AUTOHSCROLL | 
+                    ES_READONLY
+    EDITTEXT        IDC_EDIT_STATUS,142,37,52,12,ES_CENTER | ES_AUTOHSCROLL | 
+                    ES_READONLY
+    EDITTEXT        IDC_EDIT_FILE_NAME,151,58,180,12,ES_AUTOHSCROLL | 
+                    ES_READONLY
+END
+
+IDD_DIALOG_FILE_SETTING DIALOG DISCARDABLE  0, 0, 416, 288
+STYLE WS_CHILD
+FONT 9, "宋体"
+BEGIN
+    PUSHBUTTON      "Data collection",IDC_BUTTON_DATA_COLLECTION,7,38,67,16
+    GROUPBOX        "",IDC_STATIC,79,7,330,59
+    LTEXT           "MY No.",IDC_STATIC,88,20,24,10
+    LTEXT           "Data collection",IDC_STATIC,167,20,61,8
+    LTEXT           "Extension",IDC_STATIC,307,20,39,10
+    LTEXT           "File Name",IDC_STATIC,87,44,37,8
+    COMBOBOX        IDC_COMBO_MYNO,119,17,38,209,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Yes",IDC_RADIO_COLLECTION_YES,"Button",
+                    BS_AUTORADIOBUTTON | WS_GROUP,237,20,28,10
+    CONTROL         "No",IDC_RADIO__COLLECTION_NO,"Button",
+                    BS_AUTORADIOBUTTON,271,20,24,10
+    COMBOBOX        IDC_COMBO_EXTEN,347,16,53,226,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_EDIT_FILENAME,127,43,186,12,ES_AUTOHSCROLL | 
+                    ES_READONLY
+    PUSHBUTTON      "...",IDC_BUTTON_OPEN_FILEDIA,313,42,18,11
+    PUSHBUTTON      "Set",IDC_BUTTON_SET,346,41,54,15
+    CONTROL         "List1",IDC_LIST_SET,"SysListView32",LVS_REPORT | 
+                    WS_BORDER | WS_TABSTOP,7,87,402,194
+    LTEXT           "File setting list",IDC_STATIC,7,71,73,10
+    LTEXT           "COM",IDC_STATIC,7,19,13,8
+    COMBOBOX        IDC_COMBO_COMNO,24,17,46,122,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+END
+
+IDD_DIALOG_SPECTRUM DIALOG DISCARDABLE  0, 0, 437, 290
+STYLE WS_CHILD
+FONT 9, "宋体"
+BEGIN
+    LTEXT           "Curve",IDC_STATIC,7,217,21,8
+    EDITTEXT        IDC_EDIT_FILENAME,42,215,136,12,ES_AUTOHSCROLL | 
+                    ES_READONLY
+    PUSHBUTTON      "...",IDC_BUTTON_OPEN_FILEDIA,178,215,18,12
+    PUSHBUTTON      "AWS",IDC_BUTTON_AWS,210,215,45,14
+    LTEXT           "ESCR",IDC_STATIC,276,216,17,8
+    EDITTEXT        IDC_EDIT_ESCR,301,214,40,14,ES_AUTOHSCROLL
+    LTEXT           "SCCR",IDC_STATIC,276,235,17,8
+    EDITTEXT        IDC_EDIT_SCCR,301,233,40,14,ES_AUTOHSCROLL
+    LTEXT           "Window-A",IDC_STATIC,7,249,33,8
+    EDITTEXT        IDC_EDIT7,42,247,40,14,ES_AUTOHSCROLL
+    LTEXT           "Lower",IDC_STATIC,86,235,21,8
+    LTEXT           "Upper",IDC_STATIC,131,236,21,8
+    LTEXT           "Eff",IDC_STATIC,183,237,13,8
+    LTEXT           "DPM",IDC_STATIC,223,237,13,8
+    EDITTEXT        IDC_EDIT9,85,247,28,14,ES_AUTOHSCROLL
+    CONTROL         "Spin1",IDC_SPIN1,"msctls_updown32",UDS_ARROWKEYS,114,
+                    247,10,14
+    EDITTEXT        IDC_EDIT11,130,247,28,14,ES_AUTOHSCROLL
+    CONTROL         "Spin1",IDC_SPIN2,"msctls_updown32",UDS_ARROWKEYS,157,
+                    247,11,14
+    EDITTEXT        IDC_EDIT3,181,248,34,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT4,218,248,34,14,ES_AUTOHSCROLL
+    LTEXT           "Window-B",IDC_STATIC,7,272,33,8
+    EDITTEXT        IDC_EDIT8,42,269,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT10,85,269,28,14,ES_AUTOHSCROLL
+    CONTROL         "Spin1",IDC_SPIN3,"msctls_updown32",UDS_ARROWKEYS,113,
+                    269,11,14
+    EDITTEXT        IDC_EDIT12,130,269,28,14,ES_AUTOHSCROLL
+    CONTROL         "Spin1",IDC_SPIN4,"msctls_updown32",UDS_ARROWKEYS,158,
+                    269,11,14
+    EDITTEXT        IDC_EDIT5,181,269,34,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT6,218,269,34,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "Select",IDC_BUTTON_SELECT,277,269,43,14
+    PUSHBUTTON      "Delete",IDC_BUTTON_DELETE,326,269,42,14
+    PUSHBUTTON      "File Open",IDC_BUTTON_FILE_OPEN,380,211,50,14
+    PUSHBUTTON      "File Save",IDC_BUTTON_FILE_SAVE,380,239,50,14
+    PUSHBUTTON      "AWS Factor",IDC_BUTTON_AWS_FACTOR,380,269,50,14
+END
+
+IDD_DIALOG_AWS_FACTOR_SETTING DIALOG DISCARDABLE  0, 0, 438, 300
+STYLE WS_CHILD
+FONT 9, "宋体"
+BEGIN
+    PUSHBUTTON      "File Save",IDC_BUTTON_FILE_SAVE,381,252,50,14
+    PUSHBUTTON      "Cancel",IDC_BUTTON_CANCEL,381,279,50,14
+END
+
+IDD_DIALOG_AWS_FACTOR DIALOG DISCARDABLE  0, 0, 433, 290
+STYLE WS_CHILD
+FONT 9, "宋体"
+BEGIN
+    PUSHBUTTON      "Spectrum",IDC_BUTTON_SPECTRUM,359,268,67,15
+END
+
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "080404B0"
+        BEGIN
+            VALUE "CompanyName", "\0"
+            VALUE "FileDescription", "LSC Microsoft 基础类应用程序\0"
+            VALUE "FileVersion", "1, 0, 0, 1\0"
+            VALUE "InternalName", "LSC\0"
+            VALUE "LegalCopyright", "版权所有 (C) 2010\0"
+            VALUE "LegalTrademarks", "\0"
+            VALUE "OriginalFilename", "LSC.EXE\0"
+            VALUE "ProductName", "LSC 应用程序\0"
+            VALUE "ProductVersion", "1, 0, 0, 1\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x804, 1200
+    END
+END
+
+#endif    // !_MAC
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_LSC_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 454
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 296
+    END
+
+    IDD_DIALOG_DATA_COLLECTION, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 338
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 145
+    END
+
+    IDD_DIALOG_FILE_SETTING, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 409
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 281
+    END
+
+    IDD_DIALOG_SPECTRUM, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 430
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 283
+    END
+
+    IDD_DIALOG_AWS_FACTOR_SETTING, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 431
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 293
+    END
+
+    IDD_DIALOG_AWS_FACTOR, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 426
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 283
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+IDD_DIALOG_FILE_SETTING DLGINIT
+BEGIN
+    IDC_COMBO_MYNO, 0x403, 2, 0
+0x0031, 
+    IDC_COMBO_MYNO, 0x403, 2, 0
+0x0032, 
+    IDC_COMBO_MYNO, 0x403, 2, 0
+0x0033, 
+    IDC_COMBO_MYNO, 0x403, 2, 0
+0x0034, 
+    IDC_COMBO_MYNO, 0x403, 2, 0
+0x0035, 
+    IDC_COMBO_MYNO, 0x403, 2, 0
+0x0036, 
+    IDC_COMBO_MYNO, 0x403, 2, 0
+0x0037, 
+    IDC_COMBO_MYNO, 0x403, 2, 0
+0x0038, 
+    IDC_COMBO_MYNO, 0x403, 2, 0
+0x0039, 
+    IDC_COMBO_MYNO, 0x403, 3, 0
+0x3031, "\000" 
+    IDC_COMBO_MYNO, 0x403, 3, 0
+0x3131, "\000" 
+    IDC_COMBO_MYNO, 0x403, 3, 0
+0x3231, "\000" 
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_BITMAP1             BITMAP  DISCARDABLE     "res\\bitmap1.bmp"
+#endif    // Chinese (P.R.C.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+#ifdef _WIN32
+LANGUAGE 4, 2
+#pragma code_page(936)
+#endif //_WIN32
+#include "res\LSC.rc2"  // non-Microsoft Visual C++ edited resources
+#include "l.chs\afxres.rc"          // Standard components
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
