@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "LSC.h"
 #include "SpectrumDlg.h"
+#include <math.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -22,6 +23,10 @@ CSpectrumDlg::CSpectrumDlg(CWnd* pParent /*=NULL*/)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 	pSpectrumWnd = NULL;
+	for(int i = 0;i <4000;i++)
+	{
+		nSpectrunData[0][i] = 20 + sin(i *3.14 /180) * 20;
+	}
 }
 
 
@@ -104,7 +109,7 @@ HBRUSH CSpectrumDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	
 	if(pWnd->GetDlgCtrlID() == IDC_SPECTRUM)
 	{
-		pDC->SetBkColor(RGB(0,0,0));
+		//pDC->SetBkColor(RGB(0,0,0));
 	}
 	
 	// TODO: Return a different brush if the default is not desired
@@ -113,17 +118,57 @@ HBRUSH CSpectrumDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 
 void CSpectrumDlg::DrawGraph(CDC *pDC, int x, int y, int cx, int cy)
 {
-	DrawAxis(pDC,x,y,cx,cy);
-	DrawData(pDC,x,y,cx,cy);
-	pDC->LineTo(cx-20,cy-20);
-	pDC->LineTo(cx,cy-20);
+	CRect rect = DrawAxis(pDC,x,y,cx,cy);
+	DrawData(pDC,rect.left,rect.top,rect.Width(),rect.Height());
 }
 
-void CSpectrumDlg::DrawAxis(CDC *pDC, int x, int y, int cx, int cy)
+CRect CSpectrumDlg::DrawAxis(CDC *pDC, int x, int y, int cx, int cy)
 {
 	CRect rect(x,y,cx,cy);
 	pDC->FillSolidRect(&rect,RGB(250,250,150));
-	rect.DeflateRect(10,10);
+	CSize size = pDC->GetTextExtent("000",3);
+	rect.DeflateRect(size.cx,size.cy+size.cy/2);
 	pDC->FillSolidRect(&rect,RGB(0,0,0));
 
+	pDC->SetTextColor(RGB(0,0,0));
+	pDC->SetBkColor(RGB(250,250,150));
+	int dx = size.cx/6; //space to border
+	int dy = rect.Height()/5;
+	CString title;
+	for(int i =0;i< 6;i++)
+	{
+		title.Format("%d",(5-i)*10);
+		pDC->TextOut(x+dx,rect.top - size.cy/2 +dy * i, title );
+	}
+    
+	dx = rect.Width() / 4;
+	for( i=0;i<5;i++)
+	{
+		title.Format("%d",i*1000);
+		size = pDC->GetTextExtent(title);
+		pDC->TextOut(rect.left + i * dx - size.cx/2, rect.bottom , title);
+	}
+
+	return rect;
+
+}
+
+void CSpectrumDlg::DrawData(CDC *pDC, int x,int y, int cx, int cy)
+{
+	CPen pen, *old_pen;
+	pen.CreatePen(PS_SOLID,3,RGB(0,255,0));
+	old_pen = pDC->SelectObject(&pen);
+    int nx,ny;
+	for(int i = 0;i<1;i++)
+	{
+		for(int j=0;j<4000;j++)
+		{
+            nx = x + j * cx/4000;
+			ny = y + cy - nSpectrunData[i][j] * cy / 50;
+     		pDC->MoveTo(nx,ny);
+  	        pDC->LineTo(nx,ny);
+		}
+	}
+	
+	if (old_pen) pDC->SelectObject(old_pen);
 }

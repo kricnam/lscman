@@ -34,7 +34,9 @@ public:
 
 // Implementation
 protected:
-	void DrawAxis(CDC *pDC, int x, int y, int cx, int cy);
+	int nSpectrunData[5][4000];
+	void DrawData(CDC *pDC,int x,int y, int cx,int cy);
+	CRect DrawAxis(CDC *pDC, int x, int y, int cx, int cy);
 	void DrawGraph(CDC* pDC, int x, int y, int cx, int cy);
 	CWnd * pSpectrumWnd;
 
