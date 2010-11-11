@@ -34,11 +34,16 @@ public:
 
 // Implementation
 protected:
+	void DrawAxis(CDC *pDC, int x, int y, int cx, int cy);
+	void DrawGraph(CDC* pDC, int x, int y, int cx, int cy);
+	CWnd * pSpectrumWnd;
 
 	// Generated message map functions
 	//{{AFX_MSG(CSpectrumDlg)
 	virtual BOOL OnInitDialog();
 	afx_msg void OnButtonAwsFactor();
+	afx_msg void OnPaint();
+	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };
