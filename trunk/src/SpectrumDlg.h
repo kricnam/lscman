@@ -46,6 +46,11 @@ protected:
 	afx_msg void OnButtonAwsFactor();
 	afx_msg void OnPaint();
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
+	afx_msg void OnButtonOpenAWD();
+	afx_msg void OnButtonFileOpen();
+	afx_msg void OnButtonFileSave();
+	afx_msg void OnButtonSelect();
+	afx_msg void OnButtonDelete();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

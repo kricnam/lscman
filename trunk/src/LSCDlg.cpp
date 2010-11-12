@@ -145,6 +145,7 @@ void CLSCDlg::OnOpenDlg(WPARAM wParam, LPARAM lParam)
 			break;
 		case OPEN_AWS_FACTOR:
 			m_AWSFactorDlg.ShowWindow(SW_SHOW);
+			//m_AWSFactorSttingDlg.ShowWindow(SW_SHOW);
 			this->SetWindowText("AWS Factor");
 			m_AWSFactorDlg.GetClientRect(&rect);
 			break;

@@ -73,7 +73,7 @@ LINK32=link.exe
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x804 /d "_DEBUG" /d "_AFXDLL"
-# ADD RSC /l 0x804 /d "_DEBUG"
+# ADD RSC /l 0x409 /d "_DEBUG"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -128,6 +128,10 @@ SOURCE=.\LSCDlg.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\SelectList.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\SpectrumDlg.cpp
 # End Source File
 # Begin Source File
@@ -166,6 +170,10 @@ SOURCE=.\LSCDlg.h
 # Begin Source File
 
 SOURCE=.\Resource.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\SelectList.h
 # End Source File
 # Begin Source File
 

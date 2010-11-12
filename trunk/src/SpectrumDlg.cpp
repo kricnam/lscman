@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "LSC.h"
 #include "SpectrumDlg.h"
+#include "SelectList.h"
 #include <math.h>
 
 #ifdef _DEBUG
@@ -44,6 +45,11 @@ BEGIN_MESSAGE_MAP(CSpectrumDlg, CDialog)
 	ON_BN_CLICKED(IDC_BUTTON_AWS_FACTOR, OnButtonAwsFactor)
 	ON_WM_PAINT()
 	ON_WM_CTLCOLOR()
+	ON_BN_CLICKED(IDC_BUTTON_OPEN_FILEDIA, OnButtonOpenAWD)
+	ON_BN_CLICKED(IDC_BUTTON_FILE_OPEN, OnButtonFileOpen)
+	ON_BN_CLICKED(IDC_BUTTON_FILE_SAVE, OnButtonFileSave)
+	ON_BN_CLICKED(IDC_BUTTON_SELECT, OnButtonSelect)
+	ON_BN_CLICKED(IDC_BUTTON_DELETE, OnButtonDelete)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -171,4 +177,36 @@ void CSpectrumDlg::DrawData(CDC *pDC, int x,int y, int cx, int cy)
 	}
 	
 	if (old_pen) pDC->SelectObject(old_pen);
+}
+
+void CSpectrumDlg::OnButtonOpenAWD() 
+{
+	CFileDialog dlg(TRUE,"awd");
+	dlg.DoModal();
+	
+}
+
+void CSpectrumDlg::OnButtonFileOpen() 
+{
+	CFileDialog dlg(TRUE,"awd");
+	dlg.DoModal();	
+}
+
+void CSpectrumDlg::OnButtonFileSave() 
+{
+	CFileDialog dlg(FALSE,"awd");
+	dlg.DoModal();
+	
+}
+
+void CSpectrumDlg::OnButtonSelect() 
+{
+	CSelectList dlg(this);
+	dlg.DoModal();
+}
+
+void CSpectrumDlg::OnButtonDelete() 
+{
+	CSelectList dlg(this);
+	dlg.DoModal();
 }
