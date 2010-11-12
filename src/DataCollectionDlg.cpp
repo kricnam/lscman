@@ -37,7 +37,7 @@ void CDataCollectionDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_FILE_NAME, m_strFileName);
 	DDX_Text(pDX, IDC_EDIT_START_TIME, m_strStartTime);
 	DDX_Text(pDX, IDC_EDIT_STATUS, m_strStatus);
-	DDX_Text(pDX, IDC_EDIT_MYNO, m_strMYNo);
+	DDX_Text(pDX, IDC_STATIC_MYNO, m_strMYNo);
 	//}}AFX_DATA_MAP
 }
 

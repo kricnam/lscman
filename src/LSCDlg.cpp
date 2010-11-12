@@ -34,6 +34,7 @@ BEGIN_MESSAGE_MAP(CLSCDlg, CDialog)
 	//{{AFX_MSG_MAP(CLSCDlg)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_WM_CLOSE()
 	//}}AFX_MSG_MAP
 	ON_MESSAGE(WM_OPEN_DLG,OnOpenDlg)
 END_MESSAGE_MAP()
@@ -144,8 +145,8 @@ void CLSCDlg::OnOpenDlg(WPARAM wParam, LPARAM lParam)
 			m_DataCollectionDlg.GetClientRect(&rect);
 			break;
 		case OPEN_AWS_FACTOR:
-			m_AWSFactorDlg.ShowWindow(SW_SHOW);
-			//m_AWSFactorSttingDlg.ShowWindow(SW_SHOW);
+			//m_AWSFactorDlg.ShowWindow(SW_SHOW);
+			m_AWSFactorSttingDlg.ShowWindow(SW_SHOW);
 			this->SetWindowText("AWS Factor");
 			m_AWSFactorDlg.GetClientRect(&rect);
 			break;
@@ -169,4 +170,13 @@ void CLSCDlg::OnOpenDlg(WPARAM wParam, LPARAM lParam)
 	rc.bottom = rc.top + rect.bottom + (rc.Height() - rc2.Height());
 	rc.right = rc.left + rect.right + (rc.Width() - rc2.Width());
 	MoveWindow(&rc);
+}
+
+void CLSCDlg::OnClose() 
+{
+	// TODO: Add your message handler code here and/or call default
+	if (MessageBox("Do you really want to quit?","Quit",MB_OKCANCEL) == IDOK)
+	{
+		CDialog::OnClose();
+	}
 }

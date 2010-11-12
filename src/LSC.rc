@@ -13,11 +13,11 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// Neutral (Sys. Default) resources
+// Neutral resources
 
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_NEUSD)
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_NEU)
 #ifdef _WIN32
-LANGUAGE LANG_NEUTRAL, SUBLANG_SYS_DEFAULT
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 #pragma code_page(936)
 #endif //_WIN32
 
@@ -37,159 +37,79 @@ BEGIN
                     WS_VSCROLL | WS_TABSTOP
 END
 
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// DESIGNINFO
-//
-
-#ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO DISCARDABLE 
-BEGIN
-    IDD_DIALOG_LIST, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 180
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 87
-    END
-END
-#endif    // APSTUDIO_INVOKED
-
-#endif    // Neutral (Sys. Default) resources
-/////////////////////////////////////////////////////////////////////////////
-
-
-/////////////////////////////////////////////////////////////////////////////
-// Chinese (P.R.C.) resources
-
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
-#ifdef _WIN32
-LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
-#pragma code_page(936)
-#endif //_WIN32
-
-#ifdef APSTUDIO_INVOKED
-/////////////////////////////////////////////////////////////////////////////
-//
-// TEXTINCLUDE
-//
-
-1 TEXTINCLUDE DISCARDABLE 
-BEGIN
-    "resource.h\0"
-END
-
-2 TEXTINCLUDE DISCARDABLE 
-BEGIN
-    "#include ""afxres.h""\r\n"
-    "\0"
-END
-
-3 TEXTINCLUDE DISCARDABLE 
-BEGIN
-    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
-    "#define _AFX_NO_OLE_RESOURCES\r\n"
-    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
-    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
-    "\r\n"
-    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)\r\n"
-    "#ifdef _WIN32\r\n"
-    "LANGUAGE 4, 2\r\n"
-    "#pragma code_page(936)\r\n"
-    "#endif //_WIN32\r\n"
-    "#include ""res\\LSC.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
-    "#include ""l.chs\\afxres.rc""          // Standard components\r\n"
-    "#endif\r\n"
-    "\0"
-END
-
-#endif    // APSTUDIO_INVOKED
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Icon
-//
-
-// Icon with lowest ID value placed first to ensure application icon
-// remains consistent on all systems.
-IDR_MAINFRAME           ICON    DISCARDABLE     "res\\LSC.ico"
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Dialog
-//
-
-IDD_LSC_DIALOG DIALOGEX 0, 0, 333, 238
+IDD_LSC_DIALOG DIALOGEX 0, 0, 395, 238
 STYLE DS_MODALFRAME | WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | 
     WS_SYSMENU
 EXSTYLE WS_EX_APPWINDOW
 CAPTION "LSC"
-FONT 9, "??"
+FONT 9, "System"
 BEGIN
 END
 
-IDD_DIALOG_DATA_COLLECTION DIALOG DISCARDABLE  0, 0, 345, 152
+IDD_DIALOG_DATA_COLLECTION DIALOGEX 0, 0, 345, 152
 STYLE WS_CHILD
-FONT 9, "宋体"
+EXSTYLE WS_EX_TRANSPARENT
+FONT 9, "Times New Roman"
 BEGIN
     PUSHBUTTON      "File Setting",IDC_BUTTON_FILE_SETTING,18,19,67,15
     PUSHBUTTON      "Spectrum",IDC_BUTTON_SPECTRUM,18,49,67,15
     PUSHBUTTON      "AWS Factor",IDC_BUTTON_AWS_FACTOR,18,81,67,15
     PUSHBUTTON      "Shut down",IDC_BUTTON_SHUT_DOWN,18,115,67,15
     GROUPBOX        "",IDC_STATIC,7,7,92,138
-    GROUPBOX        "",IDC_STATIC,105,7,233,138
-    LTEXT           "MY No",IDC_STATIC,112,18,21,8
-    LTEXT           "Start Time",IDC_STATIC,200,17,41,8
-    LTEXT           "Status",IDC_STATIC,111,37,25,8
-    LTEXT           "Current Time",IDC_STATIC,200,35,49,8
+    GROUPBOX        "",IDC_STATIC,105,7,233,138,0,WS_EX_TRANSPARENT
+    CTEXT           "MY No.",IDC_STATIC,113,17,32,12,SS_CENTERIMAGE | 
+                    WS_BORDER
+    CTEXT           "Start Time",IDC_STATIC,198,17,41,12,SS_CENTERIMAGE | 
+                    WS_BORDER
+    LTEXT           "Status",IDC_STATIC,111,34,25,12,SS_CENTERIMAGE
+    LTEXT           "Current Time",IDC_STATIC,200,34,49,12,SS_CENTERIMAGE
     LTEXT           "File Name",IDC_STATIC,112,59,37,8
-    EDITTEXT        IDC_EDIT_START_TIME,253,15,76,12,ES_CENTER | 
+    EDITTEXT        IDC_EDIT_START_TIME,253,17,76,12,ES_CENTER | 
                     ES_AUTOHSCROLL | ES_READONLY
     EDITTEXT        IDC_EDIT_CURRENT_TIME,253,34,76,12,ES_CENTER | 
                     ES_AUTOHSCROLL | ES_READONLY
-    EDITTEXT        IDC_EDIT_MYNO,142,17,52,12,ES_CENTER | ES_AUTOHSCROLL | 
-                    ES_READONLY
-    EDITTEXT        IDC_EDIT_STATUS,142,37,52,12,ES_CENTER | ES_AUTOHSCROLL | 
+    EDITTEXT        IDC_EDIT_STATUS,142,34,52,12,ES_CENTER | ES_AUTOHSCROLL | 
                     ES_READONLY
     EDITTEXT        IDC_EDIT_FILE_NAME,151,58,180,12,ES_AUTOHSCROLL | 
                     ES_READONLY
+    CTEXT           "Static",IDC_STATIC_MYNO,144,17,55,12,SS_CENTERIMAGE | 
+                    WS_BORDER
 END
 
-IDD_DIALOG_FILE_SETTING DIALOG DISCARDABLE  0, 0, 446, 311
+IDD_DIALOG_FILE_SETTING DIALOG DISCARDABLE  0, 0, 446, 259
 STYLE WS_CHILD
-FONT 9, "宋体"
+FONT 9, "Times New Roman"
 BEGIN
-    PUSHBUTTON      "Data collection",IDC_BUTTON_DATA_COLLECTION,7,47,65,14
-    GROUPBOX        "",IDC_STATIC,80,7,349,59
-    LTEXT           "MY No.",IDC_STATIC,88,20,24,10
-    LTEXT           "Data collection",IDC_STATIC,167,20,61,8
-    LTEXT           "Extension",IDC_STATIC,307,20,39,10
+    PUSHBUTTON      "Data collection",IDC_BUTTON_DATA_COLLECTION,12,43,65,20
+    GROUPBOX        "",IDC_STATIC,80,14,349,50
+    LTEXT           "MY No.",IDC_STATIC,92,27,24,10
+    LTEXT           "Data collection",IDC_STATIC,183,24,42,14,SS_CENTERIMAGE
+    LTEXT           "Extension",IDC_STATIC,298,25,39,10
     LTEXT           "File Name",IDC_STATIC,87,44,37,8
-    COMBOBOX        IDC_COMBO_MYNO,119,17,38,209,CBS_DROPDOWNLIST | 
+    COMBOBOX        IDC_COMBO_MYNO,127,25,38,209,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP
     CONTROL         "Yes",IDC_RADIO_COLLECTION_YES,"Button",
-                    BS_AUTORADIOBUTTON | WS_GROUP,237,20,28,10
+                    BS_AUTORADIOBUTTON | WS_GROUP,238,25,28,10
     CONTROL         "No",IDC_RADIO__COLLECTION_NO,"Button",
-                    BS_AUTORADIOBUTTON,271,20,24,10
-    COMBOBOX        IDC_COMBO_EXTEN,347,16,53,226,CBS_DROPDOWNLIST | 
+                    BS_AUTORADIOBUTTON,271,25,24,10
+    COMBOBOX        IDC_COMBO_EXTEN,343,22,53,226,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP
     EDITTEXT        IDC_EDIT_FILENAME,127,43,186,12,ES_AUTOHSCROLL | 
                     ES_READONLY
-    PUSHBUTTON      "...",IDC_BUTTON_OPEN_FILEDIA,313,42,18,11
+    PUSHBUTTON      "...",IDC_BUTTON_OPEN_FILEDIA,317,44,18,11
     PUSHBUTTON      "Set",IDC_BUTTON_SET,346,41,54,15
     CONTROL         "List1",IDC_LIST_SET,"SysListView32",LVS_REPORT | 
-                    WS_BORDER | WS_TABSTOP,7,110,435,194
-    LTEXT           "File setting list",IDC_STATIC,7,71,73,10
-    LTEXT           "COM",IDC_STATIC,7,19,13,8
-    COMBOBOX        IDC_COMBO_COMNO,24,17,46,122,CBS_DROPDOWNLIST | 
+                    WS_BORDER | WS_TABSTOP,7,87,435,155
+    CONTROL         "File setting list",IDC_STATIC,"Static",SS_SIMPLE | 
+                    WS_GROUP,15,75,61,10
+    LTEXT           "COM",IDC_STATIC,7,23,18,8
+    COMBOBOX        IDC_COMBO_COMNO,25,21,46,122,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP
 END
 
 IDD_DIALOG_SPECTRUM DIALOG DISCARDABLE  0, 0, 437, 290
 STYLE WS_CHILD
-FONT 9, "宋体"
+FONT 9, "Times New Roman"
 BEGIN
     LTEXT           "Curve",IDC_STATIC,6,217,21,8
     EDITTEXT        IDC_EDIT_FILENAME,42,215,136,12,ES_AUTOHSCROLL | 
@@ -230,15 +150,15 @@ BEGIN
     PUSHBUTTON      "File Save",IDC_BUTTON_FILE_SAVE,380,239,50,14
     PUSHBUTTON      "AWS Factor",IDC_BUTTON_AWS_FACTOR,380,269,50,14
     LTEXT           "",IDC_SPECTRUM,23,7,407,183,SS_SUNKEN | WS_BORDER
-    SCROLLBAR       IDC_SCROLLBAR1,6,7,13,145,SBS_VERT
-    SCROLLBAR       IDC_SCROLLBAR2,39,191,391,13
+    SCROLLBAR       IDC_SCROLLBAR_V,6,7,13,147,SBS_VERT
+    SCROLLBAR       IDC_SCROLLBAR_H,41,191,389,13
     PUSHBUTTON      "LOG",IDC_H_LOG,6,191,34,13
-    PUSHBUTTON      "L O G",IDC_V_LOG,6,155,16,34,BS_CENTER | BS_MULTILINE
+    PUSHBUTTON      "L O G",IDC_V_LOG,6,155,14,34,BS_CENTER | BS_MULTILINE
 END
 
 IDD_DIALOG_AWS_FACTOR_SETTING DIALOGEX 0, 0, 438, 300
 STYLE WS_CHILD
-FONT 9, "宋体"
+FONT 9, "Times New Roman"
 BEGIN
     PUSHBUTTON      "File Save",IDC_BUTTON_FILE_SAVE,381,252,50,14
     PUSHBUTTON      "Cancel",IDC_BUTTON_CANCEL,381,279,50,14
@@ -258,53 +178,10 @@ END
 
 IDD_DIALOG_AWS_FACTOR DIALOG DISCARDABLE  0, 0, 433, 290
 STYLE WS_CHILD
-FONT 9, "宋体"
+FONT 9, "Times New Roman"
 BEGIN
     PUSHBUTTON      "Spectrum",IDC_BUTTON_SPECTRUM,359,268,67,15
 END
-
-
-#ifndef _MAC
-/////////////////////////////////////////////////////////////////////////////
-//
-// Version
-//
-
-VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,0,0,1
- PRODUCTVERSION 1,0,0,1
- FILEFLAGSMASK 0x3fL
-#ifdef _DEBUG
- FILEFLAGS 0x1L
-#else
- FILEFLAGS 0x0L
-#endif
- FILEOS 0x4L
- FILETYPE 0x1L
- FILESUBTYPE 0x0L
-BEGIN
-    BLOCK "StringFileInfo"
-    BEGIN
-        BLOCK "080404B0"
-        BEGIN
-            VALUE "CompanyName", "\0"
-            VALUE "FileDescription", "LSC Microsoft 基础类应用程序\0"
-            VALUE "FileVersion", "1, 0, 0, 1\0"
-            VALUE "InternalName", "LSC\0"
-            VALUE "LegalCopyright", "版权所有 (C) 2010\0"
-            VALUE "LegalTrademarks", "\0"
-            VALUE "OriginalFilename", "LSC.EXE\0"
-            VALUE "ProductName", "LSC 应用程序\0"
-            VALUE "ProductVersion", "1, 0, 0, 1\0"
-        END
-    END
-    BLOCK "VarFileInfo"
-    BEGIN
-        VALUE "Translation", 0x804, 1200
-    END
-END
-
-#endif    // !_MAC
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -315,10 +192,18 @@ END
 #ifdef APSTUDIO_INVOKED
 GUIDELINES DESIGNINFO DISCARDABLE 
 BEGIN
+    IDD_DIALOG_LIST, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 180
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 87
+    END
+
     IDD_LSC_DIALOG, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 326
+        RIGHTMARGIN, 388
         TOPMARGIN, 7
         BOTTOMMARGIN, 231
     END
@@ -336,7 +221,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 442
         TOPMARGIN, 7
-        BOTTOMMARGIN, 304
+        BOTTOMMARGIN, 251
     END
 
     IDD_DIALOG_SPECTRUM, DIALOG
@@ -399,6 +284,111 @@ BEGIN
 0x3231, "\000" 
     0
 END
+
+#endif    // Neutral resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Chinese (P.R.C.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+#ifdef _WIN32
+LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
+#pragma code_page(936)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)\r\n"
+    "#ifdef _WIN32\r\n"
+    "LANGUAGE 4, 2\r\n"
+    "#pragma code_page(936)\r\n"
+    "#endif //_WIN32\r\n"
+    "#include ""res\\LSC.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""l.chs\\afxres.rc""          // Standard components\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON    DISCARDABLE     "res\\LSC.ico"
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "000004b0"
+        BEGIN
+            VALUE "Comments", "\0"
+            VALUE "CompanyName", "\0"
+            VALUE "FileDescription", "LSC Manager\0"
+            VALUE "FileVersion", "1, 0, 0, 1\0"
+            VALUE "InternalName", "LSC\0"
+            VALUE "LegalCopyright", " (C) 2010\0"
+            VALUE "LegalTrademarks", "\0"
+            VALUE "OriginalFilename", "LSC.EXE\0"
+            VALUE "PrivateBuild", "\0"
+            VALUE "ProductName", "LSC  Application\0"
+            VALUE "ProductVersion", "1, 0, 0, 1\0"
+            VALUE "SpecialBuild", "\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x0, 1200
+    END
+END
+
+#endif    // !_MAC
 
 
 /////////////////////////////////////////////////////////////////////////////
