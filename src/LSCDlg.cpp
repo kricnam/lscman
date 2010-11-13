@@ -59,8 +59,8 @@ BOOL CLSCDlg::OnInitDialog()
 
 	m_DataCollectionDlg.Create(IDD_DIALOG_DATA_COLLECTION,this);
 	m_DataCollectionDlg.ShowWindow(SW_HIDE);
-	m_AWSFactorDlg.Create(IDD_DIALOG_AWS_FACTOR,this);
-	m_AWSFactorDlg.ShowWindow(SW_HIDE);
+	//m_AWSFactorDlg.Create(IDD_DIALOG_AWS_FACTOR,this);
+	//m_AWSFactorDlg.ShowWindow(SW_HIDE);
 	m_AWSFactorSttingDlg.Create(IDD_DIALOG_AWS_FACTOR_SETTING,this);
 	m_AWSFactorSttingDlg.ShowWindow(SW_HIDE);
 	m_SpectrumDlg.Create(IDD_DIALOG_SPECTRUM,this);
@@ -148,7 +148,8 @@ void CLSCDlg::OnOpenDlg(WPARAM wParam, LPARAM lParam)
 			//m_AWSFactorDlg.ShowWindow(SW_SHOW);
 			m_AWSFactorSttingDlg.ShowWindow(SW_SHOW);
 			this->SetWindowText("AWS Factor");
-			m_AWSFactorDlg.GetClientRect(&rect);
+			//m_AWSFactorDlg.GetClientRect(&rect);
+			m_AWSFactorSttingDlg.GetClientRect(&rect);
 			break;
 		case OPEN_AWS_FACTOR_SETTING:
 			m_AWSFactorSttingDlg.ShowWindow(SW_SHOW);
