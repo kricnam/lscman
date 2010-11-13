@@ -42,7 +42,9 @@
 #define IDC_EDIT5                       1024
 #define IDC_EDIT6                       1025
 #define IDC_EDIT7                       1026
+#define IDC_EDIT_AGROSS                 1026
 #define IDC_EDIT8                       1027
+#define IDC_EDIT_BGROSS                 1027
 #define IDC_EDIT9                       1028
 #define IDC_EDIT10                      1029
 #define IDC_EDIT11                      1030

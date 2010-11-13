@@ -19,7 +19,10 @@ public:
 // Dialog Data
 	//{{AFX_DATA(CSpectrumDlg)
 	enum { IDD = IDD_DIALOG_SPECTRUM };
-		// NOTE: the ClassWizard will add data members here
+	CString	m_strAGROSS;
+	CString	m_strBGROSS;
+	CString	m_strESCR;
+	CString	m_strSCCR;
 	//}}AFX_DATA
 
 

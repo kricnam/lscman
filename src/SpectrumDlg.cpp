@@ -22,7 +22,10 @@ CSpectrumDlg::CSpectrumDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CSpectrumDlg::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CSpectrumDlg)
-		// NOTE: the ClassWizard will add member initialization here
+	m_strAGROSS = _T("");
+	m_strBGROSS = _T("");
+	m_strESCR = _T("");
+	m_strSCCR = _T("");
 	//}}AFX_DATA_INIT
 	pSpectrumWnd = NULL;
 	for(int i = 0;i <4000;i++)
@@ -36,7 +39,10 @@ void CSpectrumDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CSpectrumDlg)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
+	DDX_Text(pDX, IDC_EDIT_AGROSS, m_strAGROSS);
+	DDX_Text(pDX, IDC_EDIT_BGROSS, m_strBGROSS);
+	DDX_Text(pDX, IDC_EDIT_ESCR, m_strESCR);
+	DDX_Text(pDX, IDC_EDIT_SCCR, m_strSCCR);
 	//}}AFX_DATA_MAP
 }
 
@@ -196,9 +202,14 @@ void CSpectrumDlg::OnButtonFileOpen()
 		if (data.Open(dlg.GetPathName()))
 		{
 			data.GetSpectrumData(&nSpectrunData[0][0],4000);
-			
+			data.GetFieldValue("A-GROSS",m_strAGROSS);
+			data.GetFieldValue("B-GROSS",m_strBGROSS);
+			data.GetFieldValue("SCCR",m_strSCCR);
+			data.GetFieldValue("ESCR",m_strESCR);
+
 			Invalidate();   
 			UpdateWindow();
+			UpdateData(FALSE);
 		}
 	}
 }

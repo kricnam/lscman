@@ -45,11 +45,10 @@ int CDataFile::GetSpectrumData(int *pArray, int len)
 				readLine(strLine);
 				while(strLine.GetLength())
 				{
-					if (chopFirstCSVField(strLine,strField))
-					{
-						pArray[n++] = atoi(LPCTSTR(strField));
-					}
-					
+					int index = chopFirstCSVField(strLine,strField);
+					pArray[n++] = atoi(LPCTSTR(strField));
+	
+					if (index == -1 || n > len) break;
 				};
 			};
 		}
@@ -153,7 +152,7 @@ int CDataFile::chopFirstCSVField(CString& strLine,CString& strField)
 		int n=strLine.Find(',');
 		if ( n < 0) 
 		{
-			return -1;
+			strField = strLine;
 		}
 
 		if (n > 0)
