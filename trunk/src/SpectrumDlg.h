@@ -53,6 +53,8 @@ protected:
 	afx_msg void OnButtonDelete();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
+
+	static char szDataFilter[];
 };
 
 //{{AFX_INSERT_LOCATION}}

@@ -5,6 +5,7 @@
 #include "LSC.h"
 #include "SpectrumDlg.h"
 #include "SelectList.h"
+#include "DataFile.h"
 #include <math.h>
 
 #ifdef _DEBUG
@@ -15,7 +16,7 @@ static char THIS_FILE[] = __FILE__;
 
 /////////////////////////////////////////////////////////////////////////////
 // CSpectrumDlg dialog
-
+char CSpectrumDlg::szDataFilter[] = "Data File|*.???||";
 
 CSpectrumDlg::CSpectrumDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CSpectrumDlg::IDD, pParent)
@@ -26,7 +27,7 @@ CSpectrumDlg::CSpectrumDlg(CWnd* pParent /*=NULL*/)
 	pSpectrumWnd = NULL;
 	for(int i = 0;i <4000;i++)
 	{
-		nSpectrunData[0][i] = 20 + sin(i *3.14 /180) * 20;
+		nSpectrunData[0][i] = 0 ;
 	}
 }
 
@@ -188,12 +189,23 @@ void CSpectrumDlg::OnButtonOpenAWD()
 
 void CSpectrumDlg::OnButtonFileOpen() 
 {
-	CFileDialog dlg(TRUE,"awd");
-	dlg.DoModal();	
+	CFileDialog dlg(TRUE,NULL,NULL,0,szDataFilter,this->GetParent());
+	if (dlg.DoModal() == IDOK)
+	{
+		CDataFile data;
+		if (data.Open(dlg.GetPathName()))
+		{
+			data.GetSpectrumData(&nSpectrunData[0][0],4000);
+			
+			Invalidate();   
+			UpdateWindow();
+		}
+	}
 }
 
 void CSpectrumDlg::OnButtonFileSave() 
 {
+	
 	CFileDialog dlg(FALSE,"awd");
 	dlg.DoModal();
 	

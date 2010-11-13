@@ -82,9 +82,9 @@ int CDataFile::Open()
 	if (fData == NULL)
 	{
 		perror((LPCTSTR)strFileName);
-		return -1;
+		return 0;
 	}
-	return 0;
+	return 1;
 }
 
 bool CDataFile::IsValidFile()
@@ -121,9 +121,10 @@ bool CDataFile::gotoSpetrumStart()
 {
 	if (fData)
 	{
+		fseek(fData,0,SEEK_SET);
 		CString strLine;
 		if (readLine(strLine)
-			&&readLine(strLine))
+			&&readLine(strLine)&&readLine(strLine))
 			return true;
 	}
 	return false;
@@ -137,6 +138,8 @@ int CDataFile::readLine(CString &strLine)
 		if (fgets(buf,1024,fData))
 		{
 			strLine = buf;
+			strLine.TrimRight();
+			return strlen(buf);
 		}
 	}
 	return 0;
