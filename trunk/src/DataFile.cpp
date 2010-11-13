@@ -168,3 +168,33 @@ int CDataFile::chopFirstCSVField(CString& strLine,CString& strField)
 
 	return 0;
 }
+
+int CDataFile::GetFieldIndex(LPCTSTR *szName)
+{
+	if (fData)
+	{
+		int n =0;
+		fseek(fData,0,SEEK_SET);
+		CString strLine;
+		if (readLine(strLine)
+			&&readLine(strLine))
+		{
+			CString strField;
+			while(strLine.GetLength())
+			{
+				n++;
+				chopFirstCSVField(strLine,strField);
+				if (strField.Find(szName)>-1)
+				{
+					return n;
+				}
+			};
+		}
+	}
+	return 0;
+}
+
+int CDataFile::GetFieldValue(LPCTSTR szName, CString &strValue)
+{
+
+}
