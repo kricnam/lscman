@@ -128,7 +128,7 @@ void CLSCDlg::OnOpenDlg(WPARAM wParam, LPARAM lParam)
 {
 	m_FileSettingDlg.ShowWindow(SW_HIDE);
 	m_DataCollectionDlg.ShowWindow(SW_HIDE);
-	m_AWSFactorDlg.ShowWindow(SW_HIDE);
+	//m_AWSFactorDlg.ShowWindow(SW_HIDE);
 	m_AWSFactorSttingDlg.ShowWindow(SW_HIDE);
 	m_SpectrumDlg.ShowWindow(SW_HIDE);
 	CRect rect;
@@ -174,7 +174,15 @@ void CLSCDlg::OnOpenDlg(WPARAM wParam, LPARAM lParam)
 
 void CLSCDlg::OnClose() 
 {
-	// TODO: Add your message handler code here and/or call default
+	CString strTitle;
+	
+	GetWindowText(strTitle);
+	if (strTitle == "Spectrum" || strTitle.Find("AWS")!=-1)
+	{
+		::PostMessage(m_hWnd,WM_OPEN_DLG,OPEN_DATA_COLLECTION,0);
+		return;
+	}
+
 	if (MessageBox("Do you really want to quit?","Quit",MB_OKCANCEL) == IDOK)
 	{
 		CDialog::OnClose();
