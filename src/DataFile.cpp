@@ -153,14 +153,14 @@ int CDataFile::chopFirstCSVField(CString& strLine,CString& strField)
 		if ( n < 0) 
 		{
 			strField = strLine;
+			strLine.Empty();
 		}
 
-		if (n > 0)
+		if (n >= 0)
 		{
 			strField = strLine.Left(n);
+			strLine = strLine.Right(strLine.GetLength()-n-1);
 		}
-
-		strLine = strLine.Right(strLine.GetLength()-n-1);
 
 		return n;
 	}
