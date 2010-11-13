@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "LSC.h"
+#include "Config.h"
 #include "SpectrumDlg.h"
 #include "SelectList.h"
 #include "DataFile.h"
@@ -17,6 +18,7 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // CSpectrumDlg dialog
 char CSpectrumDlg::szDataFilter[] = "Data File|*.???||";
+char CSpectrumDlg::szAWSFilter[] = "AWS File(*.aws)|*.aws||";
 
 CSpectrumDlg::CSpectrumDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CSpectrumDlg::IDD, pParent)
@@ -26,13 +28,19 @@ CSpectrumDlg::CSpectrumDlg(CWnd* pParent /*=NULL*/)
 	m_strBGROSS = _T("");
 	m_strESCR = _T("");
 	m_strSCCR = _T("");
+	m_strADPM = _T("");
+	m_strAEFF = _T("");
+	m_strBDPM = _T("");
+	m_strBEFF = _T("");
 	//}}AFX_DATA_INIT
 	pSpectrumWnd = NULL;
 	for(int i = 0;i <4000;i++)
 	{
 		nSpectrunData[0][i] = 0 ;
 	}
+	setMF();
 }
+
 
 
 void CSpectrumDlg::DoDataExchange(CDataExchange* pDX)
@@ -40,9 +48,21 @@ void CSpectrumDlg::DoDataExchange(CDataExchange* pDX)
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CSpectrumDlg)
 	DDX_Text(pDX, IDC_EDIT_AGROSS, m_strAGROSS);
+	DDV_MaxChars(pDX, m_strAGROSS, 20);
 	DDX_Text(pDX, IDC_EDIT_BGROSS, m_strBGROSS);
+	DDV_MaxChars(pDX, m_strBGROSS, 20);
 	DDX_Text(pDX, IDC_EDIT_ESCR, m_strESCR);
+	DDV_MaxChars(pDX, m_strESCR, 20);
 	DDX_Text(pDX, IDC_EDIT_SCCR, m_strSCCR);
+	DDV_MaxChars(pDX, m_strSCCR, 20);
+	DDX_Text(pDX, IDC_EDIT_ADPM, m_strADPM);
+	DDV_MaxChars(pDX, m_strADPM, 20);
+	DDX_Text(pDX, IDC_EDIT_AEFF, m_strAEFF);
+	DDV_MaxChars(pDX, m_strAEFF, 20);
+	DDX_Text(pDX, IDC_EDIT_BDPM, m_strBDPM);
+	DDV_MaxChars(pDX, m_strBDPM, 20);
+	DDX_Text(pDX, IDC_EDIT_BEFF, m_strBEFF);
+	DDV_MaxChars(pDX, m_strBEFF, 20);
 	//}}AFX_DATA_MAP
 }
 
@@ -206,7 +226,12 @@ void CSpectrumDlg::OnButtonFileOpen()
 			data.GetFieldValue("B-GROSS",m_strBGROSS);
 			data.GetFieldValue("SCCR",m_strSCCR);
 			data.GetFieldValue("ESCR",m_strESCR);
-
+			data.GetFieldValue("A-DPM",m_strADPM);
+			if (!m_strADPM.GetLength())	data.GetFieldValue("A-Bq",m_strADPM);
+			data.GetFieldValue("B-DPM",m_strBDPM);
+			if (!m_strADPM.GetLength())	data.GetFieldValue("B-Bq",m_strADPM);
+			data.GetFieldValue("A-EFF",m_strAEFF);
+			data.GetFieldValue("B-EFF",m_strBEFF);
 			Invalidate();   
 			UpdateWindow();
 			UpdateData(FALSE);
@@ -217,7 +242,7 @@ void CSpectrumDlg::OnButtonFileOpen()
 void CSpectrumDlg::OnButtonFileSave() 
 {
 	
-	CFileDialog dlg(FALSE,"awd");
+	CFileDialog dlg(FALSE,"awd",NULL,0,szAWSFilter,this->GetParent());
 	dlg.DoModal();
 	
 }
@@ -232,4 +257,43 @@ void CSpectrumDlg::OnButtonDelete()
 {
 	CSelectList dlg(this);
 	dlg.DoModal();
+}
+
+double CSpectrumDlg::Factor(double Y)
+{
+	double p,q;
+	p = pow(10.0,MF_a);
+	p *= MF_A;
+	p *= pow(Y,3);
+
+	q = pow(10.0,MF_b);
+	q *= MF_B;
+	q *= pow(Y,2);
+
+	p += q;
+
+	q = pow(10,MF_c);
+	q *= MF_C;
+	q *= Y;
+
+	p += q;
+
+	q = pow(10,MF_d);
+	q *= MF_D;
+
+	return p + q;
+
+}
+
+void CSpectrumDlg::setMF()
+{
+	Config conf(CONF_FILENAME);
+	MF_A = conf.GetMF_A();
+	MF_B = conf.GetMF_B();
+	MF_C = conf.GetMF_C();
+	MF_D = conf.GetMF_D();
+	MF_a = conf.GetMF_a();
+	MF_b = conf.GetMF_b();
+	MF_c = conf.GetMF_c();
+	MF_d = conf.GetMF_d();
 }

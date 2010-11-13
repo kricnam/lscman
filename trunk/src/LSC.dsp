@@ -100,7 +100,15 @@ SOURCE=.\AWSFactorSttingDlg.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\Config.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\DataCollectionDlg.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\DataFile.cpp
 # End Source File
 # Begin Source File
 
@@ -153,7 +161,15 @@ SOURCE=.\AWSFactorSttingDlg.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\Config.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\DataCollectionDlg.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\DataFile.h
 # End Source File
 # Begin Source File
 

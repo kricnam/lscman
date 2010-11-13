@@ -23,6 +23,10 @@ public:
 	CString	m_strBGROSS;
 	CString	m_strESCR;
 	CString	m_strSCCR;
+	CString	m_strADPM;
+	CString	m_strAEFF;
+	CString	m_strBDPM;
+	CString	m_strBEFF;
 	//}}AFX_DATA
 
 
@@ -37,6 +41,9 @@ public:
 
 // Implementation
 protected:
+	void setMF(void);
+	double Factor(double Y);
+	
 	int nSpectrunData[5][4000];
 	void DrawData(CDC *pDC,int x,int y, int cx,int cy);
 	CRect DrawAxis(CDC *pDC, int x, int y, int cx, int cy);
@@ -58,6 +65,9 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	static char szDataFilter[];
+	static char szAWSFilter[];
+	//Model Factor
+	double MF_A,MF_B,MF_C,MF_D,MF_a,MF_b,MF_c,MF_d;
 };
 
 //{{AFX_INSERT_LOCATION}}
