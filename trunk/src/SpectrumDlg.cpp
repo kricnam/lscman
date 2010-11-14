@@ -284,35 +284,62 @@ void CSpectrumDlg::setMF()
 bool CSpectrumDlg::LoadData(LPCTSTR szPath)
 {
 		CDataFile data;
+		CString strMsg;
+		strMsg.Empty();
 		while (data.Open(szPath))
 		{
 			int n = data.GetSpectrumData(&nSpectrunData[0][0],4000); 
 			if (n<4000)
 			{
-				CString strMsg;
 				strMsg.Format("Load %d channel data, maybe not correct file format",n);
 				MessageBox(strMsg,"Warning",MB_OK);
 				return false;
 			}
 
-			data.GetFieldValue("A-GROSS",m_strAGROSS);
-			data.GetFieldValue("B-GROSS",m_strBGROSS);
-			data.GetFieldValue("SCCR",m_strSCCR);
-			data.GetFieldValue("ESCR",m_strESCR);
-			data.GetFieldValue("A-DPM",m_strADPM);
-			if (!m_strADPM.GetLength())	data.GetFieldValue("A-Bq",m_strADPM);
-			data.GetFieldValue("B-DPM",m_strBDPM);
-			if (!m_strADPM.GetLength())	data.GetFieldValue("B-Bq",m_strADPM);
-			data.GetFieldValue("A-EFF",m_strAEFF);
-			data.GetFieldValue("B-EFF",m_strBEFF);
+			if (!data.GetFieldValue("A-GROSS",m_strAGROSS))
+				strMsg+="[A-GROSS] ";
+			if (!data.GetFieldValue("B-GROSS",m_strBGROSS))
+				strMsg+="[B-GROSS] ";
+			if (!data.GetFieldValue("SCCR",m_strSCCR))
+				strMsg+="[SCCR] ";
+			if (!data.GetFieldValue("ESCR",m_strESCR))
+				strMsg+="[ESCR] ";
+
+			if (data.GetFieldIndex("A-DPM"))
+			{
+				data.GetFieldValue("A-DPM",m_strADPM);
+			}
+			else if(data.GetFieldIndex("A-Bq"))
+			{
+				data.GetFieldValue("A-Bq",m_strADPM);
+			}
+			else
+				strMsg+="[A-DPM] ";
+
+			if (data.GetFieldIndex("B-DPM"))
+			{
+				data.GetFieldValue("B-DPM",m_strADPM);
+			}
+			else if(data.GetFieldIndex("B-Bq"))
+			{
+				data.GetFieldValue("B-Bq",m_strADPM);
+			}
+			else
+				strMsg+="[B-DPM] ";
+			
+			if (!data.GetFieldValue("A-EFF",m_strAEFF))
+				strMsg+="[A-EFF] ";
+			
+			if (!data.GetFieldValue("B-EFF",m_strBEFF))
+				strMsg+="[B-EFF] ";
 			Invalidate();   
 			UpdateWindow();
 			UpdateData(FALSE);
+			if (strMsg.GetLength()) break;
 			return true;
 		}
 
-		CString strMsg;
-		strMsg.Format("Open %s failed.",szPath);
+		if (strMsg.IsEmpty()) strMsg.Format("Open %s failed.",szPath);
 		MessageBox(strMsg,"Error",MB_OK);
 		return false;
 }
