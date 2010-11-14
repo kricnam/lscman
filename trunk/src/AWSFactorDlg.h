@@ -6,7 +6,7 @@
 #endif // _MSC_VER > 1000
 // AWSFactorDlg.h : header file
 //
-
+#include "AWSFile.h"
 /////////////////////////////////////////////////////////////////////////////
 // CAWSFactorDlg dialog
 
@@ -16,12 +16,33 @@ class CAWSFactorDlg : public CDialog
 public:
 	CAWSFactorDlg(CWnd* pParent = NULL);   // standard constructor
 
+	CEdit editSample[10][7];
+	CStatic lbl[10];
 // Dialog Data
 	//{{AFX_DATA(CAWSFactorDlg)
 	enum { IDD = IDD_DIALOG_AWS_FACTOR };
+	CStatic	m_stcOrg;
 	CButton	m_btnSave;
 	CButton	m_btnOpen;
 	CButton	m_btnSet;
+	double	m_ADPM;
+	int		m_nAchUL;
+	int		m_nAchLL;
+	double	m_BDPM;
+	int		m_nBchLL;
+	int		m_nBchUL;
+	double	m_dAcha;
+	double	m_bAchc;
+	double	m_dAchb;
+	double	m_dAchd;
+	double	m_dBA_a;
+	double	m_dBA_b;
+	double	m_dBA_d;
+	double	m_dBA_c;
+	double	m_dBch_a;
+	double	m_dBch_b;
+	double	m_dBch_c;
+	double	m_dBch_d;
 	//}}AFX_DATA
 
 
@@ -36,6 +57,8 @@ public:
 
 // Implementation
 protected:
+	void LoadData(AWS_Setting& set);
+	void GetSetting(AWS_Setting& set);
 
 	// Generated message map functions
 	//{{AFX_MSG(CAWSFactorDlg)
@@ -44,6 +67,8 @@ protected:
 	afx_msg void OnDestroy();
 	afx_msg void OnButtonSet();
 	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
+	afx_msg void OnButtonFileSave();
+	afx_msg void OnButtonFileOpen();
 	//}}AFX_MSG
 	afx_msg LONG OnHotKey(WPARAM wParam,LPARAM lParam);  
 	DECLARE_MESSAGE_MAP()

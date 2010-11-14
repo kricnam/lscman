@@ -96,6 +96,10 @@ SOURCE=.\AWSFactorDlg.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\AWSFile.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Config.cpp
 # End Source File
 # Begin Source File
@@ -150,6 +154,10 @@ SOURCE=.\StdAfx.cpp
 # Begin Source File
 
 SOURCE=.\AWSFactorDlg.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\AWSFile.h
 # End Source File
 # Begin Source File
 

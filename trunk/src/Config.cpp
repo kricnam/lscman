@@ -172,3 +172,12 @@ double Config::GetMF_d(void)
 	}
 	return 1.001;
 }
+
+bool Config::ReadKey(LPCTSTR szKey, LPCTSTR szVal, int nLen)
+{
+	if (GetValue(strFileName,szKey,(char*)szVal,nLen)==0)
+		return true;
+	else
+		return false;
+
+}
