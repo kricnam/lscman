@@ -171,6 +171,7 @@ void CLSCDlg::OnOpenDlg(WPARAM wParam, LPARAM lParam)
 	rc.bottom = rc.top + rect.bottom + (rc.Height() - rc2.Height());
 	rc.right = rc.left + rect.right + (rc.Width() - rc2.Width());
 	MoveWindow(&rc);
+	CenterWindow();
 }
 
 void CLSCDlg::OnClose() 

@@ -335,7 +335,11 @@ bool CSpectrumDlg::LoadData(LPCTSTR szPath)
 			Invalidate();   
 			UpdateWindow();
 			UpdateData(FALSE);
-			if (strMsg.GetLength()) break;
+			if (strMsg.GetLength()) 
+			{
+				strMsg+="fiels not found.";
+				break;
+			}
 			return true;
 		}
 
