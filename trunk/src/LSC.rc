@@ -168,7 +168,7 @@ IDD_DIALOG_AWS_FACTOR DIALOGEX 0, 0, 433, 290
 STYLE WS_CHILD
 FONT 9, "Times New Roman"
 BEGIN
-    PUSHBUTTON      "Spectrum",IDC_BUTTON_SPECTRUM,359,268,67,15
+    PUSHBUTTON      "Spectru&m",IDC_BUTTON_SPECTRUM,362,261,50,15
     LTEXT           "A-Ch",IDC_STATIC,25,30,17,8
     LTEXT           "B-Ch",IDC_STATIC,25,44,17,8
     LTEXT           "L.L",IDC_STATIC,59,16,29,9
@@ -181,9 +181,14 @@ BEGIN
                     WS_EX_STATICEDGE
     EDITTEXT        IDC_EDIT4,97,43,37,12,ES_AUTOHSCROLL | NOT WS_BORDER,
                     WS_EX_STATICEDGE
-    PUSHBUTTON      "File Save",IDC_BUTTON_FILE_SAVE,366,221,50,14,NOT 
+    PUSHBUTTON      "File S&ave",IDC_BUTTON_FILE_SAVE,362,229,50,14,NOT 
                     WS_VISIBLE
-    PUSHBUTTON      "Cancel",IDC_BUTTON_CANCEL,366,247,50,14,NOT WS_VISIBLE
+    PUSHBUTTON      "File &Open",IDC_BUTTON_FILE_OPEN,362,245,50,14
+    PUSHBUTTON      "&Set",IDC_BUTTON_SET,78,254,50,14,NOT WS_VISIBLE
+    LTEXT           "A-DPM",IDC_STATIC,57,90,24,8
+    LTEXT           "B-DPM",IDC_STATIC,163,89,24,8
+    EDITTEXT        IDC_EDIT_ADPM,54,102,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_BDPM,163,101,40,14,ES_AUTOHSCROLL
 END
 
 
@@ -280,6 +285,15 @@ BEGIN
     0
 END
 
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON    DISCARDABLE     "res\\LSC.ico"
 #endif    // Neutral resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -330,15 +344,6 @@ END
 
 #endif    // APSTUDIO_INVOKED
 
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Icon
-//
-
-// Icon with lowest ID value placed first to ensure application icon
-// remains consistent on all systems.
-IDR_MAINFRAME           ICON    DISCARDABLE     "res\\LSC.ico"
 
 #ifndef _MAC
 /////////////////////////////////////////////////////////////////////////////

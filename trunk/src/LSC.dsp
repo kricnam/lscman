@@ -96,10 +96,6 @@ SOURCE=.\AWSFactorDlg.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\AWSFactorSttingDlg.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\Config.cpp
 # End Source File
 # Begin Source File
@@ -154,10 +150,6 @@ SOURCE=.\StdAfx.cpp
 # Begin Source File
 
 SOURCE=.\AWSFactorDlg.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\AWSFactorSttingDlg.h
 # End Source File
 # Begin Source File
 

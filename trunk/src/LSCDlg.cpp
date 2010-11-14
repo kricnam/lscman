@@ -116,7 +116,6 @@ BOOL CLSCDlg::PreTranslateMessage(MSG* pMsg)
 			break;
 		}
 	}
-	
 	return CDialog::PreTranslateMessage(pMsg);
 }
 
@@ -145,6 +144,7 @@ void CLSCDlg::OnOpenDlg(WPARAM wParam, LPARAM lParam)
 			m_AWSFactorDlg.ShowWindow(SW_SHOW);
 			this->SetWindowText("AWS Factor");
 			m_AWSFactorDlg.GetClientRect(&rect);
+			m_AWSFactorDlg.SetFocus();
 			break;
 		case OPEN_SPECTRUM:
 			m_SpectrumDlg.ShowWindow(SW_SHOW);

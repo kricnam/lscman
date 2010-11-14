@@ -19,7 +19,6 @@ CAWSFactorDlg::CAWSFactorDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CAWSFactorDlg::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CAWSFactorDlg)
-		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
 
@@ -28,7 +27,9 @@ void CAWSFactorDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CAWSFactorDlg)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
+	DDX_Control(pDX, IDC_BUTTON_FILE_SAVE, m_btnSave);
+	DDX_Control(pDX, IDC_BUTTON_FILE_OPEN, m_btnOpen);
+	DDX_Control(pDX, IDC_BUTTON_SET, m_btnSet);
 	//}}AFX_DATA_MAP
 }
 
@@ -37,6 +38,8 @@ BEGIN_MESSAGE_MAP(CAWSFactorDlg, CDialog)
 	//{{AFX_MSG_MAP(CAWSFactorDlg)
 	ON_BN_CLICKED(IDC_BUTTON_SPECTRUM, OnButtonSpectrum)
 	ON_WM_DESTROY()
+	ON_BN_CLICKED(IDC_BUTTON_SET, OnButtonSet)
+	ON_WM_SHOWWINDOW()
 	//}}AFX_MSG_MAP
 	ON_MESSAGE(WM_HOTKEY,OnHotKey)
 END_MESSAGE_MAP()
@@ -80,7 +83,9 @@ void CAWSFactorDlg::OnButtonSpectrum()
 LONG CAWSFactorDlg::OnHotKey(WPARAM wParam,LPARAM lParam)
 {
    
-	GetParent()->SetWindowText("AWS Factor Setting");	
+	GetParent()->SetWindowText("AWS Factor Setting");
+	m_btnSet.ShowWindow(TRUE);
+	m_btnSave.ShowWindow(TRUE);
     return 0;     
 }
 
@@ -90,4 +95,21 @@ void CAWSFactorDlg::OnDestroy()
 	
 	UnregisterHotKey(this->m_hWnd,0x2000);   
 	
+}
+
+void CAWSFactorDlg::OnButtonSet() 
+{
+	// TODO: Add your control notification handler code here
+	m_btnSet.ShowWindow(FALSE);
+}
+
+void CAWSFactorDlg::OnShowWindow(BOOL bShow, UINT nStatus) 
+{
+	CDialog::OnShowWindow(bShow, nStatus);
+	
+	if (!bShow)
+	{
+		m_btnSet.ShowWindow(bShow);
+		m_btnSave.ShowWindow(bShow);
+	}
 }
