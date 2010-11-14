@@ -210,7 +210,7 @@ void CSpectrumDlg::OnButtonOpenAWD()
 {
 	CFileDialog dlg(TRUE,"awd");
 	dlg.DoModal();
-	
+
 }
 
 void CSpectrumDlg::OnButtonFileOpen() 
@@ -218,24 +218,7 @@ void CSpectrumDlg::OnButtonFileOpen()
 	CFileDialog dlg(TRUE,NULL,NULL,0,szDataFilter,this->GetParent());
 	if (dlg.DoModal() == IDOK)
 	{
-		CDataFile data;
-		if (data.Open(dlg.GetPathName()))
-		{
-			data.GetSpectrumData(&nSpectrunData[0][0],4000);
-			data.GetFieldValue("A-GROSS",m_strAGROSS);
-			data.GetFieldValue("B-GROSS",m_strBGROSS);
-			data.GetFieldValue("SCCR",m_strSCCR);
-			data.GetFieldValue("ESCR",m_strESCR);
-			data.GetFieldValue("A-DPM",m_strADPM);
-			if (!m_strADPM.GetLength())	data.GetFieldValue("A-Bq",m_strADPM);
-			data.GetFieldValue("B-DPM",m_strBDPM);
-			if (!m_strADPM.GetLength())	data.GetFieldValue("B-Bq",m_strADPM);
-			data.GetFieldValue("A-EFF",m_strAEFF);
-			data.GetFieldValue("B-EFF",m_strBEFF);
-			Invalidate();   
-			UpdateWindow();
-			UpdateData(FALSE);
-		}
+		LoadData(dlg.GetPathName());
 	}
 }
 
@@ -296,4 +279,40 @@ void CSpectrumDlg::setMF()
 	MF_b = conf.GetMF_b();
 	MF_c = conf.GetMF_c();
 	MF_d = conf.GetMF_d();
+}
+
+bool CSpectrumDlg::LoadData(LPCTSTR szPath)
+{
+		CDataFile data;
+		while (data.Open(szPath))
+		{
+			int n = data.GetSpectrumData(&nSpectrunData[0][0],4000); 
+			if (n<4000)
+			{
+				CString strMsg;
+				strMsg.Format("Load %d channel data, maybe not correct file format",n);
+				MessageBox(strMsg,"Warning",MB_OK);
+				return false;
+			}
+
+			data.GetFieldValue("A-GROSS",m_strAGROSS);
+			data.GetFieldValue("B-GROSS",m_strBGROSS);
+			data.GetFieldValue("SCCR",m_strSCCR);
+			data.GetFieldValue("ESCR",m_strESCR);
+			data.GetFieldValue("A-DPM",m_strADPM);
+			if (!m_strADPM.GetLength())	data.GetFieldValue("A-Bq",m_strADPM);
+			data.GetFieldValue("B-DPM",m_strBDPM);
+			if (!m_strADPM.GetLength())	data.GetFieldValue("B-Bq",m_strADPM);
+			data.GetFieldValue("A-EFF",m_strAEFF);
+			data.GetFieldValue("B-EFF",m_strBEFF);
+			Invalidate();   
+			UpdateWindow();
+			UpdateData(FALSE);
+			return true;
+		}
+
+		CString strMsg;
+		strMsg.Format("Open %s failed.",szPath);
+		MessageBox(strMsg,"Error",MB_OK);
+		return false;
 }

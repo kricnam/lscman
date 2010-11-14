@@ -258,3 +258,5 @@ HBRUSH CFileSettingDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	// TODO: Return a different brush if the default is not desired
 	return hbr;
 }
+
+
