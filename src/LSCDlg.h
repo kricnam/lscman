@@ -41,8 +41,7 @@ public:
 	CRect m_IniRect;
 	CFileSettingDlg m_FileSettingDlg;
 	CDataCollectionDlg m_DataCollectionDlg;
-	//CAWSFactorDlg m_AWSFactorDlg;
-	CAWSFactorSttingDlg m_AWSFactorSttingDlg;
+	CAWSFactorDlg m_AWSFactorDlg;
 	CSpectrumDlg m_SpectrumDlg;
 // Implementation
 protected:
