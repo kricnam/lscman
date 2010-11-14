@@ -14,6 +14,7 @@
 class Config
 {
 public:
+	bool ReadKey(LPCTSTR szKey, LPCTSTR szVal, int nLen);
 	Config(const char* szFile);
 	virtual ~Config();
 

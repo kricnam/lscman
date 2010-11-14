@@ -38,37 +38,54 @@
 #define IDC_BUTTON_SELECT               1020
 #define IDC_BUTTON_DELETE               1021
 #define IDC_EDIT3                       1022
+#define IDC_EDIT_BLL                    1022
 #define IDC_EDIT4                       1023
+#define IDC_EDIT_BUL                    1023
 #define IDC_EDIT5                       1024
 #define IDC_EDIT_BEFF                   1024
+#define IDC_EDIT_CURVENAME              1024
 #define IDC_EDIT6                       1025
 #define IDC_EDIT_BDPM                   1025
 #define IDC_EDIT7                       1026
 #define IDC_EDIT_AGROSS                 1026
+#define IDC_EDIT_ACHA                   1026
 #define IDC_EDIT8                       1027
 #define IDC_EDIT_BGROSS                 1027
+#define IDC_EDIT_ACHB                   1027
 #define IDC_EDIT9                       1028
 #define IDC_EDIT10                      1029
 #define IDC_EDIT11                      1030
 #define IDC_EDIT12                      1031
+#define IDC_EDIT_BCHC                   1032
 #define IDC_SPIN1                       1033
+#define IDC_EDIT_BCHD                   1033
 #define IDC_SPIN2                       1034
+#define IDC_EDIT_BAA                    1034
 #define IDC_SPIN3                       1035
 #define IDC_BUTTON_CANCEL               1035
+#define IDC_EDIT_BAB                    1035
 #define IDC_SPIN4                       1036
+#define IDC_EDIT_BAC                    1036
 #define IDC_SPECTRUM                    1037
-#define IDC_SCROLLBAR1                  1038
+#define IDC_EDIT_BAD                    1037
 #define IDC_SCROLLBAR_V                 1038
-#define IDC_SCROLLBAR2                  1039
 #define IDC_SCROLLBAR_H                 1039
 #define IDC_H_LOG                       1040
 #define IDC_V_LOG                       1041
 #define IDC_LIST1                       1042
 #define IDC_EDIT1                       1043
+#define IDC_EDIT_ALL                    1043
 #define IDC_EDIT2                       1044
+#define IDC_EDIT_AUL                    1044
 #define IDC_STATIC_MYNO                 1045
 #define IDC_EDIT_AEFF                   1046
 #define IDC_EDIT_ADPM                   1047
+#define IDC_STATIC_ORG                  1050
+#define IDC_EDIT_ACHC                   1051
+#define IDC_EDIT_ACHD                   1052
+#define IDC_EDIT_BCHA                   1053
+#define IDC_EDIT_BCHB                   1054
+#define IDC_EDIT_SAMPLE                 1500
 
 // Next default values for new objects
 // 
@@ -76,7 +93,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        140
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1050
-#define _APS_NEXT_SYMED_VALUE           101
+#define _APS_NEXT_CONTROL_VALUE         1055
+#define _APS_NEXT_SYMED_VALUE           102
 #endif
 #endif
