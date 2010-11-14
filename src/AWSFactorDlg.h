@@ -19,7 +19,9 @@ public:
 // Dialog Data
 	//{{AFX_DATA(CAWSFactorDlg)
 	enum { IDD = IDD_DIALOG_AWS_FACTOR };
-		// NOTE: the ClassWizard will add data members here
+	CButton	m_btnSave;
+	CButton	m_btnOpen;
+	CButton	m_btnSet;
 	//}}AFX_DATA
 
 
@@ -40,6 +42,8 @@ protected:
 	virtual BOOL OnInitDialog();
 	afx_msg void OnButtonSpectrum();
 	afx_msg void OnDestroy();
+	afx_msg void OnButtonSet();
+	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
 	//}}AFX_MSG
 	afx_msg LONG OnHotKey(WPARAM wParam,LPARAM lParam);  
 	DECLARE_MESSAGE_MAP()

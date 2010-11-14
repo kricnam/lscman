@@ -10,7 +10,6 @@
 
 #include "DataCollectionDlg.h"
 #include "FileSettingDlg.h"
-#include "AWSFactorSttingDlg.h"
 #include "SpectrumDlg.h"
 #include "AWSFactorDlg.h"
 /////////////////////////////////////////////////////////////////////////////
