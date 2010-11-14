@@ -133,8 +133,8 @@ BEGIN
     CONTROL         "Spin1",IDC_SPIN1,"msctls_updown32",UDS_ARROWKEYS,112,
                     264,10,14
     EDITTEXT        IDC_EDIT11,130,264,28,14,ES_AUTOHSCROLL
-    CONTROL         "Spin1",IDC_SPIN2,"msctls_updown32",UDS_ARROWKEYS,157,
-                    264,11,14
+    CONTROL         "Spin1",IDC_SPIN2,"msctls_updown32",UDS_ARROWKEYS,159,
+                    263,7,14
     EDITTEXT        IDC_EDIT_AEFF,181,264,34,14,ES_RIGHT | ES_AUTOHSCROLL | 
                     ES_READONLY | ES_NUMBER
     EDITTEXT        IDC_EDIT_ADPM,218,264,34,14,ES_RIGHT | ES_AUTOHSCROLL | 
@@ -146,8 +146,8 @@ BEGIN
     CONTROL         "Spin1",IDC_SPIN3,"msctls_updown32",UDS_ARROWKEYS,112,
                     278,11,14
     EDITTEXT        IDC_EDIT12,130,278,28,14,ES_AUTOHSCROLL
-    CONTROL         "Spin1",IDC_SPIN4,"msctls_updown32",UDS_ARROWKEYS,158,
-                    278,11,14
+    CONTROL         "Spin1",IDC_SPIN4,"msctls_updown32",UDS_ARROWKEYS,159,
+                    278,7,14
     EDITTEXT        IDC_EDIT_BEFF,181,278,34,14,ES_RIGHT | ES_AUTOHSCROLL | 
                     ES_READONLY | ES_NUMBER
     EDITTEXT        IDC_EDIT_BDPM,218,278,34,14,ES_RIGHT | ES_AUTOHSCROLL | 
