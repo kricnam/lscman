@@ -41,6 +41,7 @@ public:
 
 // Implementation
 protected:
+	bool LoadData(LPCTSTR szPath);
 	void setMF(void);
 	double Factor(double Y);
 	

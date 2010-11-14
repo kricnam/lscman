@@ -24,7 +24,7 @@ CDataFile::CDataFile()
 
 CDataFile::~CDataFile()
 {
-
+    if  (fData) fclose(fData);
 }
 
 
@@ -226,4 +226,13 @@ int CDataFile::GetFieldValue(LPCTSTR szName, CString &strValue)
 		}
 	}
 	return 0;
+}
+
+void CDataFile::Close()
+{
+	if (fData)
+	{
+		fclose(fData);
+		fData = NULL;
+	}
 }

@@ -12,6 +12,7 @@
 class CDataFile  
 {
 public:
+	void Close(void);
 	int GetFieldValue(LPCTSTR szName,CString& strValue);
 	int GetFieldIndex(LPCTSTR szName);
 	bool IsValidFile(void);
