@@ -51,7 +51,6 @@ BOOL CLSCDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// Set big icon
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 	
-	// TODO: Add extra initialization here
 	this->GetWindowRect(&m_IniRect);
 	m_FileSettingDlg.Create(IDD_DIALOG_FILE_SETTING,this);
 	m_FileSettingDlg.ShowWindow(SW_SHOW);
@@ -59,10 +58,8 @@ BOOL CLSCDlg::OnInitDialog()
 
 	m_DataCollectionDlg.Create(IDD_DIALOG_DATA_COLLECTION,this);
 	m_DataCollectionDlg.ShowWindow(SW_HIDE);
-	//m_AWSFactorDlg.Create(IDD_DIALOG_AWS_FACTOR,this);
-	//m_AWSFactorDlg.ShowWindow(SW_HIDE);
-	m_AWSFactorSttingDlg.Create(IDD_DIALOG_AWS_FACTOR_SETTING,this);
-	m_AWSFactorSttingDlg.ShowWindow(SW_HIDE);
+	m_AWSFactorDlg.Create(IDD_DIALOG_AWS_FACTOR,this);
+	m_AWSFactorDlg.ShowWindow(SW_HIDE);
 	m_SpectrumDlg.Create(IDD_DIALOG_SPECTRUM,this);
 	m_SpectrumDlg.ShowWindow(SW_HIDE);
 
@@ -128,8 +125,8 @@ void CLSCDlg::OnOpenDlg(WPARAM wParam, LPARAM lParam)
 {
 	m_FileSettingDlg.ShowWindow(SW_HIDE);
 	m_DataCollectionDlg.ShowWindow(SW_HIDE);
-	//m_AWSFactorDlg.ShowWindow(SW_HIDE);
-	m_AWSFactorSttingDlg.ShowWindow(SW_HIDE);
+	m_AWSFactorDlg.ShowWindow(SW_HIDE);
+	//m_AWSFactorSttingDlg.ShowWindow(SW_HIDE);
 	m_SpectrumDlg.ShowWindow(SW_HIDE);
 	CRect rect;
 	switch (wParam)
@@ -145,16 +142,9 @@ void CLSCDlg::OnOpenDlg(WPARAM wParam, LPARAM lParam)
 			m_DataCollectionDlg.GetClientRect(&rect);
 			break;
 		case OPEN_AWS_FACTOR:
-			//m_AWSFactorDlg.ShowWindow(SW_SHOW);
-			m_AWSFactorSttingDlg.ShowWindow(SW_SHOW);
+			m_AWSFactorDlg.ShowWindow(SW_SHOW);
 			this->SetWindowText("AWS Factor");
-			//m_AWSFactorDlg.GetClientRect(&rect);
-			m_AWSFactorSttingDlg.GetClientRect(&rect);
-			break;
-		case OPEN_AWS_FACTOR_SETTING:
-			m_AWSFactorSttingDlg.ShowWindow(SW_SHOW);
-			this->SetWindowText("AWS Factor Stting");
-			m_AWSFactorSttingDlg.GetClientRect(&rect);
+			m_AWSFactorDlg.GetClientRect(&rect);
 			break;
 		case OPEN_SPECTRUM:
 			m_SpectrumDlg.ShowWindow(SW_SHOW);

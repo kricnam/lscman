@@ -66,7 +66,6 @@ BOOL CAWSFactorDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	
-	// TODO: Add extra initialization here
 	RegisterHotKey(this->m_hWnd, 0x2000, MOD_CONTROL | MOD_ALT, 'C');
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
@@ -81,8 +80,7 @@ void CAWSFactorDlg::OnButtonSpectrum()
 LONG CAWSFactorDlg::OnHotKey(WPARAM wParam,LPARAM lParam)
 {
    
-	::PostMessage(this->GetParent()->m_hWnd,WM_OPEN_DLG,OPEN_AWS_FACTOR_SETTING,0);
-	
+	GetParent()->SetWindowText("AWS Factor Setting");	
     return 0;     
 }
 
