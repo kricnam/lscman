@@ -25,10 +25,6 @@ CAWSFactorDlg::CAWSFactorDlg(CWnd* pParent /*=NULL*/)
 	m_BDPM = 0.0;
 	m_nBchLL = 0;
 	m_nBchUL = 0;
-	m_dAcha = 0.0;
-	m_bAchc = 0.0;
-	m_dAchb = 0.0;
-	m_dAchd = 0.0;
 	m_dBA_a = 0.0;
 	m_dBA_b = 0.0;
 	m_dBA_d = 0.0;
@@ -37,6 +33,10 @@ CAWSFactorDlg::CAWSFactorDlg(CWnd* pParent /*=NULL*/)
 	m_dBch_b = 0.0;
 	m_dBch_c = 0.0;
 	m_dBch_d = 0.0;
+	m_dAch_a = 0.0;
+	m_dAch_b = 0.0;
+	m_dAch_c = 0.0;
+	m_dAch_d = 0.0;
 	//}}AFX_DATA_INIT
 }
 
@@ -44,6 +44,7 @@ CAWSFactorDlg::CAWSFactorDlg(CWnd* pParent /*=NULL*/)
 void CAWSFactorDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
+	
 	//{{AFX_DATA_MAP(CAWSFactorDlg)
 	DDX_Control(pDX, IDC_STATIC_ORG, m_stcOrg);
 	DDX_Control(pDX, IDC_BUTTON_FILE_SAVE, m_btnSave);
@@ -55,19 +56,23 @@ void CAWSFactorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_BDPM, m_BDPM);
 	DDX_Text(pDX, IDC_EDIT_BLL, m_nBchLL);
 	DDX_Text(pDX, IDC_EDIT_BUL, m_nBchUL);
-	DDX_Text(pDX, IDC_EDIT_ACHA, m_dAcha);
-	DDX_Text(pDX, IDC_EDIT_ACHC, m_bAchc);
-	DDX_Text(pDX, IDC_EDIT_ACHB, m_dAchb);
-	DDX_Text(pDX, IDC_EDIT_ACHD, m_dAchd);
-	DDX_Text(pDX, IDC_EDIT_BAA, m_dBA_a);
-	DDX_Text(pDX, IDC_EDIT_BAB, m_dBA_b);
-	DDX_Text(pDX, IDC_EDIT_BAD, m_dBA_d);
-	DDX_Text(pDX, IDC_EDIT_BAC, m_dBA_c);
-	DDX_Text(pDX, IDC_EDIT_BCHA, m_dBch_a);
-	DDX_Text(pDX, IDC_EDIT_BCHB, m_dBch_b);
-	DDX_Text(pDX, IDC_EDIT_BCHC, m_dBch_c);
-	DDX_Text(pDX, IDC_EDIT_BCHD, m_dBch_d);
 	//}}AFX_DATA_MAP
+	if (!pDX->m_bSaveAndValidate)
+	{
+		DDX_Text(pDX, IDC_EDIT_BAA, m_dBA_a);
+		DDX_Text(pDX, IDC_EDIT_BAB, m_dBA_b);
+		DDX_Text(pDX, IDC_EDIT_BAD, m_dBA_d);
+		DDX_Text(pDX, IDC_EDIT_BAC, m_dBA_c);
+		DDX_Text(pDX, IDC_EDIT_BCHA, m_dBch_a);
+		DDX_Text(pDX, IDC_EDIT_BCHB, m_dBch_b);
+		DDX_Text(pDX, IDC_EDIT_BCHC, m_dBch_c);
+		DDX_Text(pDX, IDC_EDIT_BCHD, m_dBch_d);
+		DDX_Text(pDX, IDC_EDIT_ACHA, m_dAch_a);
+		DDX_Text(pDX, IDC_EDIT_ACHB, m_dAch_b);
+		DDX_Text(pDX, IDC_EDIT_ACHC, m_dAch_c);
+		DDX_Text(pDX, IDC_EDIT_ACHD, m_dAch_d);
+	}
+	
 }
 
 
@@ -173,6 +178,12 @@ void CAWSFactorDlg::OnDestroy()
 
 void CAWSFactorDlg::OnButtonSet() 
 {
+		CAWSFile awsFile;
+		AWS_Setting set;
+		AWS_CalCo co;
+		GetSetting(set);
+		if (awsFile.CalculateCoefficient(set,co))
+			LoadCalCo(co);
 
 }
 
@@ -232,8 +243,15 @@ void CAWSFactorDlg::OnButtonFileOpen()
 	{
 		CAWSFile awsFile;
 		AWS_Setting set;
+		AWS_CalCo co;
 		awsFile.ReadData(dlg.GetPathName(),set);
-		LoadData(set);
+		if (awsFile.CalculateCoefficient(set,co))
+			LoadData(set,co);
+		else
+		{
+			MessageBox("Calculate coefficients fail! only sample data loaded.");
+			LoadData(set);
+		}
 	}
 }
 
@@ -259,5 +277,40 @@ void CAWSFactorDlg::LoadData(AWS_Setting &set)
 		strVal.Format("%G",set.sample.dB_CPM[i] );
 		editSample[i][3].SetWindowText(strVal);
 	}
+
+	UpdateData(FALSE);
+}
+
+void CAWSFactorDlg::LoadData(AWS_Setting &set,AWS_CalCo& co)
+{
+	LoadData(set);
+	LoadCalCo(co);
+}
+
+void CAWSFactorDlg::LoadCalCo(AWS_CalCo &co)
+{
+	CString strVal;
+	for(int i=0;i<10;i++)
+	{
+		strVal.Format("%G",co.cal.dA_Eff[i]);
+		editSample[i][4].SetWindowText(strVal);
+		strVal.Format("%G",co.cal.dB_Eff[i]);
+		editSample[i][5].SetWindowText(strVal);
+		strVal.Format("%G",co.cal.dBA_CPM[i]);
+		editSample[i][6].SetWindowText(strVal);
+	}
+
+	m_dAch_a = co.dAch_co[3];
+	m_dAch_b = co.dAch_co[2];
+	m_dAch_c = co.dAch_co[1];
+	m_dAch_d = co.dAch_co[0];
+	m_dBch_a = co.dBch_co[3];
+	m_dBch_b = co.dBch_co[2];
+	m_dBch_c = co.dBch_co[1];
+	m_dBch_d = co.dBch_co[0];
+	m_dBA_a = co.d_BA_co[3];
+	m_dBA_b = co.d_BA_co[2];
+	m_dBA_c = co.d_BA_co[1];
+	m_dBA_d = co.d_BA_co[0];
 	UpdateData(FALSE);
 }

@@ -16,6 +16,13 @@ typedef struct
 	double dB_CPM[10];
 } AWS_Sample;
 
+typedef struct 
+{
+	double dA_Eff[10];
+	double dB_Eff[10];
+	double dBA_CPM[10];
+} AWS_Cal;
+
 typedef struct
 {
 	int nAch_LL;
@@ -27,9 +34,18 @@ typedef struct
 	AWS_Sample sample;
 } AWS_Setting;
 
+typedef struct
+{
+	double dAch_co[4];
+	double dBch_co[4];
+	double d_BA_co[4];
+	AWS_Cal cal;
+} AWS_CalCo;
+
 class CAWSFile  
 {
 public:
+	bool CalculateCoefficient(AWS_Setting& set ,AWS_CalCo& co);
 	bool WriteFile(LPCTSTR szPath, AWS_Setting& set);
 	bool ReadData(LPCTSTR szFile,AWS_Setting& set);
 	CAWSFile();

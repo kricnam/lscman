@@ -31,10 +31,6 @@ public:
 	double	m_BDPM;
 	int		m_nBchLL;
 	int		m_nBchUL;
-	double	m_dAcha;
-	double	m_bAchc;
-	double	m_dAchb;
-	double	m_dAchd;
 	double	m_dBA_a;
 	double	m_dBA_b;
 	double	m_dBA_d;
@@ -43,6 +39,10 @@ public:
 	double	m_dBch_b;
 	double	m_dBch_c;
 	double	m_dBch_d;
+	double	m_dAch_a;
+	double	m_dAch_b;
+	double	m_dAch_c;
+	double	m_dAch_d;
 	//}}AFX_DATA
 
 
@@ -57,7 +57,9 @@ public:
 
 // Implementation
 protected:
+	void LoadCalCo(AWS_CalCo& co);
 	void LoadData(AWS_Setting& set);
+	void LoadData(AWS_Setting& set,AWS_CalCo& co);
 	void GetSetting(AWS_Setting& set);
 
 	// Generated message map functions
