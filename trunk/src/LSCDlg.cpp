@@ -21,6 +21,7 @@ CLSCDlg::CLSCDlg(CWnd* pParent /*=NULL*/)
 	//}}AFX_DATA_INIT
 	// Note that LoadIcon does not require a subsequent DestroyIcon in Win32
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+	
 }
 
 void CLSCDlg::DoDataExchange(CDataExchange* pDX)
@@ -116,6 +117,7 @@ BOOL CLSCDlg::PreTranslateMessage(MSG* pMsg)
 			break;
 		}
 	}
+
 	return CDialog::PreTranslateMessage(pMsg);
 }
 
@@ -127,6 +129,7 @@ void CLSCDlg::OnOpenDlg(WPARAM wParam, LPARAM lParam)
 	m_AWSFactorDlg.ShowWindow(SW_HIDE);
 	//m_AWSFactorSttingDlg.ShowWindow(SW_HIDE);
 	m_SpectrumDlg.ShowWindow(SW_HIDE);
+	
 	CRect rect;
 	switch (wParam)
 	{
@@ -134,21 +137,27 @@ void CLSCDlg::OnOpenDlg(WPARAM wParam, LPARAM lParam)
 			m_FileSettingDlg.ShowWindow(SW_SHOW);
 			this->SetWindowText("File Setting");
 			m_FileSettingDlg.GetClientRect(&rect);
+			m_FileSettingDlg.SetFocus();
 			break;
 		case OPEN_DATA_COLLECTION:
 			m_DataCollectionDlg.ShowWindow(SW_SHOW);
 			this->SetWindowText("Data Collection");
 			m_DataCollectionDlg.GetClientRect(&rect);
+			m_DataCollectionDlg.SetFocus();
 			break;
 		case OPEN_AWS_FACTOR:
 			m_AWSFactorDlg.ShowWindow(SW_SHOW);
+			m_AWSFactorDlg.m_strCurveName = m_SpectrumDlg.m_strCurveName;
 			this->SetWindowText("AWS Factor");
 			m_AWSFactorDlg.GetClientRect(&rect);
 			m_AWSFactorDlg.SetFocus();
 			break;
 		case OPEN_SPECTRUM:
+			m_SpectrumDlg.m_strCurveName = m_AWSFactorDlg.m_strCurveName;
 			m_SpectrumDlg.ShowWindow(SW_SHOW);
+			m_SpectrumDlg.UpdateData(FALSE);
 			this->SetWindowText("Spectrum");
+			m_SpectrumDlg.SetFocus();
 			m_SpectrumDlg.GetClientRect(&rect);
 			break;
 		default:

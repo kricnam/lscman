@@ -7,6 +7,7 @@
 #include "SpectrumDlg.h"
 #include "SelectList.h"
 #include "DataFile.h"
+#include "AWSFile.h"
 #include <math.h>
 
 #ifdef _DEBUG
@@ -32,6 +33,11 @@ CSpectrumDlg::CSpectrumDlg(CWnd* pParent /*=NULL*/)
 	m_strAEFF = _T("");
 	m_strBDPM = _T("");
 	m_strBEFF = _T("");
+	m_strCurveName = _T("");
+	m_nBchLL = 0;
+	m_nBchUL = 0;
+	m_nAchLL = 0;
+	m_nAchUL = 0;
 	//}}AFX_DATA_INIT
 	pSpectrumWnd = NULL;
 	for(int i = 0;i <4000;i++)
@@ -63,6 +69,11 @@ void CSpectrumDlg::DoDataExchange(CDataExchange* pDX)
 	DDV_MaxChars(pDX, m_strBDPM, 20);
 	DDX_Text(pDX, IDC_EDIT_BEFF, m_strBEFF);
 	DDV_MaxChars(pDX, m_strBEFF, 20);
+	DDX_Text(pDX, IDC_EDIT_FILENAME, m_strCurveName);
+	DDX_Text(pDX, IDC_EDIT_BCHLL, m_nBchLL);
+	DDX_Text(pDX, IDC_EDIT_BCHUL, m_nBchUL);
+	DDX_Text(pDX, IDC_EDIT_ACHLL, m_nAchLL);
+	DDX_Text(pDX, IDC_EDIT_ACHUL, m_nAchUL);
 	//}}AFX_DATA_MAP
 }
 
@@ -77,6 +88,7 @@ BEGIN_MESSAGE_MAP(CSpectrumDlg, CDialog)
 	ON_BN_CLICKED(IDC_BUTTON_FILE_SAVE, OnButtonFileSave)
 	ON_BN_CLICKED(IDC_BUTTON_SELECT, OnButtonSelect)
 	ON_BN_CLICKED(IDC_BUTTON_DELETE, OnButtonDelete)
+	ON_BN_CLICKED(IDC_BUTTON_AWS, OnButtonAws)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -208,9 +220,12 @@ void CSpectrumDlg::DrawData(CDC *pDC, int x,int y, int cx, int cy)
 
 void CSpectrumDlg::OnButtonOpenAWD() 
 {
-	CFileDialog dlg(TRUE,"awd");
-	dlg.DoModal();
-
+	CFileDialog dlg(TRUE,"awd",NULL,0,"AWS File(*.aws)|*.aws||",this->GetParent());
+	if (dlg.DoModal()==IDOK)
+	{
+		m_strCurveName = dlg.GetPathName();
+		UpdateData(FALSE);
+	}
 }
 
 void CSpectrumDlg::OnButtonFileOpen() 
@@ -346,4 +361,33 @@ bool CSpectrumDlg::LoadData(LPCTSTR szPath)
 		if (strMsg.IsEmpty()) strMsg.Format("Open %s failed.",szPath);
 		MessageBox(strMsg,"Error",MB_OK);
 		return false;
+}
+
+void CSpectrumDlg::OnButtonAws() 
+{
+	if (m_strCurveName.IsEmpty()) return;
+	CAWSFile awsFile;
+	AWS_Setting set;
+	AWS_CalCo co;
+
+	awsFile.ReadData(m_strCurveName,set);
+	if (awsFile.CalculateCoefficient(set,co))
+	{
+		double factor = Factor(atof(m_strESCR));
+		m_nAchLL = set.nAch_LL;
+		m_nAchUL = set.nAch_UL * factor;
+		m_nBchLL = set.nBch_LL * factor;
+		m_nBchUL = set.nBch_UL * factor;
+
+		factor = atof(m_strESCR);
+		double y;
+		y = co.dAch_co[0] + factor * co.dAch_co[1] + pow(factor,2) * co.dAch_co[2] + pow(factor,3)*co.dAch_co[3];
+		m_strAEFF.Format("%G",y);
+		y = co.dBch_co[0] + factor * co.dBch_co[1] + pow(factor,2) * co.dBch_co[2] + pow(factor,3)*co.dBch_co[3];
+		m_strBEFF.Format("%G",y);
+
+
+
+	}	
+	UpdateData(FALSE);
 }

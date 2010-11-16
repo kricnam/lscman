@@ -44,6 +44,7 @@ public:
 	CSpectrumDlg m_SpectrumDlg;
 // Implementation
 protected:
+
 	HICON m_hIcon;
 
 	// Generated message map functions
