@@ -43,6 +43,7 @@ public:
 	double	m_dAch_b;
 	double	m_dAch_c;
 	double	m_dAch_d;
+	CString	m_strCurveName;
 	//}}AFX_DATA
 
 

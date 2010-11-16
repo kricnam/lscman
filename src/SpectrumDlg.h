@@ -27,6 +27,11 @@ public:
 	CString	m_strAEFF;
 	CString	m_strBDPM;
 	CString	m_strBEFF;
+	CString	m_strCurveName;
+	int		m_nBchLL;
+	int		m_nBchUL;
+	int		m_nAchLL;
+	int		m_nAchUL;
 	//}}AFX_DATA
 
 
@@ -62,6 +67,7 @@ protected:
 	afx_msg void OnButtonFileSave();
 	afx_msg void OnButtonSelect();
 	afx_msg void OnButtonDelete();
+	afx_msg void OnButtonAws();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 

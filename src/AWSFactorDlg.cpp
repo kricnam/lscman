@@ -37,6 +37,7 @@ CAWSFactorDlg::CAWSFactorDlg(CWnd* pParent /*=NULL*/)
 	m_dAch_b = 0.0;
 	m_dAch_c = 0.0;
 	m_dAch_d = 0.0;
+	m_strCurveName = _T("");
 	//}}AFX_DATA_INIT
 }
 
@@ -56,6 +57,7 @@ void CAWSFactorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_BDPM, m_BDPM);
 	DDX_Text(pDX, IDC_EDIT_BLL, m_nBchLL);
 	DDX_Text(pDX, IDC_EDIT_BUL, m_nBchUL);
+	DDX_Text(pDX, IDC_EDIT_CURVENAME, m_strCurveName);
 	//}}AFX_DATA_MAP
 	if (!pDX->m_bSaveAndValidate)
 	{
@@ -244,6 +246,7 @@ void CAWSFactorDlg::OnButtonFileOpen()
 		CAWSFile awsFile;
 		AWS_Setting set;
 		AWS_CalCo co;
+		m_strCurveName = dlg.GetPathName();
 		awsFile.ReadData(dlg.GetPathName(),set);
 		if (awsFile.CalculateCoefficient(set,co))
 			LoadData(set,co);

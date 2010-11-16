@@ -53,9 +53,13 @@
 #define IDC_EDIT_BGROSS                 1027
 #define IDC_EDIT_ACHB                   1027
 #define IDC_EDIT9                       1028
+#define IDC_EDIT_ACHLL                  1028
 #define IDC_EDIT10                      1029
+#define IDC_EDIT_BCHLL                  1029
 #define IDC_EDIT11                      1030
+#define IDC_EDIT_ACHUL                  1030
 #define IDC_EDIT12                      1031
+#define IDC_EDIT_BCHUL                  1031
 #define IDC_EDIT_BCHC                   1032
 #define IDC_SPIN1                       1033
 #define IDC_EDIT_BCHD                   1033
