@@ -6,9 +6,27 @@
 #endif // _MSC_VER > 1000
 // SpectrumDlg.h : header file
 //
+typedef struct
+{
+	int nSpetrum[4000];
+	CString strESCR;
+	CString strSCCR;
+	CString strAGROSS;
+	CString strBGROSS;
+	CString strTime;
+	CString strName;
+	CString strADPM;
+	CString strBDPM;
+	CString strAEFF;
+	CString strBEFF;
+	CString strPath;
+
+} RawData;
 
 /////////////////////////////////////////////////////////////////////////////
 // CSpectrumDlg dialog
+#include <list>
+using namespace std;
 
 class CSpectrumDlg : public CDialog
 {
@@ -28,10 +46,10 @@ public:
 	CString	m_strBDPM;
 	CString	m_strBEFF;
 	CString	m_strCurveName;
-	int		m_nBchLL;
-	int		m_nBchUL;
-	int		m_nAchLL;
-	int		m_nAchUL;
+	CString	m_strAchLL;
+	CString	m_strAchUL;
+	CString	m_strBchLL;
+	CString	m_strBchUL;
 	//}}AFX_DATA
 
 
@@ -46,11 +64,13 @@ public:
 
 // Implementation
 protected:
-	bool LoadData(LPCTSTR szPath);
+	bool LoadData(LPCTSTR szPath,LPCTSTR szName);
 	void setMF(void);
 	double Factor(double Y);
 	
-	int nSpectrunData[5][4000];
+	list<RawData> listData;
+	
+	//int nSpectrunData[5][4000];
 	void DrawData(CDC *pDC,int x,int y, int cx,int cy);
 	CRect DrawAxis(CDC *pDC, int x, int y, int cx, int cy);
 	void DrawGraph(CDC* pDC, int x, int y, int cx, int cy);

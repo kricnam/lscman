@@ -58,6 +58,7 @@ public:
 
 // Implementation
 protected:
+	void OpenFile(void);
 	void LoadCalCo(AWS_CalCo& co);
 	void LoadData(AWS_Setting& set);
 	void LoadData(AWS_Setting& set,AWS_CalCo& co);

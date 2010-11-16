@@ -151,6 +151,7 @@ BOOL CAWSFactorDlg::OnInitDialog()
 	  };
 	}
 	RegisterHotKey(this->m_hWnd, 0x2000, MOD_CONTROL | MOD_ALT, 'C');
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
@@ -193,7 +194,12 @@ void CAWSFactorDlg::OnShowWindow(BOOL bShow, UINT nStatus)
 {
 	CDialog::OnShowWindow(bShow, nStatus);
 	
-	if (!bShow)
+	if (bShow)
+	{
+		if(!m_strCurveName.IsEmpty())
+			OpenFile();
+	}
+	else
 	{
 		m_btnSet.ShowWindow(bShow);
 		m_btnSave.ShowWindow(bShow);
@@ -243,18 +249,8 @@ void CAWSFactorDlg::OnButtonFileOpen()
 	CFileDialog dlg(TRUE,"awd",NULL,0,"AWS File(*.aws)|*.aws||",this->GetParent());
 	if (dlg.DoModal()==IDOK)
 	{
-		CAWSFile awsFile;
-		AWS_Setting set;
-		AWS_CalCo co;
 		m_strCurveName = dlg.GetPathName();
-		awsFile.ReadData(dlg.GetPathName(),set);
-		if (awsFile.CalculateCoefficient(set,co))
-			LoadData(set,co);
-		else
-		{
-			MessageBox("Calculate coefficients fail! only sample data loaded.");
-			LoadData(set);
-		}
+		OpenFile();
 	}
 }
 
@@ -295,11 +291,11 @@ void CAWSFactorDlg::LoadCalCo(AWS_CalCo &co)
 	CString strVal;
 	for(int i=0;i<10;i++)
 	{
-		strVal.Format("%G",co.cal.dA_Eff[i]);
+		strVal.Format("%10G",co.cal.dA_Eff[i]);
 		editSample[i][4].SetWindowText(strVal);
-		strVal.Format("%G",co.cal.dB_Eff[i]);
+		strVal.Format("%10G",co.cal.dB_Eff[i]);
 		editSample[i][5].SetWindowText(strVal);
-		strVal.Format("%G",co.cal.dBA_CPM[i]);
+		strVal.Format("%10G",co.cal.dBA_CPM[i]);
 		editSample[i][6].SetWindowText(strVal);
 	}
 
@@ -316,4 +312,20 @@ void CAWSFactorDlg::LoadCalCo(AWS_CalCo &co)
 	m_dBA_c = co.d_BA_co[1];
 	m_dBA_d = co.d_BA_co[0];
 	UpdateData(FALSE);
+}
+
+void CAWSFactorDlg::OpenFile(void)
+{
+		CAWSFile awsFile;
+		AWS_Setting set;
+		AWS_CalCo co;
+		
+		awsFile.ReadData(m_strCurveName,set);
+		if (awsFile.CalculateCoefficient(set,co))
+			LoadData(set,co);
+		else
+		{
+			MessageBox("Calculate coefficients fail! only sample data loaded.");
+			LoadData(set);
+		}
 }
