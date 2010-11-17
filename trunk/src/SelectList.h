@@ -14,6 +14,8 @@ class CSelectList : public CDialog
 {
 // Construction
 public:
+	CString m_strTitle;
+	int m_nSelIndex;
 	CSelectList(CWnd* pParent = NULL);   // standard constructor
 
 // Dialog Data
@@ -22,10 +24,11 @@ public:
 	CListBox	m_list;
 	//}}AFX_DATA
 
-
+	CString m_strList[5];
 // Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CSelectList)
+	public:
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	//}}AFX_VIRTUAL
@@ -35,7 +38,8 @@ protected:
 
 	// Generated message map functions
 	//{{AFX_MSG(CSelectList)
-		// NOTE: the ClassWizard will add member functions here
+	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
+	virtual void OnOK();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };
