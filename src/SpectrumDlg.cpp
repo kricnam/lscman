@@ -46,11 +46,13 @@ CSpectrumDlg::CSpectrumDlg(CWnd* pParent /*=NULL*/)
 	m_strBchUL = _T("");
 	//}}AFX_DATA_INIT
 	pSpectrumWnd = NULL;
-	for(int i = 0;i <4000;i++)
-	{
-		//nSpectrunData[0][i] = 0 ;
-	}
 	setMF();
+	nActiveIndex = 0;
+	rgb.push_back(RGB(200,200,155));
+	rgb.push_back(RGB(255,155,255));
+	rgb.push_back(RGB(155,255,255));
+	rgb.push_back(RGB(200,255,200));
+	rgb.push_back(RGB(255,200,200));
 }
 
 
@@ -218,6 +220,9 @@ void CSpectrumDlg::DrawData(CDC *pDC, int x,int y, int cx, int cy)
 	int nx,ny;
 	for(it=listData.begin();it!=listData.end();it++)
 	{
+		CPen* pPen = new CPen;
+		pPen->CreatePen(PS_SOLID,3,(*it).rgb);
+		pDC->SelectObject(pPen);
 			for(int j=0;j<4000;j++)
 			{
 				nx = x + j * cx/4000;
@@ -225,6 +230,9 @@ void CSpectrumDlg::DrawData(CDC *pDC, int x,int y, int cx, int cy)
 				pDC->MoveTo(nx,ny);
 				pDC->LineTo(nx,ny);
 			}
+		pDC->SelectObject(&pen);
+		pPen->DeleteObject();
+		delete pPen;
 	}
 	
 	if (old_pen) pDC->SelectObject(old_pen);
@@ -233,15 +241,16 @@ void CSpectrumDlg::DrawData(CDC *pDC, int x,int y, int cx, int cy)
 
 void CSpectrumDlg::DrawLegend(CDC *pDC, int x,int y, int cx, int cy)
 {
-	CRect rect(x+(cx*4)/5,y+cy/7,x+cx-cx/20,y+cy/7*3);
-	pDC->FillSolidRect(&rect,RGB(255,255,255));
-	
-	pDC->SetBkColor(RGB(255,255,255));
-
 	int nx,ny;
 	int spaceX,spaceY;
 	spaceX = pDC->GetTextExtent("M").cx;
 	spaceY = pDC->GetTextExtent("M").cy;
+
+	CRect rect(x+(cx*4)/5,y+cy/7,x+cx-cx/20,y+cy/7+7*spaceY);
+	pDC->FillSolidRect(&rect,RGB(255,255,255));
+	
+	pDC->SetBkColor(RGB(255,255,255));
+
 	nx = rect.left+ spaceX;
 	ny = rect.top+ spaceY;
 	for(int i=0;i<listData.size();i++)
@@ -256,6 +265,13 @@ void CSpectrumDlg::DrawLegend(CDC *pDC, int x,int y, int cx, int cy)
 		{
 			formatString(str,dx, rect.Width()-2*spaceX);
 		}
+		
+		if (i==nActiveIndex) 
+		{
+			pDC->SetTextColor(RGB(0,0,0));
+			pDC->TextOut(nx - spaceX/2,ny,"*");
+		}
+		pDC->SetTextColor(data.rgb);
 		pDC->TextOut(nx,ny,str);
 		ny += dy;
 	}
@@ -273,19 +289,40 @@ void CSpectrumDlg::OnButtonOpenAWD()
 
 void CSpectrumDlg::OnButtonFileOpen() 
 {
-	CFileDialog dlg(TRUE,NULL,NULL,0,szDataFilter,this->GetParent());
+	CFileDialog dlg(TRUE,NULL,NULL,OFN_ALLOWMULTISELECT ,szDataFilter,this->GetParent());
+	TCHAR szFileName[5*(MAX_PATH+1)+1]={0};
+	dlg.m_ofn.lpstrFile = szFileName;
+	dlg.m_ofn.nMaxFile = 5*(MAX_PATH+1);
 	if (dlg.DoModal() == IDOK)
 	{
-		if (LoadData(dlg.GetPathName(),dlg.GetFileName()))
-		{	
-			m_strESCR = listData.front().strESCR;
-			m_strSCCR = listData.front().strSCCR;
-			m_strAEFF = listData.front().strAEFF;
-			m_strBEFF = listData.front().strBEFF;
-			m_strADPM = listData.front().strADPM;
-			m_strBDPM = listData.front().strBDPM;
-			m_strAGROSS =listData.front().strAGROSS;
-			m_strBGROSS=listData.front().strBGROSS;
+		POSITION fileNamesPosition = dlg.GetStartPosition();
+        int iCtr = 0;
+		CString fileName[5];
+        while(fileNamesPosition != NULL)
+        {
+              fileName[iCtr] = dlg.GetNextPathName(fileNamesPosition);
+              iCtr++;
+			  if (iCtr==5) break;
+        }  
+
+		int i=0;
+		while(iCtr--)
+		{
+			if (listData.size() > 4)
+			{
+				MessageBox("Open too many files, olny 5 file can be displayed.");
+				break;
+			}
+			int n;
+			if (isOpenedAt(fileName[i],n))
+				deleteData(n);
+			LoadData(fileName[i++]);
+		};
+
+		if (i)
+		{
+			setActiveData(listData.front());
+			nActiveIndex = 0;
 			Invalidate();   
 			UpdateWindow();
 			UpdateData(FALSE);
@@ -296,7 +333,7 @@ void CSpectrumDlg::OnButtonFileOpen()
 void CSpectrumDlg::OnButtonFileSave() 
 {
 	
-	CFileDialog dlg(FALSE,"awd",NULL,0,szAWSFilter,this->GetParent());
+	CFileDialog dlg(FALSE,"awd",NULL, OFN_OVERWRITEPROMPT,szAWSFilter,this->GetParent());
 	dlg.DoModal();
 	
 }
@@ -304,13 +341,51 @@ void CSpectrumDlg::OnButtonFileSave()
 void CSpectrumDlg::OnButtonSelect() 
 {
 	CSelectList dlg(this);
-	dlg.DoModal();
+	list<RawData>::iterator it;
+	int i=0;
+	for(it=listData.begin();it!=listData.end();it++)
+	{
+		dlg.m_strList[i++]=((*it).strName);
+		if (i>4) break;
+	}
+	dlg.m_nSelIndex = nActiveIndex;
+	if (dlg.DoModal()==IDOK)
+	{
+		nActiveIndex = dlg.m_nSelIndex;
+		Invalidate();
+		UpdateWindow();
+	}
 }
 
 void CSpectrumDlg::OnButtonDelete() 
 {
 	CSelectList dlg(this);
-	dlg.DoModal();
+	dlg.m_strTitle = "Delete";
+		list<RawData>::iterator it;
+	int i=0;
+	for(it=listData.begin();it!=listData.end();it++)
+	{
+		dlg.m_strList[i++]=((*it).strName);
+		if (i>4) break;
+	}
+	dlg.m_nSelIndex = nActiveIndex;
+	if (dlg.DoModal()==IDOK)
+	{
+		deleteData(dlg.m_nSelIndex);
+		if (listData.size())
+		{
+			setActiveData(GetListItem(nActiveIndex));
+		}
+		else
+		{
+			RawData data;
+			setActiveData(data);
+		}
+		UpdateData(FALSE);
+		Invalidate();
+		UpdateWindow();
+		
+	}
 }
 
 double CSpectrumDlg::Factor(double Y)
@@ -352,15 +427,22 @@ void CSpectrumDlg::setMF()
 	MF_d = conf.GetMF_d();
 }
 
-bool CSpectrumDlg::LoadData(LPCTSTR szPath,LPCTSTR szName)
+bool CSpectrumDlg::LoadData(LPCTSTR szPath)
 {
 		CDataFile data;
 		CString strMsg;
 		strMsg.Empty();
 		RawData rawData;
+		
+		char szName[_MAX_FNAME]={0};
+		char ext[_MAX_EXT]={0};
+
+		_splitpath(szPath, NULL, NULL, szName, ext );
+
 		while (data.Open(szPath))
 		{
 			rawData.strName = szName;
+			rawData.strName+= ext;
 			rawData.strPath = szPath;
 			int n = data.GetSpectrumData(rawData.nSpetrum,4000); 
 
@@ -416,6 +498,8 @@ bool CSpectrumDlg::LoadData(LPCTSTR szPath,LPCTSTR szName)
 				strMsg+="fiels not found.";
 				break;
 			}
+			rawData.rgb = rgb.front();
+			rgb.pop_front();
 			listData.push_front(rawData);
 			return true;
 		}
@@ -479,4 +563,55 @@ void CSpectrumDlg::formatString(CString &str,int dx, int cx)
 	strF += ".";
 	strF += str.Right(4);
 	str = strF;
+}
+
+void CSpectrumDlg::deleteData(int n)
+{
+	list<RawData>::iterator it;
+	int i=0;
+
+	for(it=listData.begin();it!=listData.end();it++)
+	{
+		if(i++==n) 
+		{
+			rgb.push_back((*it).rgb);
+			listData.erase(it);
+			break;
+		}
+	}
+
+	if(nActiveIndex >= n) nActiveIndex--;
+
+	if (!(nActiveIndex < listData.size()))
+		nActiveIndex = listData.size() - 1;
+	if (nActiveIndex < 0 ) nActiveIndex = 0;
+}
+
+void CSpectrumDlg::setActiveData(RawData &data)
+{
+	m_strESCR = data.strESCR;
+	m_strSCCR = data.strSCCR;
+	m_strAEFF = data.strAEFF;
+	m_strBEFF = data.strBEFF;
+	m_strADPM = data.strADPM;
+	m_strBDPM = data.strBDPM;
+	m_strAGROSS =data.strAGROSS;
+	m_strBGROSS=data.strBGROSS;
+}
+
+bool CSpectrumDlg::isOpenedAt(LPCTSTR szPath,int& n)
+{
+	list<RawData>::iterator it;
+	int i=0;
+
+	for(it=listData.begin();it!=listData.end();it++)
+	{
+		if ((*it).strPath == szPath)
+		{
+			n = i;
+			return true;
+		}
+		i++;
+	}
+	return false;
 }

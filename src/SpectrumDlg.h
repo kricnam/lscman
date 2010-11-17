@@ -20,6 +20,7 @@ typedef struct
 	CString strAEFF;
 	CString strBEFF;
 	CString strPath;
+	COLORREF rgb;
 
 } RawData;
 
@@ -64,9 +65,12 @@ public:
 
 // Implementation
 protected:
+	bool isOpenedAt(LPCTSTR szPath,int& n);
+	void setActiveData(RawData& data);
+	void deleteData(int n);
 	void formatString(CString& str, int dx,int cy);
 	RawData& GetListItem(int n);
-	bool LoadData(LPCTSTR szPath,LPCTSTR szName);
+	bool LoadData(LPCTSTR szPath);
 	void setMF(void);
 	double Factor(double Y);
 	
@@ -96,6 +100,8 @@ protected:
 
 	static char szDataFilter[];
 	static char szAWSFilter[];
+	int nActiveIndex;
+	list<COLORREF> rgb;
 	//Model Factor
 	double MF_A,MF_B,MF_C,MF_D,MF_a,MF_b,MF_c,MF_d;
 };
