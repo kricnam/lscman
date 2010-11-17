@@ -64,6 +64,8 @@ public:
 
 // Implementation
 protected:
+	void formatString(CString& str, int dx,int cy);
+	RawData& GetListItem(int n);
 	bool LoadData(LPCTSTR szPath,LPCTSTR szName);
 	void setMF(void);
 	double Factor(double Y);
@@ -74,6 +76,7 @@ protected:
 	void DrawData(CDC *pDC,int x,int y, int cx,int cy);
 	CRect DrawAxis(CDC *pDC, int x, int y, int cx, int cy);
 	void DrawGraph(CDC* pDC, int x, int y, int cx, int cy);
+	void DrawLegend(CDC* pDC, int x, int y, int cx, int cy);
 	CWnd * pSpectrumWnd;
 
 	// Generated message map functions

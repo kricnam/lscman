@@ -19,7 +19,7 @@ public:
 // Dialog Data
 	//{{AFX_DATA(CSelectList)
 	enum { IDD = IDD_DIALOG_LIST };
-		// NOTE: the ClassWizard will add data members here
+	CListBox	m_list;
 	//}}AFX_DATA
 
 
