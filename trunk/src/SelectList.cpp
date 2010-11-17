@@ -28,7 +28,7 @@ void CSelectList::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CSelectList)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
+	DDX_Control(pDX, IDC_LIST1, m_list);
 	//}}AFX_DATA_MAP
 }
 

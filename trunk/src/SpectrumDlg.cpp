@@ -228,6 +228,37 @@ void CSpectrumDlg::DrawData(CDC *pDC, int x,int y, int cx, int cy)
 	}
 	
 	if (old_pen) pDC->SelectObject(old_pen);
+	DrawLegend(pDC,x,y,cx,cy);
+}
+
+void CSpectrumDlg::DrawLegend(CDC *pDC, int x,int y, int cx, int cy)
+{
+	CRect rect(x+(cx*4)/5,y+cy/7,x+cx-cx/20,y+cy/7*3);
+	pDC->FillSolidRect(&rect,RGB(255,255,255));
+	
+	pDC->SetBkColor(RGB(255,255,255));
+
+	int nx,ny;
+	int spaceX,spaceY;
+	spaceX = pDC->GetTextExtent("M").cx;
+	spaceY = pDC->GetTextExtent("M").cy;
+	nx = rect.left+ spaceX;
+	ny = rect.top+ spaceY;
+	for(int i=0;i<listData.size();i++)
+	{
+		if(i>4) break;
+		RawData& data = GetListItem(i);
+		CString str = data.strName;
+		int dx,dy;
+		dx = pDC->GetTextExtent(str).cx;
+		dy = pDC->GetTextExtent(str).cy;
+		if (dx > rect.Width()-2*spaceX)
+		{
+			formatString(str,dx, rect.Width()-2*spaceX);
+		}
+		pDC->TextOut(nx,ny,str);
+		ny += dy;
+	}
 }
 
 void CSpectrumDlg::OnButtonOpenAWD() 
@@ -424,4 +455,28 @@ void CSpectrumDlg::OnButtonAws()
 
 	}	
 	UpdateData(FALSE);
+}
+
+RawData& CSpectrumDlg::GetListItem(int n)
+{
+	list<RawData>::iterator it;
+	int i=0;
+	for(it=listData.begin();it!=listData.end();it++)
+	{
+		if(i++==n) return (*it);
+	}
+	return listData.back();
+}
+
+void CSpectrumDlg::formatString(CString &str,int dx, int cx)
+{
+	int pDX;
+	pDX = dx / str.GetLength();
+	int n = cx / pDX;
+	CString strF;
+	strF = str.SpanExcluding(".");
+	strF = strF.Left(n-5);
+	strF += ".";
+	strF += str.Right(4);
+	str = strF;
 }
