@@ -47,6 +47,7 @@ BEGIN_MESSAGE_MAP(CFileSettingDlg, CDialog)
 	ON_BN_CLICKED(IDC_BUTTON_DATA_COLLECTION, OnButtonDataCollection)
 	ON_WM_SHOWWINDOW()
 	ON_WM_CTLCOLOR()
+	ON_BN_CLICKED(IDC_BUTTON_COMCONF, OnButtonComconf)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -223,21 +224,28 @@ void CFileSettingDlg::InitComNo()
 {
 	CString strNo,strName;
 	CArray<SSerInfo,SSerInfo&> asi;
-	EnumSerialPorts(asi,TRUE);
-	for (int i=0; i < asi.GetSize(); i++) 
+	try
 	{
-		strName = asi[i].strFriendlyName;
-		int idx = strName.Find("(COM");
-		if (idx > 0)
+		EnumSerialPorts(asi,TRUE);
+		for (int i=0; i < asi.GetSize(); i++) 
 		{
-			int last = strName.Find(")",idx+1);
-			if (last > 0)
+			strName = asi[i].strFriendlyName;
+			int idx = strName.Find("(COM");
+			if (idx > 0)
 			{
-				strNo = strName.Mid(idx + 1,last - idx - 1);
-				m_ComboComNo.AddString(strNo);
+				int last = strName.Find(")",idx+1);
+				if (last > 0)
+				{
+					strNo = strName.Mid(idx + 1,last - idx - 1);
+					m_ComboComNo.AddString(strNo);
+				}
 			}
+			
 		}
-
+	}
+	catch(CString strErr)
+	{
+		AfxMessageBox(strErr);
 	}
 }
 
@@ -260,3 +268,33 @@ HBRUSH CFileSettingDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 }
 
 
+
+void CFileSettingDlg::OnButtonComconf() 
+{
+	COMMCONFIG conf={0};
+	CString strPort;
+	conf.dwSize = sizeof(COMMCONFIG);
+	conf.wVersion = 1;
+	conf.dwProviderSize = 1;
+	conf.dcb.BaudRate = CBR_9600;
+	conf.dcb.ByteSize = 7;
+	conf.dcb.Parity = EVENPARITY;        // no parity bit
+	conf.dcb.StopBits =TWOSTOPBITS;    // one stop bit
+	int n;
+	n = m_ComboComNo.GetCurSel();
+	if (n == CB_ERR)
+	{
+		m_ComboComNo.GetEditSel();
+	}
+	else
+		m_ComboComNo.GetLBText(n,strPort);
+
+	if (CommConfigDialog(strPort,GetSafeHwnd(),&conf))
+	{
+		m_cdcConf = conf.dcb;
+	}
+	else
+	{
+		n = GetLastError();
+	}
+}

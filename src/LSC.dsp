@@ -140,6 +140,10 @@ SOURCE=.\SelectList.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\SerialPort.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\SpectrumDlg.cpp
 # End Source File
 # Begin Source File
@@ -190,6 +194,10 @@ SOURCE=.\Resource.h
 # Begin Source File
 
 SOURCE=.\SelectList.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\SerialPort.h
 # End Source File
 # Begin Source File
 
