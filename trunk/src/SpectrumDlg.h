@@ -101,6 +101,7 @@ protected:
 	static char szDataFilter[];
 	static char szAWSFilter[];
 	int nActiveIndex;
+	
 	list<COLORREF> rgb;
 	//Model Factor
 	double MF_A,MF_B,MF_C,MF_D,MF_a,MF_b,MF_c,MF_d;

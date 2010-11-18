@@ -54,8 +54,10 @@ protected:
 	afx_msg void OnButtonDataCollection();
 	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
+	afx_msg void OnButtonComconf();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
+	DCB m_cdcConf;
 };
 
 //{{AFX_INSERT_LOCATION}}
