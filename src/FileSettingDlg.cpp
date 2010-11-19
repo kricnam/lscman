@@ -295,6 +295,8 @@ void CFileSettingDlg::OnButtonComconf()
 	}
 	else
 	{
-		n = GetLastError();
+		CErrorMsg msg;
+		msg.GetErrorMsg("COM conf");
+		AfxMessageBox(msg);
 	}
 }

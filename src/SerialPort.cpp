@@ -24,7 +24,7 @@ CSerialPort::CSerialPort()
 
 CSerialPort::~CSerialPort()
 {
-	if (handle > 0)
+	if (handle != INVALID_HANDLE_VALUE)
 		Close();
 }
 
@@ -37,17 +37,21 @@ int CSerialPort::Open(const char* szDev)
 
 	handle = CreateFile(szDev,GENERIC_READ|GENERIC_WRITE,
 		0,NULL,
-		OPEN_EXISTING, //打开而不是创建
-		0, //同步方式
+		OPEN_EXISTING, 
+		0, 
 		NULL);
 	if(handle ==INVALID_HANDLE_VALUE)
 	{
-		AfxMessageBox("Failed to open COM port");
 		return -1;
 	}
 
-	SetCom();
-	return 0;
+	PurgeComm(handle,PURGE_TXABORT|PURGE_RXABORT|PURGE_TXCLEAR|PURGE_RXCLEAR);
+	if (SetCom()) 	return 0;
+	else
+	{
+		Close();
+		return -1;
+	}
 }
 
 bool CSerialPort::SetCom(void)
@@ -94,7 +98,15 @@ bool CSerialPort::SetCom(void)
 		AfxMessageBox(strMsg);
 		return false;
     }
+	SetTimeOut(1000000);
 	return true;
+}
+
+void CSerialPort::SetTimeOut(int usec)
+{
+	COMMTIMEOUTS co = {0};
+	co.ReadIntervalTimeout = usec/1000;
+	SetCommTimeouts(handle,&co);
 }
 
 void CSerialPort::Lock(void)
@@ -107,7 +119,7 @@ void CSerialPort::Lock(void)
 
 void CSerialPort::Close()
 {
-	if (handle > 0)
+	if (handle != INVALID_HANDLE_VALUE)
 	{
 		//tcflush(handle, TCIOFLUSH);
 		CloseHandle(handle);
@@ -125,47 +137,37 @@ int CSerialPort::Read(char* buf, int len)
 {
 	if (len == 0)
 		return 0;
-	if (handle == (HANDLE) -1)
+	if (handle == INVALID_HANDLE_VALUE)
 		Open((LPCTSTR)strDevName);
-	int try_again = 2;
-	int n;
+	unsigned long n;
 	do
 	{
-		//n = read(handle, buf, len);
-		if (n > 0)
+		if (ReadFile(handle,buf,len,&n,NULL))
 			return n;
-		if (n == -1)
+		else
 		{
-			//ERRTRACE();
-			Close();
-			return 0;
+			m_strErr.FormatMessage("Read");
+			break;
 		}
-		if (try_again--)
-		{
-			//usleep(timeout);
-			continue;
-		}
-	} while (try_again);
-	return n;
+	}while(true);
+	return 0;
 }
 
 int CSerialPort::Write(const char* buf, int len)
 {
 	if (len == 0)
 		return 0;
-	if (handle == (HANDLE)-1)
+	if (handle == INVALID_HANDLE_VALUE)
 		Open((LPCTSTR)strDevName);
 
 //	DUMP(buf,len);
 
-	int n ;//write(handle, buf, len);
-	//tcdrain(handle);
-	if (n > 0)
+	unsigned long n ;//write(handle, buf, len);
+	if (WriteFile(handle,buf,len,&n,NULL))
 		return n;
-	if (n == -1)
+	else
 	{
-		//ERRTRACE();
-		Close();
+		m_strErr.FormatMessage("Write");
 	}
 	return 0;
 }

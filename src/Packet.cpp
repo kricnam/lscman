@@ -1,0 +1,27 @@
+// Packet.cpp: implementation of the CPacket class.
+//
+//////////////////////////////////////////////////////////////////////
+
+#include "stdafx.h"
+#include "lsc.h"
+#include "Packet.h"
+
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[]=__FILE__;
+#define new DEBUG_NEW
+#endif
+
+//////////////////////////////////////////////////////////////////////
+// Construction/Destruction
+//////////////////////////////////////////////////////////////////////
+
+CPacket::CPacket()
+{
+
+}
+
+CPacket::~CPacket()
+{
+
+}

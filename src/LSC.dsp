@@ -120,6 +120,10 @@ SOURCE=.\EnumSerial.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ErrorMsg.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\FileSettingDlg.cpp
 # End Source File
 # Begin Source File
@@ -133,6 +137,10 @@ SOURCE=.\LSC.rc
 # Begin Source File
 
 SOURCE=.\LSCDlg.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Packet.cpp
 # End Source File
 # Begin Source File
 
@@ -177,6 +185,10 @@ SOURCE=.\DataFile.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ErrorMsg.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\FileSettingDlg.h
 # End Source File
 # Begin Source File
@@ -186,6 +198,10 @@ SOURCE=.\LSC.h
 # Begin Source File
 
 SOURCE=.\LSCDlg.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Packet.h
 # End Source File
 # Begin Source File
 

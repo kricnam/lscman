@@ -12,6 +12,7 @@
 class CSerialPort  
 {
 public:
+	CErrorMsg m_strErr;
 	CSerialPort();
 	virtual ~CSerialPort();
 	int Open(const char* szDev);
@@ -22,9 +23,9 @@ public:
 	virtual int Write(const char* buf,int len);
 	virtual void Lock(void);
 	virtual void Unlock(void);
-	virtual bool IsOpen() { return handle == (HANDLE)-1;};
+	virtual bool IsOpen() { return handle == INVALID_HANDLE_VALUE;};
 	const char* GetPort(void) {return (LPCTSTR)strDevName;};
-	virtual void SetTimeOut(int usec) {timeout= usec;};
+	virtual void SetTimeOut(int usec);
 	int m_BaudRate;
 protected:
 	HANDLE handle;
