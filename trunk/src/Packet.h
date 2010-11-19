@@ -8,6 +8,8 @@
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
+#define STX 0x02
+#define ETX 0x03
 
 typedef struct {
 	char head;
@@ -66,11 +68,11 @@ typedef struct {
 	char sp16;
 	char C_EFF[9];
 	char sp17;
-	char ESCR_SCCR[9];
+	char STD_ESCR_SCCR[9];
 	char sp18[2];
 	char DATE[10];
 	char sp19[3];
-	char TIME[5];
+	char HOUR_MINUTE[5];
 	char sp20[3];
 	char OPT1[9];
 	char sp21[3];
@@ -101,12 +103,27 @@ typedef struct
 	char tail;
 } Spectrum_Packet;
 
+typedef struct
+{
+	char head;
+	char type;
+	char endCR;
+	char endLF;
+    char tail;
+} Command_Packet;
+
+#define TYPE_DATA 'D'
+#define TYPE_GROUP 'G'
+#define TYPE_TITLE 'T'
+#define TYPE_SPECTRUN 'S'
+#define TYPE_CMD_SPECTRUM 'S'
+
 class CPacket  
 {
 public:
 	CPacket();
 	virtual ~CPacket();
-
+    
 };
 
 #endif // !defined(AFX_PACKET_H__A288B744_8E7D_4BB6_AEEA_92E6690BAE5D__INCLUDED_)

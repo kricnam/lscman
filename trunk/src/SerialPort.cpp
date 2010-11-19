@@ -31,7 +31,7 @@ CSerialPort::~CSerialPort()
 int CSerialPort::Open(const char* szDev)
 {
 	Close();
-
+     
 	if (strDevName != szDev)
 		strDevName = szDev;
 
