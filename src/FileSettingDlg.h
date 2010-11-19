@@ -20,7 +20,7 @@ public:
 	void InitListCtrl();
 	void InitExtensionComboBox();
 	CFileSettingDlg(CWnd* pParent = NULL);   // standard constructor
-
+	DCB m_cdcConf;
 // Dialog Data
 	//{{AFX_DATA(CFileSettingDlg)
 	enum { IDD = IDD_DIALOG_FILE_SETTING };
@@ -57,7 +57,7 @@ protected:
 	afx_msg void OnButtonComconf();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
-	DCB m_cdcConf;
+	
 };
 
 //{{AFX_INSERT_LOCATION}}

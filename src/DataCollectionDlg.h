@@ -1,6 +1,7 @@
 #if !defined(AFX_DATACOLLECTIONDLG_H__A17B0148_F445_4D87_9680_B4D64B73D864__INCLUDED_)
 #define AFX_DATACOLLECTIONDLG_H__A17B0148_F445_4D87_9680_B4D64B73D864__INCLUDED_
 
+#include "SerialPort.h"	// Added by ClassView
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
@@ -26,7 +27,7 @@ public:
 	CString	m_strStatus;
 	CString	m_strMYNo;
 	//}}AFX_DATA
-
+    DCB m_dcd;
 
 // Overrides
 	// ClassWizard generated virtual function overrides
@@ -39,6 +40,8 @@ public:
 
 // Implementation
 protected:
+	CSerialPort m_port;
+	CWinThread *pWorking;
 
 	// Generated message map functions
 	//{{AFX_MSG(CDataCollectionDlg)
@@ -48,6 +51,8 @@ protected:
 	afx_msg void OnButtonShutDown();
 	afx_msg void OnButtonSpectrum();
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
+	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
+	afx_msg void OnClose();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

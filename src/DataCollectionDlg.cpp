@@ -4,12 +4,24 @@
 #include "stdafx.h"
 #include "LSC.h"
 #include "DataCollectionDlg.h"
-
+#include "SerialPort.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+
+UINT CommThreadProc( LPVOID pParam )
+{
+	//Open Port;
+	CSerialPort& port=*(CSerialPort*)pParam;;
+	port.Open();
+	do
+	{
+		Sleep(10);
+	}while(port.IsOpen());
+	return 0;
+}
 
 /////////////////////////////////////////////////////////////////////////////
 // CDataCollectionDlg dialog
@@ -25,6 +37,7 @@ CDataCollectionDlg::CDataCollectionDlg(CWnd* pParent /*=NULL*/)
 	m_strStatus = _T("");
 	m_strMYNo = _T("");
 	//}}AFX_DATA_INIT
+	pWorking = NULL;
 }
 
 
@@ -49,6 +62,8 @@ BEGIN_MESSAGE_MAP(CDataCollectionDlg, CDialog)
 	ON_BN_CLICKED(IDC_BUTTON_SHUT_DOWN, OnButtonShutDown)
 	ON_BN_CLICKED(IDC_BUTTON_SPECTRUM, OnButtonSpectrum)
 	ON_WM_CTLCOLOR()
+	ON_WM_SHOWWINDOW()
+	ON_WM_CLOSE()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -131,4 +146,22 @@ HBRUSH CDataCollectionDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	
 	// TODO: Return a different brush if the default is not desired
 	return hbr;
+}
+
+void CDataCollectionDlg::OnShowWindow(BOOL bShow, UINT nStatus) 
+{
+	CDialog::OnShowWindow(bShow, nStatus);
+	
+	if (!pWorking)
+		pWorking = AfxBeginThread(CommThreadProc,&m_port);
+
+}
+
+void CDataCollectionDlg::OnClose() 
+{
+	if (pWorking)
+	{
+		m_port.Close();
+	}
+	CDialog::OnClose();
 }
