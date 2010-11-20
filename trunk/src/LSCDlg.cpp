@@ -138,7 +138,8 @@ void CLSCDlg::OnOpenDlg(WPARAM wParam, LPARAM lParam)
 			m_FileSettingDlg.SetFocus();
 			break;
 		case OPEN_DATA_COLLECTION:
-			m_DataCollectionDlg.m_dcd = m_FileSettingDlg.m_cdcConf;
+			m_DataCollectionDlg.m_dcb = m_FileSettingDlg.m_dcbConf;
+			m_DataCollectionDlg.m_strDev = m_FileSettingDlg.m_strDev;
 			m_DataCollectionDlg.ShowWindow(SW_SHOW);
 			this->SetWindowText("Data Collection");
 			m_DataCollectionDlg.GetClientRect(&rect);

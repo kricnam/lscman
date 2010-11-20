@@ -5,6 +5,7 @@
 #include "LSC.h"
 #include "DataCollectionDlg.h"
 #include "SerialPort.h"
+#include "Packet.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -14,12 +15,32 @@ static char THIS_FILE[] = __FILE__;
 UINT CommThreadProc( LPVOID pParam )
 {
 	//Open Port;
-	CSerialPort& port=*(CSerialPort*)pParam;;
-	port.Open();
+	CDataCollectionDlg& UI=*(CDataCollectionDlg*)pParam;;
+	CPacket packet;
 	do
 	{
-		Sleep(10);
-	}while(port.IsOpen());
+		if (packet.ReceiveFrame(UI.m_port)>0)
+		{
+			if (!UI.m_port.IsOpen()) return 0;
+			switch(packet.GetPacketType())
+			{
+				case TYPE_GROUP:
+					packet.SendAck(UI.m_port);
+				    packet.SendCmd(UI.m_port);
+				    UI.SaveData(packet.GetData());
+				    break;
+				case TYPE_TITLE:
+				case TYPE_DATA:
+				case TYPE_SPECTRUM:
+					UI.SaveData(packet.GetData());
+					packet.SendAck(UI.m_port);
+					break;
+				default:
+					if (packet.IsValid())
+						packet.SendAck(UI.m_port);
+			}
+		}
+	}while(UI.m_port.IsOpen());
 	return 0;
 }
 
@@ -152,8 +173,16 @@ void CDataCollectionDlg::OnShowWindow(BOOL bShow, UINT nStatus)
 {
 	CDialog::OnShowWindow(bShow, nStatus);
 	
-	if (!pWorking)
-		pWorking = AfxBeginThread(CommThreadProc,&m_port);
+	if (bShow && !m_strDev.IsEmpty() && !pWorking)
+	{
+		m_port.m_dcb = m_dcb;
+		if (m_port.Open(m_strDev)<0)
+		{
+			AfxMessageBox(m_port.m_strErr+" for "+m_strDev);
+			return;
+		}
+		pWorking = AfxBeginThread(CommThreadProc,this);
+	}
 
 }
 
@@ -164,4 +193,17 @@ void CDataCollectionDlg::OnClose()
 		m_port.Close();
 	}
 	CDialog::OnClose();
+}
+
+void CDataCollectionDlg::SetStatus(CPacket &packet)
+{
+
+}
+
+void CDataCollectionDlg::SaveData(CString &str)
+{
+	FILE* file=fopen(strCurrentFile,"w+");
+	if(file==NULL) return;
+	fprintf(file,"%s",(LPCTSTR)str);
+	fclose(file);
 }

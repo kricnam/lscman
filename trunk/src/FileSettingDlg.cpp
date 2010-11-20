@@ -22,7 +22,12 @@ CFileSettingDlg::CFileSettingDlg(CWnd* pParent /*=NULL*/)
 	//{{AFX_DATA_INIT(CFileSettingDlg)
 	m_strFileName = _T("");
 	m_DataCollectionByNo = 1;
+	m_strExt = _T("");
 	//}}AFX_DATA_INIT
+	m_dcbConf.BaudRate = CBR_9600;
+	m_dcbConf.ByteSize = 7;
+	m_dcbConf.Parity = EVENPARITY;        // no parity bit
+	m_dcbConf.StopBits =TWOSTOPBITS;    // one stop bit
 }
 
 
@@ -30,12 +35,14 @@ void CFileSettingDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CFileSettingDlg)
+	DDX_Control(pDX, IDC_SPIN_EXT, m_spinExt);
 	DDX_Control(pDX, IDC_COMBO_COMNO, m_ComboComNo);
 	DDX_Control(pDX, IDC_LIST_SET, m_ListSet);
 	DDX_Control(pDX, IDC_COMBO_MYNO, m_ComboMyNo);
-	DDX_Control(pDX, IDC_COMBO_EXTEN, m_ComboExtension);
 	DDX_Text(pDX, IDC_EDIT_FILENAME, m_strFileName);
 	DDX_Radio(pDX, IDC_RADIO_COLLECTION_YES, m_DataCollectionByNo);
+	DDX_Text(pDX, IDC_EDIT_EXT, m_strExt);
+	DDV_MaxChars(pDX, m_strExt, 3);
 	//}}AFX_DATA_MAP
 }
 
@@ -48,6 +55,8 @@ BEGIN_MESSAGE_MAP(CFileSettingDlg, CDialog)
 	ON_WM_SHOWWINDOW()
 	ON_WM_CTLCOLOR()
 	ON_BN_CLICKED(IDC_BUTTON_COMCONF, OnButtonComconf)
+	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_EXT, OnDeltaposSpinExt)
+	ON_EN_CHANGE(IDC_EDIT_EXT, OnChangeEditExt)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -58,8 +67,6 @@ BOOL CFileSettingDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	
-	// TODO: Add extra initialization here
-	InitExtensionComboBox();
 	CBitmap bmp;
 	bmp.LoadBitmap(IDB_BITMAP1);
 	m_listImage.Create(2,20,ILC_COLOR24|ILC_MASK,1,0);
@@ -68,12 +75,17 @@ BOOL CFileSettingDlg::OnInitDialog()
 	InitListCtrl();
 	InitListData();
 	InitComNo();
+	
+	m_spinExt.SetRange(0,999);
+	m_spinExt.SetPos(0);
+	m_strExt.Format("%.03d",(short)m_spinExt.GetPos());
+
 	if (m_ComboComNo.GetCount() > 0)
 	{
 		m_ComboComNo.SetCurSel(0);
 	}
 	m_ComboMyNo.SetCurSel(0);
-	m_ComboExtension.SetCurSel(0);
+	
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
@@ -96,28 +108,19 @@ BOOL CFileSettingDlg::PreTranslateMessage(MSG* pMsg)
 	return CDialog::PreTranslateMessage(pMsg);
 }
 
-void CFileSettingDlg::InitExtensionComboBox()
-{
-	for (int i = 0; i < 999; i++)
-	{
-		CString strNo;
-		strNo.Format("%03d",i+1);
-		m_ComboExtension.AddString(strNo);
-	}
-}
-
 void CFileSettingDlg::OnButtonOpenFiledia() 
 {
 	UpdateData(TRUE);
-	CString strFileName,strFName,strExt;
-	m_ComboExtension.GetWindowText(strExt);
-	CFileDialog FDlg(FALSE,strExt,"",OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
+	CString strFileName,strFName;
+    
+	CFileDialog FDlg(FALSE,m_strExt,"",0,
 		"All File(*.*)|*.*||",NULL);
 	if (FDlg.DoModal() == IDOK)
 	{
 		strFileName = FDlg.GetPathName();
-		strFName = FDlg.GetFileName();
-		m_strFileName = strFileName;
+		
+		strFName = strFileName.SpanExcluding(".");
+		m_strFileName = strFName;
 		UpdateData(FALSE);
 	}
 	else
@@ -187,7 +190,7 @@ void CFileSettingDlg::UpdateListItem(int MYNo)
 {
 	if (g_SetArray[MYNo].m_DataCollection)
 	{
-		m_ListSet.SetItemText(MYNo-1,1,"o");
+		m_ListSet.SetItemText(MYNo-1,1,"O");
 	}
 	else
 	{
@@ -203,7 +206,9 @@ void CFileSettingDlg::OnButtonSet()
 	int i = m_ComboMyNo.GetCurSel();
 	i++;
 	g_SetArray[i].m_strFileName = m_strFileName;
-	m_ComboExtension.GetWindowText(g_SetArray[i].m_Extension);
+	int n = atoi(m_strExt);
+	m_strExt.Format("%.03d",n);
+	g_SetArray[i].m_Extension = m_strExt;
 	if (m_DataCollectionByNo == 0)
 	{
 		g_SetArray[i].m_DataCollection = TRUE;
@@ -217,6 +222,18 @@ void CFileSettingDlg::OnButtonSet()
 
 void CFileSettingDlg::OnButtonDataCollection() 
 {
+	int n;
+	n = m_ComboComNo.GetCurSel();
+	if (n == CB_ERR)
+	{
+		m_ComboComNo.GetEditCtrl()->GetWindowText(m_strDev);		
+	}
+	else
+		m_ComboComNo.GetLBText(n,m_strDev);
+
+	if (m_strDev.IsEmpty())
+		AfxMessageBox("COM port not selected, Please select one, \nor the data can not be collected");
+
 	::PostMessage(this->GetParent()->m_hWnd,WM_OPEN_DLG,OPEN_DATA_COLLECTION,0);
 }
 
@@ -237,7 +254,11 @@ void CFileSettingDlg::InitComNo()
 				if (last > 0)
 				{
 					strNo = strName.Mid(idx + 1,last - idx - 1);
-					m_ComboComNo.AddString(strNo);
+					COMBOBOXEXITEM item={0};
+					item.mask = CBEIF_TEXT;
+					item.pszText = (char*)(LPCTSTR)strNo;
+					item.cchTextMax = strNo.GetLength();
+					m_ComboComNo.InsertItem(&item);
 				}
 			}
 			
@@ -252,7 +273,7 @@ void CFileSettingDlg::InitComNo()
 void CFileSettingDlg::OnShowWindow(BOOL bShow, UINT nStatus) 
 {
 	CDialog::OnShowWindow(bShow, nStatus);
-	
+	UpdateData(FALSE);
 	// TODO: Add your message handler code here
 	
 }
@@ -272,14 +293,10 @@ HBRUSH CFileSettingDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 void CFileSettingDlg::OnButtonComconf() 
 {
 	COMMCONFIG conf={0};
-	CString strPort;
 	conf.dwSize = sizeof(COMMCONFIG);
 	conf.wVersion = 1;
 	conf.dwProviderSize = 1;
-	conf.dcb.BaudRate = CBR_9600;
-	conf.dcb.ByteSize = 7;
-	conf.dcb.Parity = EVENPARITY;        // no parity bit
-	conf.dcb.StopBits =TWOSTOPBITS;    // one stop bit
+	conf.dcb = m_dcbConf;
 	int n;
 	n = m_ComboComNo.GetCurSel();
 	if (n == CB_ERR)
@@ -287,11 +304,11 @@ void CFileSettingDlg::OnButtonComconf()
 		m_ComboComNo.GetEditSel();
 	}
 	else
-		m_ComboComNo.GetLBText(n,strPort);
+		m_ComboComNo.GetLBText(n,m_strDev);
 
-	if (CommConfigDialog(strPort,GetSafeHwnd(),&conf))
+	if (CommConfigDialog(m_strDev,GetSafeHwnd(),&conf))
 	{
-		m_cdcConf = conf.dcb;
+		m_dcbConf = conf.dcb;
 	}
 	else
 	{
@@ -300,3 +317,23 @@ void CFileSettingDlg::OnButtonComconf()
 		AfxMessageBox(msg);
 	}
 }
+
+void CFileSettingDlg::OnDeltaposSpinExt(NMHDR* pNMHDR, LRESULT* pResult) 
+{
+	NM_UPDOWN* pNMUpDown = (NM_UPDOWN*)pNMHDR;
+	
+	int n = (short)(pNMUpDown->iPos+pNMUpDown->iDelta);
+	if (n<0) n=0;
+	if (n>999) n = 999;
+	m_strExt.Format("%.03d",n);
+	UpdateData(FALSE);
+	*pResult = 0;
+}
+
+void CFileSettingDlg::OnChangeEditExt() 
+{
+	UpdateData();
+	m_spinExt.SetPos(atoi(m_strExt));
+}
+
+
