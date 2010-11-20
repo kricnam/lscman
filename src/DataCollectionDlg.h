@@ -7,7 +7,7 @@
 #endif // _MSC_VER > 1000
 // DataCollectionDlg.h : header file
 //
-
+#include "Packet.h"
 /////////////////////////////////////////////////////////////////////////////
 // CDataCollectionDlg dialog
 
@@ -15,6 +15,8 @@ class CDataCollectionDlg : public CDialog
 {
 // Construction
 public:
+	void SaveData(CString& str);
+	void SetStatus(CPacket& packet);
 	CDataCollectionDlg(CWnd* pParent = NULL);   // standard constructor
 
 // Dialog Data
@@ -27,8 +29,9 @@ public:
 	CString	m_strStatus;
 	CString	m_strMYNo;
 	//}}AFX_DATA
-    DCB m_dcd;
-
+    DCB m_dcb;
+	CSerialPort m_port;
+	CString m_strDev;
 // Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CDataCollectionDlg)
@@ -40,7 +43,8 @@ public:
 
 // Implementation
 protected:
-	CSerialPort m_port;
+	CString strCurrentFile;
+	
 	CWinThread *pWorking;
 
 	// Generated message map functions

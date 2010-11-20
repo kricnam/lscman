@@ -236,3 +236,5 @@ void CDataFile::Close()
 		fData = NULL;
 	}
 }
+
+

@@ -26,7 +26,7 @@ public:
 	virtual bool IsOpen() { return handle != INVALID_HANDLE_VALUE;};
 	const char* GetPort(void) {return (LPCTSTR)strDevName;};
 	virtual void SetTimeOut(int usec);
-	int m_BaudRate;
+	DCB m_dcb;
 protected:
 	HANDLE handle;
 	int timeout;

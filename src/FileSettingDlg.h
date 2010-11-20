@@ -18,18 +18,19 @@ public:
 	void UpdateListItem(int MYNo);
 	void InitListData();
 	void InitListCtrl();
-	void InitExtensionComboBox();
 	CFileSettingDlg(CWnd* pParent = NULL);   // standard constructor
-	DCB m_cdcConf;
+	DCB m_dcbConf;
+	CString m_strDev;
 // Dialog Data
 	//{{AFX_DATA(CFileSettingDlg)
 	enum { IDD = IDD_DIALOG_FILE_SETTING };
-	CComboBox	m_ComboComNo;
+	CSpinButtonCtrl	m_spinExt;
+	CComboBoxEx	m_ComboComNo;
 	CListCtrl	m_ListSet;
 	CComboBox	m_ComboMyNo;
-	CComboBox	m_ComboExtension;
 	CString	m_strFileName;
 	int		m_DataCollectionByNo;
+	CString	m_strExt;
 	//}}AFX_DATA
 
 
@@ -55,6 +56,8 @@ protected:
 	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 	afx_msg void OnButtonComconf();
+	afx_msg void OnDeltaposSpinExt(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnChangeEditExt();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 	

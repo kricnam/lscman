@@ -4,12 +4,16 @@
 
 #if !defined(AFX_PACKET_H__A288B744_8E7D_4BB6_AEEA_92E6690BAE5D__INCLUDED_)
 #define AFX_PACKET_H__A288B744_8E7D_4BB6_AEEA_92E6690BAE5D__INCLUDED_
-
+#include "SerialPort.h"
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
 #define STX 0x02
 #define ETX 0x03
+#define ACK 0x06
+
+#pragma pack(1)
+
 
 typedef struct {
 	char head;
@@ -115,14 +119,26 @@ typedef struct
 #define TYPE_DATA 'D'
 #define TYPE_GROUP 'G'
 #define TYPE_TITLE 'T'
-#define TYPE_SPECTRUN 'S'
-#define TYPE_CMD_SPECTRUM 'S'
+#define TYPE_SPECTRUM 'S'
+
+#define TYPE_UNKNOW 0
+
+#pragma pack()
 
 class CPacket  
 {
 public:
+	CString GetData();
+	void SendCmd(CSerialPort& port);
+	void SendAck(CSerialPort& port);
+	bool IsValid(void);
+	char GetPacketType(void);
+	int SendData(CSerialPort& port);
+	int ReceiveFrame(CSerialPort& port);
 	CPacket();
 	virtual ~CPacket();
+protected:
+	CString strData;
     
 };
 

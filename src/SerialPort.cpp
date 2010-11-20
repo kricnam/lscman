@@ -19,7 +19,6 @@ static char THIS_FILE[]=__FILE__;
 CSerialPort::CSerialPort()
 {
 	handle = INVALID_HANDLE_VALUE;
-	timeout = 20000;
 }
 
 CSerialPort::~CSerialPort()
@@ -42,16 +41,14 @@ int CSerialPort::Open(const char* szDev)
 		NULL);
 	if(handle ==INVALID_HANDLE_VALUE)
 	{
+		m_strErr.GetErrorMsg("Open");
 		return -1;
 	}
 
 	PurgeComm(handle,PURGE_TXABORT|PURGE_RXABORT|PURGE_TXCLEAR|PURGE_RXCLEAR);
 	if (SetCom()) 	return 0;
-	else
-	{
-		Close();
-		return -1;
-	}
+	else Close();
+	return -1;
 }
 
 bool CSerialPort::SetCom(void)
@@ -64,38 +61,15 @@ bool CSerialPort::SetCom(void)
 	
 	if (!fSuccess) {
 		// Handle the error.
-		CString strMsg;
-		strMsg.Format("GetCommState failed with error %d.",GetLastError());
-		AfxMessageBox(strMsg);
+		m_strErr.GetErrorMsg("SetCom");
 		return false;
     }
 	
-	switch(m_BaudRate)
-	{
-	case 4800:
-		dcb.BaudRate = CBR_4800;
-		break;
-	case 9600:
-		dcb.BaudRate = CBR_9600;
-		break;
-	case 19200:
-		dcb.BaudRate = CBR_19200;
-		break;
-	default:
-		dcb.BaudRate = CBR_9600;
-	}
- 
-	dcb.ByteSize = 7;             // data size, xmit, and rcv
-	dcb.Parity = EVENPARITY;        // no parity bit
-	dcb.StopBits =TWOSTOPBITS;    // one stop bit
-	
-	fSuccess = SetCommState(handle, &dcb);
+	fSuccess = SetCommState(handle, &m_dcb);
 	
 	if (!fSuccess) {
 		// Handle the error.
-		CString strMsg;
-		strMsg.Format("SetCommState failed with error %d.\n", GetLastError());
-		AfxMessageBox(strMsg);
+		m_strErr.GetErrorMsg("SetCom");
 		return false;
     }
 	SetTimeOut(1000000);
@@ -105,7 +79,9 @@ bool CSerialPort::SetCom(void)
 void CSerialPort::SetTimeOut(int usec)
 {
 	COMMTIMEOUTS co = {0};
-	co.ReadIntervalTimeout = usec/1000;
+	co.ReadIntervalTimeout = 0;
+	co.ReadTotalTimeoutConstant = usec/1000;
+	co.ReadTotalTimeoutMultiplier = 10000 / ((m_dcb.BaudRate)?m_dcb.BaudRate:1);
 	SetCommTimeouts(handle,&co);
 }
 
@@ -138,7 +114,11 @@ int CSerialPort::Read(char* buf, int len)
 	if (len == 0)
 		return 0;
 	if (handle == INVALID_HANDLE_VALUE)
-		Open((LPCTSTR)strDevName);
+	{
+		if (Open((LPCTSTR)strDevName)<0)
+			return -1;
+	}
+
 	unsigned long n;
 	do
 	{
@@ -146,11 +126,11 @@ int CSerialPort::Read(char* buf, int len)
 			return n;
 		else
 		{
-			m_strErr.FormatMessage("Read");
+			m_strErr.GetErrorMsg("Read");
 			break;
 		}
 	}while(true);
-	return 0;
+	return -1;
 }
 
 int CSerialPort::Write(const char* buf, int len)
@@ -158,7 +138,9 @@ int CSerialPort::Write(const char* buf, int len)
 	if (len == 0)
 		return 0;
 	if (handle == INVALID_HANDLE_VALUE)
-		Open((LPCTSTR)strDevName);
+	{
+		if (Open((LPCTSTR)strDevName)<0) return -1;
+	}
 
 //	DUMP(buf,len);
 
@@ -167,7 +149,7 @@ int CSerialPort::Write(const char* buf, int len)
 		return n;
 	else
 	{
-		m_strErr.FormatMessage("Write");
+		m_strErr.GetErrorMsg("Write");
 	}
-	return 0;
+	return -1;
 }
