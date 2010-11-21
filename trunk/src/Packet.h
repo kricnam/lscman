@@ -128,6 +128,8 @@ typedef struct
 class CPacket  
 {
 public:
+	CString GetTime();
+	CString GetDate();
 	CString GetMYNo();
 	CString GetSpetrumData();
 	CString GetDMPData();

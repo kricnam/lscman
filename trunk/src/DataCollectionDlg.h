@@ -15,6 +15,7 @@ class CDataCollectionDlg : public CDialog
 {
 // Construction
 public:
+	bool NeedCollect(CString& strMYNo);
 	CString m_strCurrentFile;
 	void SaveData(CPacket& packet);
 	void SetStatus(CPacket& packet);
@@ -57,6 +58,7 @@ protected:
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
 	afx_msg void OnClose();
+	afx_msg void OnTimer(UINT nIDEvent);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };
