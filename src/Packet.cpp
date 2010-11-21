@@ -121,3 +121,55 @@ CString CPacket::GetData()
 	}
 	return str;
 }
+
+CString CPacket::GetGroupData()
+{
+	CString str;
+	if (GetPacketType()==TYPE_GROUP)
+	{
+		str = strData.Mid(3,strData.GetLength()-6);
+	}
+	return str;
+}
+
+
+CString CPacket::GetTitleData()
+{
+	CString str;
+	if (GetPacketType()==TYPE_TITLE)
+	{
+		str = strData.Mid(3,strData.GetLength()-6);
+	}
+	return str;
+}
+
+CString CPacket::GetDMPData()
+{
+	CString str;
+	if (GetPacketType()==TYPE_DATA)
+	{
+		str = strData.Mid(3,strData.GetLength()-6);
+	}
+	return str;
+}
+
+
+CString CPacket::GetSpetrumData()
+{
+	CString str;
+	if (GetPacketType()==TYPE_DATA)
+	{
+		str = strData.Mid(6,strData.GetLength()-9);
+	}
+	return str;
+}
+
+CString CPacket::GetMYNo()
+{
+	CString str;
+	if (GetPacketType()==TYPE_GROUP)
+	{
+		str = strData.Mid(3,2);
+	}
+	return str;
+}

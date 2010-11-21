@@ -6,6 +6,7 @@
 #include "DataCollectionDlg.h"
 #include "SerialPort.h"
 #include "Packet.h"
+#include "DataFile.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -27,12 +28,12 @@ UINT CommThreadProc( LPVOID pParam )
 				case TYPE_GROUP:
 					packet.SendAck(UI.m_port);
 				    packet.SendCmd(UI.m_port);
-				    UI.SaveData(packet.GetData());
+				    UI.SaveData(packet);
 				    break;
 				case TYPE_TITLE:
 				case TYPE_DATA:
 				case TYPE_SPECTRUM:
-					UI.SaveData(packet.GetData());
+					UI.SaveData(packet);
 					packet.SendAck(UI.m_port);
 					break;
 				default:
@@ -52,11 +53,11 @@ CDataCollectionDlg::CDataCollectionDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CDataCollectionDlg::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CDataCollectionDlg)
-	m_strCurrentTime = _T("");
 	m_strFileName = _T("");
-	m_strStartTime = _T("");
-	m_strStatus = _T("");
 	m_strMYNo = _T("");
+	m_strStartTime = _T("");
+	m_strStatus = _T("Unreceived");
+	m_strCurrentTime = _T("");
 	//}}AFX_DATA_INIT
 	pWorking = NULL;
 }
@@ -66,12 +67,11 @@ void CDataCollectionDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CDataCollectionDlg)
-	DDX_Control(pDX, IDC_EDIT_STATUS, m_EditStatus);
-	DDX_Text(pDX, IDC_EDIT_CURRENT_TIME, m_strCurrentTime);
 	DDX_Text(pDX, IDC_EDIT_FILE_NAME, m_strFileName);
-	DDX_Text(pDX, IDC_EDIT_START_TIME, m_strStartTime);
-	DDX_Text(pDX, IDC_EDIT_STATUS, m_strStatus);
 	DDX_Text(pDX, IDC_STATIC_MYNO, m_strMYNo);
+	DDX_Text(pDX, IDC_STATIC_STARTTIME, m_strStartTime);
+	DDX_Text(pDX, IDC_STATIC_STATUS, m_strStatus);
+	DDX_Text(pDX, IDC_STATIC_CURRENTTIME, m_strCurrentTime);
 	//}}AFX_DATA_MAP
 }
 
@@ -121,7 +121,6 @@ BOOL CDataCollectionDlg::PreTranslateMessage(MSG* pMsg)
 void CDataCollectionDlg::OnButtonFileSetting() 
 {
 	::PostMessage(this->GetParent()->m_hWnd,WM_OPEN_DLG,OPEN_FILE_SETTING,0);
-	
 }
 
 void CDataCollectionDlg::OnButtonAwsFactor() 
@@ -147,21 +146,20 @@ void CDataCollectionDlg::OnButtonSpectrum()
 HBRUSH CDataCollectionDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor) 
 {
 	HBRUSH hbr = CDialog::OnCtlColor(pDC, pWnd, nCtlColor);
-	
+	HBRUSH brush_green = ::CreateSolidBrush(RGB(0,255,0));
+    LOGBRUSH log={0};
 	int nID = pWnd->GetDlgCtrlID();
-	if (nID == IDC_EDIT_STATUS)
+	if (nID == IDC_STATIC_STATUS)
 	{
 		if (m_strStatus == "Received")
 		{
 			pDC->SetBkColor(RGB(0,255,0));
-		}
-		else if (m_strStatus == "Send")
-		{
-			pDC->SetBkColor(RGB(255,0,0));
+			return brush_green;
 		}
 		else
 		{
-
+			::GetObject(hbr,sizeof(log),&log);
+			pDC->SetBkColor(log.lbColor);
 		}
 	}
 	
@@ -197,13 +195,34 @@ void CDataCollectionDlg::OnClose()
 
 void CDataCollectionDlg::SetStatus(CPacket &packet)
 {
+	if (packet.GetPacketType() == TYPE_GROUP)
+	{
+		m_strMYNo = packet.GetMYNo();
+
+	}
+
+	UpdateData(FALSE);
 
 }
 
-void CDataCollectionDlg::SaveData(CString &str)
+void CDataCollectionDlg::SaveData(CPacket& packet)
 {
-	FILE* file=fopen(strCurrentFile,"w+");
-	if(file==NULL) return;
-	fprintf(file,"%s",(LPCTSTR)str);
-	fclose(file);
+	CDataFile file;
+	if (packet.GetPacketType() == TYPE_GROUP)
+	{
+		CString strMYNo = packet.GetMYNo();
+		for(int i=0;i<12;i++)
+		{
+			if (g_SetArray[i].m_strID == strMYNo)
+			{
+				m_strCurrentFile = g_SetArray[i].m_strFileName+"."+
+					g_SetArray[i].m_Extension;
+				g_SetArray[i].m_Extension.Format("%.03d",
+					atoi(g_SetArray[i].m_Extension));
+				break;
+			}
+		}
+	}
+	
+	file.Save(m_strCurrentFile,packet);
 }

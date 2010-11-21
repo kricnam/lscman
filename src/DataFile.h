@@ -8,10 +8,11 @@
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
-
+#include "Packet.h"
 class CDataFile  
 {
 public:
+	bool Save(LPCTSTR szFile, CPacket& packet);
 	void Close(void);
 	int GetFieldValue(LPCTSTR szName,CString& strValue);
 	int GetFieldIndex(LPCTSTR szName);

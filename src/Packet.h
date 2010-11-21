@@ -128,6 +128,11 @@ typedef struct
 class CPacket  
 {
 public:
+	CString GetMYNo();
+	CString GetSpetrumData();
+	CString GetDMPData();
+	CString GetTitleData();
+	CString GetGroupData();
 	CString GetData();
 	void SendCmd(CSerialPort& port);
 	void SendAck(CSerialPort& port);

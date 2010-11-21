@@ -238,3 +238,42 @@ void CDataFile::Close()
 }
 
 
+
+bool CDataFile::Save(LPCTSTR szFile, CPacket &packet)
+{
+	Close();
+	fData = fopen((LPCTSTR)strFileName,"ab");
+	if (fData == NULL) return false;
+	CString strGroup = packet.GetGroupData();
+	CString strTitle = packet.GetTitleData();
+	CString strData = packet.GetDMPData();
+	CString strSpectrum = packet.GetSpetrumData();
+	
+	do
+	{
+		if(!strGroup.IsEmpty())
+		{
+			fprintf(fData,"%s\r\n",(LPCTSTR)strGroup);
+			break;
+		}
+		if(!strTitle.IsEmpty())
+		{
+			fprintf(fData,"%s\r\n",(LPCTSTR)strTitle);
+			break;
+		}
+		if(!strData.IsEmpty())
+		{
+			fprintf(fData,"%s\r\n",(LPCTSTR)strData);
+			break;
+		}
+		if(!strSpectrum.IsEmpty())
+		{
+			fprintf(fData,"%s\r\n",(LPCTSTR)strSpectrum);
+			break;
+		}
+		break;
+	} while(1);
+
+	Close();
+	return true;
+}
