@@ -92,6 +92,9 @@
 #define IDC_EDIT_BCHB                   1054
 #define IDC_BUTTON_COMCONF              1055
 #define IDC_SPIN_EXT                    1057
+#define IDC_STATIC_STARTTIME            1058
+#define IDC_STATIC_STATUS               1059
+#define IDC_STATIC_CURRENTTIME          1060
 #define IDC_EDIT_SAMPLE                 1500
 
 // Next default values for new objects
@@ -100,7 +103,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        140
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1058
+#define _APS_NEXT_CONTROL_VALUE         1061
 #define _APS_NEXT_SYMED_VALUE           102
 #endif
 #endif

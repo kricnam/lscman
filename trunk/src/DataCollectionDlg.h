@@ -15,19 +15,19 @@ class CDataCollectionDlg : public CDialog
 {
 // Construction
 public:
-	void SaveData(CString& str);
+	CString m_strCurrentFile;
+	void SaveData(CPacket& packet);
 	void SetStatus(CPacket& packet);
 	CDataCollectionDlg(CWnd* pParent = NULL);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(CDataCollectionDlg)
 	enum { IDD = IDD_DIALOG_DATA_COLLECTION };
-	CEdit	m_EditStatus;
-	CString	m_strCurrentTime;
 	CString	m_strFileName;
+	CString	m_strMYNo;
 	CString	m_strStartTime;
 	CString	m_strStatus;
-	CString	m_strMYNo;
+	CString	m_strCurrentTime;
 	//}}AFX_DATA
     DCB m_dcb;
 	CSerialPort m_port;
