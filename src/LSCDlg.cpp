@@ -55,6 +55,16 @@ BOOL CLSCDlg::OnInitDialog()
 	m_FileSettingDlg.Create(IDD_DIALOG_FILE_SETTING,this);
 	m_FileSettingDlg.ShowWindow(SW_SHOW);
 	this->SetWindowText("File Setting");
+	CRect rect;
+	m_FileSettingDlg.GetClientRect(&rect);
+	CRect rc,rc2;
+	this->GetWindowRect(&rc);
+	this->GetClientRect(&rc2);
+	
+	rc.bottom = rc.top + rect.bottom + (rc.Height() - rc2.Height());
+	rc.right = rc.left + rect.right + (rc.Width() - rc2.Width());
+	MoveWindow(&rc);
+	CenterWindow();
 
 	m_DataCollectionDlg.Create(IDD_DIALOG_DATA_COLLECTION,this);
 	m_DataCollectionDlg.ShowWindow(SW_HIDE);

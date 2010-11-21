@@ -173,3 +173,23 @@ CString CPacket::GetMYNo()
 	}
 	return str;
 }
+
+CString CPacket::GetDate()
+{
+	CString str;
+	if (GetPacketType()==TYPE_GROUP)
+	{
+		str = strData.Mid(71,10);
+	}
+	return str;
+}
+
+CString CPacket::GetTime()
+{
+	CString str;
+	if (GetPacketType()==TYPE_GROUP)
+	{
+		str = strData.Mid(82,5);
+	}
+	return str;
+}

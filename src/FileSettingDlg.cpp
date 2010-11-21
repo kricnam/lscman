@@ -203,12 +203,19 @@ void CFileSettingDlg::UpdateListItem(int MYNo)
 void CFileSettingDlg::OnButtonSet() 
 {
 	UpdateData(TRUE);
+    if (m_strFileName.IsEmpty())
+	{
+		AfxMessageBox("Please input a file name.");
+		return;
+	}
 	int i = m_ComboMyNo.GetCurSel();
 	i++;
 	g_SetArray[i].m_strFileName = m_strFileName;
 	int n = atoi(m_strExt);
 	m_strExt.Format("%.03d",n);
 	g_SetArray[i].m_Extension = m_strExt;
+
+
 	if (m_DataCollectionByNo == 0)
 	{
 		g_SetArray[i].m_DataCollection = TRUE;

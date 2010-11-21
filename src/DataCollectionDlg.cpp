@@ -22,13 +22,17 @@ UINT CommThreadProc( LPVOID pParam )
 	{
 		if (packet.ReceiveFrame(UI.m_port)>0)
 		{
+			UI.SetStatus(packet);
 			if (!UI.m_port.IsOpen()) return 0;
 			switch(packet.GetPacketType())
 			{
 				case TYPE_GROUP:
 					packet.SendAck(UI.m_port);
-				    packet.SendCmd(UI.m_port);
-				    UI.SaveData(packet);
+					if (UI.NeedCollect(packet.GetMYNo()))
+					{
+						packet.SendCmd(UI.m_port);
+						UI.SaveData(packet);
+					}
 				    break;
 				case TYPE_TITLE:
 				case TYPE_DATA:
@@ -41,6 +45,8 @@ UINT CommThreadProc( LPVOID pParam )
 						packet.SendAck(UI.m_port);
 			}
 		}
+		else
+			UI.SetStatus(packet);
 	}while(UI.m_port.IsOpen());
 	return 0;
 }
@@ -85,6 +91,7 @@ BEGIN_MESSAGE_MAP(CDataCollectionDlg, CDialog)
 	ON_WM_CTLCOLOR()
 	ON_WM_SHOWWINDOW()
 	ON_WM_CLOSE()
+	ON_WM_TIMER()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -182,6 +189,15 @@ void CDataCollectionDlg::OnShowWindow(BOOL bShow, UINT nStatus)
 		pWorking = AfxBeginThread(CommThreadProc,this);
 	}
 
+	if (bShow)
+	{
+		SetTimer(1,1000,0);
+	}
+	else
+	{
+		KillTimer(1);
+	}
+
 }
 
 void CDataCollectionDlg::OnClose() 
@@ -198,7 +214,15 @@ void CDataCollectionDlg::SetStatus(CPacket &packet)
 	if (packet.GetPacketType() == TYPE_GROUP)
 	{
 		m_strMYNo = packet.GetMYNo();
+		m_strStatus = "Received";
+		m_strStartTime = packet.GetDate() + " " + packet.GetTime();
+	}
 
+	if (packet.GetPacketType() == TYPE_UNKNOW)
+	{
+		m_strMYNo.Empty();
+		m_strStatus = "Unreceived";
+		m_strStartTime.Empty();
 	}
 
 	UpdateData(FALSE);
@@ -210,19 +234,48 @@ void CDataCollectionDlg::SaveData(CPacket& packet)
 	CDataFile file;
 	if (packet.GetPacketType() == TYPE_GROUP)
 	{
-		CString strMYNo = packet.GetMYNo();
+		m_strMYNo = packet.GetMYNo();
+		m_strFileName.Empty();
+		for(int i=0;i<12;i++)
+		{
+			if (g_SetArray[i].m_strID == m_strMYNo &&
+				g_SetArray[i].m_DataCollection)
+			{
+				m_strFileName = g_SetArray[i].m_strFileName+"."+
+					g_SetArray[i].m_Extension;
+				g_SetArray[i].m_Extension.Format("%.03d",
+					atoi(g_SetArray[i].m_Extension));
+				
+				break;
+			}
+		}
+		UpdateData(FALSE);
+	}
+
+	if (NeedCollect(m_strMYNo))
+		file.Save(m_strCurrentFile,packet);
+}
+
+void CDataCollectionDlg::OnTimer(UINT nIDEvent) 
+{
+	if (nIDEvent = 1)
+	{
+		CTime now = CTime::GetCurrentTime();
+		m_strCurrentTime = now.Format("%Y/%m/%d %H:%M:%S");
+		UpdateData(FALSE);
+	}
+	
+	CDialog::OnTimer(nIDEvent);
+}
+
+bool CDataCollectionDlg::NeedCollect(CString &strMYNo)
+{
 		for(int i=0;i<12;i++)
 		{
 			if (g_SetArray[i].m_strID == strMYNo)
 			{
-				m_strCurrentFile = g_SetArray[i].m_strFileName+"."+
-					g_SetArray[i].m_Extension;
-				g_SetArray[i].m_Extension.Format("%.03d",
-					atoi(g_SetArray[i].m_Extension));
-				break;
+				return g_SetArray[i].m_DataCollection==TRUE;
 			}
 		}
-	}
-	
-	file.Save(m_strCurrentFile,packet);
+		return false;
 }
