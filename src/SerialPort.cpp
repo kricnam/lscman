@@ -97,7 +97,7 @@ void CSerialPort::Close()
 {
 	if (handle != INVALID_HANDLE_VALUE)
 	{
-		//tcflush(handle, TCIOFLUSH);
+		PurgeComm(handle,PURGE_TXABORT|PURGE_RXABORT|PURGE_TXCLEAR|PURGE_RXCLEAR);
 		CloseHandle(handle);
 		handle = INVALID_HANDLE_VALUE;
 	}

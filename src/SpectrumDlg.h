@@ -52,7 +52,7 @@ public:
 	CString	m_strBchLL;
 	CString	m_strBchUL;
 	//}}AFX_DATA
-
+	int m_nTime;
 
 // Overrides
 	// ClassWizard generated virtual function overrides
@@ -65,6 +65,7 @@ public:
 
 // Implementation
 protected:
+	double ChanelSum(int nLL,int nLU);
 	bool isOpenedAt(LPCTSTR szPath,int& n);
 	void setActiveData(RawData& data);
 	void deleteData(int n);

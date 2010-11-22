@@ -35,7 +35,8 @@ extern MYNOSet g_SetArray[13];
 #define OPEN_AWS_FACTOR_SETTING		4
 #define OPEN_SPECTRUM				5
 
-#define WM_OPEN_DLG			WM_USER+100
+#define WM_OPEN_DLG			WM_USER+200
+#define WM_UPDATE_DATA		WM_USER+300
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 
