@@ -18,36 +18,39 @@ UINT CommThreadProc( LPVOID pParam )
 	//Open Port;
 	CDataCollectionDlg& UI=*(CDataCollectionDlg*)pParam;;
 	CPacket packet;
+	CPacket send;
 	do
 	{
+		UI.m_bStop = false;
 		if (packet.ReceiveFrame(UI.m_port)>0)
 		{
 			//UI.SetStatus(packet);
-			UI.PostMessage(WM_UPDATE_DATA,(WPARAM)&packet,NULL);
+			UI.SendMessage(WM_UPDATE_DATA,(WPARAM)&packet,NULL);
 			if (!UI.m_port.IsOpen()) return 0;
 			switch(packet.GetPacketType())
 			{
 				case TYPE_GROUP:
-					packet.SendAck(UI.m_port);
+					send.SendAck(UI.m_port);
 					if (UI.NeedCollect(packet.GetMYNo()))
 					{
-						packet.SendCmd(UI.m_port);
-						UI.SaveData(packet);
+						send.SendCmd(UI.m_port);
+						UI.SendMessage(WM_UPDATE_DATA,(WPARAM)&packet,1);						
 					}
 				    break;
 				case TYPE_TITLE:
 				case TYPE_DATA:
 				case TYPE_SPECTRUM:
-					UI.SaveData(packet);
-					packet.SendAck(UI.m_port);
+					UI.SendMessage(WM_UPDATE_DATA,(WPARAM)&packet,1);
+					send.SendAck(UI.m_port);
 					break;
 				default:
 					if (packet.IsValid())
-						packet.SendAck(UI.m_port);
+						send.SendAck(UI.m_port);
 			}
 		}
 		
-	}while(UI.m_port.IsOpen());
+	}while(UI.m_hWnd && UI.m_port.IsOpen());
+	UI.m_bStop = true;
 	return 0;
 }
 
@@ -66,6 +69,7 @@ CDataCollectionDlg::CDataCollectionDlg(CWnd* pParent /*=NULL*/)
 	m_strCurrentTime = _T("");
 	//}}AFX_DATA_INIT
 	pWorking = NULL;
+	m_bStop = true;
 }
 
 
@@ -207,6 +211,7 @@ void CDataCollectionDlg::OnClose()
 	if (pWorking)
 	{
 		m_port.Close();
+		while(m_bStop) Sleep(10);
 	}
 	CDialog::OnClose();
 }
@@ -256,7 +261,7 @@ void CDataCollectionDlg::SaveData(CPacket& packet)
 	}
 
 	if (NeedCollect(m_strMYNo))
-		file.Save(m_strCurrentFile,packet);
+		file.Save(m_strFileName,packet);
 }
 
 void CDataCollectionDlg::OnTimer(UINT nIDEvent) 
@@ -294,5 +299,6 @@ LRESULT CDataCollectionDlg::OnUpdateData(WPARAM wParam, LPARAM lParam)
 {
 	CPacket& packet=*(CPacket*)wParam;
 	SetStatus(packet);
+	if (lParam) SaveData(packet);
 	return 0;
 }

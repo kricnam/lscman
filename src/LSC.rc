@@ -71,8 +71,8 @@ BEGIN
                     ES_READONLY | NOT WS_BORDER,WS_EX_STATICEDGE
     CTEXT           "Static",IDC_STATIC_MYNO,154,17,45,12,SS_CENTERIMAGE | 
                     WS_BORDER
-    LTEXT           "",IDC_STATIC_STARTTIME,248,17,81,12,WS_BORDER | NOT 
-                    WS_GROUP
+    CTEXT           "",IDC_STATIC_STARTTIME,248,17,81,12,SS_CENTERIMAGE | 
+                    WS_BORDER | NOT WS_GROUP
     CTEXT           "Static",IDC_STATIC_STATUS,154,34,45,12,SS_CENTERIMAGE | 
                     WS_BORDER | NOT WS_GROUP
     CTEXT           "Static",IDC_STATIC_CURRENTTIME,248,34,81,12,

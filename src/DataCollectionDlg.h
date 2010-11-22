@@ -16,7 +16,6 @@ class CDataCollectionDlg : public CDialog
 // Construction
 public:
 	bool NeedCollect(CString& strMYNo);
-	CString m_strCurrentFile;
 	void SaveData(CPacket& packet);
 	void SetStatus(CPacket& packet);
 	CDataCollectionDlg(CWnd* pParent = NULL);   // standard constructor
@@ -33,6 +32,7 @@ public:
     DCB m_dcb;
 	CSerialPort m_port;
 	CString m_strDev;
+	bool m_bStop;
 // Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CDataCollectionDlg)
