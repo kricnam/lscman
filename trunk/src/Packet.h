@@ -116,10 +116,25 @@ typedef struct
     char tail;
 } Command_Packet;
 
+typedef struct
+{
+	char head;
+	char type;
+	char sp0[2];
+	char Date[10];
+	char sp1[3];
+	char Time[5];
+	char sp2;
+	char endCR;
+	char endLF;
+    char tail;
+} End_Packet;
+
 #define TYPE_DATA 'D'
 #define TYPE_GROUP 'G'
 #define TYPE_TITLE 'T'
 #define TYPE_SPECTRUM 'S'
+#define TYPE_END 'E'
 
 #define TYPE_UNKNOW 0
 

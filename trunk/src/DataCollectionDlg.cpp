@@ -22,7 +22,8 @@ UINT CommThreadProc( LPVOID pParam )
 	{
 		if (packet.ReceiveFrame(UI.m_port)>0)
 		{
-			UI.SetStatus(packet);
+			//UI.SetStatus(packet);
+			UI.PostMessage(WM_UPDATE_DATA,(WPARAM)&packet,NULL);
 			if (!UI.m_port.IsOpen()) return 0;
 			switch(packet.GetPacketType())
 			{
@@ -45,8 +46,7 @@ UINT CommThreadProc( LPVOID pParam )
 						packet.SendAck(UI.m_port);
 			}
 		}
-		else
-			UI.SetStatus(packet);
+		
 	}while(UI.m_port.IsOpen());
 	return 0;
 }
@@ -92,7 +92,9 @@ BEGIN_MESSAGE_MAP(CDataCollectionDlg, CDialog)
 	ON_WM_SHOWWINDOW()
 	ON_WM_CLOSE()
 	ON_WM_TIMER()
+	ON_WM_COPYDATA()
 	//}}AFX_MSG_MAP
+	ON_MESSAGE(WM_UPDATE_DATA,OnUpdateData)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -218,14 +220,15 @@ void CDataCollectionDlg::SetStatus(CPacket &packet)
 		m_strStartTime = packet.GetDate() + " " + packet.GetTime();
 	}
 
-	if (packet.GetPacketType() == TYPE_UNKNOW)
+	if (packet.GetPacketType() == TYPE_UNKNOW
+		|| packet.GetPacketType() == TYPE_END)
 	{
 		m_strMYNo.Empty();
 		m_strStatus = "Unreceived";
 		m_strStartTime.Empty();
 	}
 
-	UpdateData(FALSE);
+	if (IsWindowVisible())	UpdateData(FALSE);
 
 }
 
@@ -278,4 +281,18 @@ bool CDataCollectionDlg::NeedCollect(CString &strMYNo)
 			}
 		}
 		return false;
+}
+
+BOOL CDataCollectionDlg::OnCopyData(CWnd* pWnd, COPYDATASTRUCT* pCopyDataStruct) 
+{
+	// TODO: Add your message handler code here and/or call default
+	
+	return CDialog::OnCopyData(pWnd, pCopyDataStruct);
+}
+
+LRESULT CDataCollectionDlg::OnUpdateData(WPARAM wParam, LPARAM lParam)
+{
+	CPacket& packet=*(CPacket*)wParam;
+	SetStatus(packet);
+	return 0;
 }

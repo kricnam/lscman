@@ -32,9 +32,10 @@ int CPacket::ReceiveFrame(CSerialPort &port)
 	strData.Empty();
 	do
 	{
-		if (port.Read(&c,1)<0) 
+		int n=port.Read(&c,1);
+		if (n<0)
 			return -1;
-		else
+		else if(n==0)
 			return 0;
 	}while(c != STX);
 
@@ -84,7 +85,8 @@ bool CPacket::IsValid()
 		|| len == sizeof(DataTitle_Packet)
 		|| len == sizeof(GroupCondition_Packet)
 		|| len == sizeof(Spectrum_Packet)
-		|| len == sizeof(Command_Packet))
+		|| len == sizeof(Command_Packet)
+		|| len == sizeof(End_Packet))
 	{
 		if(strData.GetAt(strData.GetLength()-2)==0x0A
 			&& strData.GetAt(strData.GetLength()-3)==0x0D)

@@ -24,10 +24,12 @@ CFileSettingDlg::CFileSettingDlg(CWnd* pParent /*=NULL*/)
 	m_DataCollectionByNo = 1;
 	m_strExt = _T("");
 	//}}AFX_DATA_INIT
+	memset(&m_dcbConf,0,sizeof(m_dcbConf));
 	m_dcbConf.BaudRate = CBR_9600;
 	m_dcbConf.ByteSize = 7;
 	m_dcbConf.Parity = EVENPARITY;        // no parity bit
 	m_dcbConf.StopBits =TWOSTOPBITS;    // one stop bit
+
 }
 
 
@@ -306,9 +308,10 @@ void CFileSettingDlg::OnButtonComconf()
 	conf.dcb = m_dcbConf;
 	int n;
 	n = m_ComboComNo.GetCurSel();
+	
 	if (n == CB_ERR)
 	{
-		m_ComboComNo.GetEditSel();
+		m_ComboComNo.GetEditCtrl()->GetWindowText(m_strDev);
 	}
 	else
 		m_ComboComNo.GetLBText(n,m_strDev);

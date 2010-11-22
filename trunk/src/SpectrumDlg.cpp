@@ -515,7 +515,7 @@ void CSpectrumDlg::OnButtonAws()
 	CAWSFile awsFile;
 	AWS_Setting set;
 	AWS_CalCo co;
-
+	
 	awsFile.ReadData(m_strCurveName,set);
 	if (awsFile.CalculateCoefficient(set,co))
 	{
@@ -526,17 +526,25 @@ void CSpectrumDlg::OnButtonAws()
 		m_strBchUL.Format("%d",round(set.nBch_UL * factor));
 
 		factor = atof(m_strESCR);
-		double y;
+		double y,fAEff,fBEff;
+		double z,Z;
 		y = co.dAch_co[0] + factor * co.dAch_co[1] + pow(factor,2) * co.dAch_co[2] + pow(factor,3)*co.dAch_co[3];
 		m_strAEFF.Format("%G",y);
+		fAEff = y;
+		
 		y = co.dBch_co[0] + factor * co.dBch_co[1] + pow(factor,2) * co.dBch_co[2] + pow(factor,3)*co.dBch_co[3];
 		m_strBEFF.Format("%G",y);
+		fBEff = y;
 
 		y = co.d_BA_co[0] + factor * co.d_BA_co[1] + pow(factor,2) * co.d_BA_co[2] + pow(factor,3)*co.d_BA_co[3];
 
-		double z,Z;
-		//ChanelSum(m_nAchLL,m_nAchUL)/m_nTime;
-
+		Z = ChanelSum(atoi(m_strAchLL),atoi(m_strAchUL))/m_nTime;
+		z = ChanelSum(atoi(m_strBchLL),atoi(m_strBchUL))/m_nTime;
+		
+		Z = (Z-(1/y)*z)/fAEff;	
+		z = z/fBEff;
+		m_strADPM.Format("%G",Z);
+		m_strBDPM.Format("%G",z);
 	}	
 	UpdateData(FALSE);
 }
@@ -597,6 +605,7 @@ void CSpectrumDlg::setActiveData(RawData &data)
 	m_strBDPM = data.strBDPM;
 	m_strAGROSS =data.strAGROSS;
 	m_strBGROSS=data.strBGROSS;
+	m_nTime = atoi(data.strTime);
 }
 
 bool CSpectrumDlg::isOpenedAt(LPCTSTR szPath,int& n)
@@ -614,4 +623,21 @@ bool CSpectrumDlg::isOpenedAt(LPCTSTR szPath,int& n)
 		i++;
 	}
 	return false;
+}
+
+double CSpectrumDlg::ChanelSum(int nLL, int nLU)
+{
+	RawData& data = GetListItem(nActiveIndex);
+
+	if (nLL < 0) nLL = 0;
+	if (nLU > 3999) nLU = 3999;
+
+	double sum = 0;
+
+	for(int i = nLL;i<nLU;i++)
+	{
+		sum+=data.nSpetrum[i];
+	}
+
+	return sum;
 }
