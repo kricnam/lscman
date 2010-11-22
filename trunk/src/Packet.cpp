@@ -181,7 +181,7 @@ CString CPacket::GetDate()
 	CString str;
 	if (GetPacketType()==TYPE_GROUP)
 	{
-		str = strData.Mid(71,10);
+		str = strData.Mid(69,10);
 	}
 	return str;
 }

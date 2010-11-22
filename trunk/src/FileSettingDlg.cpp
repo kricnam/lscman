@@ -316,7 +316,7 @@ void CFileSettingDlg::OnButtonComconf()
 	else
 		m_ComboComNo.GetLBText(n,m_strDev);
 
-	if (CommConfigDialog(m_strDev,GetSafeHwnd(),&conf))
+	if (CommConfigDialog("COM1",GetSafeHwnd(),&conf))
 	{
 		m_dcbConf = conf.dcb;
 	}

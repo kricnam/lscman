@@ -242,7 +242,7 @@ void CDataFile::Close()
 bool CDataFile::Save(LPCTSTR szFile, CPacket &packet)
 {
 	Close();
-	fData = fopen((LPCTSTR)strFileName,"ab");
+	fData = fopen(szFile,"ab");
 	if (fData == NULL) return false;
 	CString strGroup = packet.GetGroupData();
 	CString strTitle = packet.GetTitleData();
