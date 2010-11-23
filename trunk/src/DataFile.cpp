@@ -77,7 +77,7 @@ int CDataFile::Open(LPCTSTR szFileName)
 
 int CDataFile::Open()
 {
-	fData = fopen((LPCTSTR)strFileName,"r");
+	fData = fopen((LPCTSTR)strFileName,"rb");
 	if (fData == NULL)
 	{
 		perror((LPCTSTR)strFileName);
@@ -276,4 +276,86 @@ bool CDataFile::Save(LPCTSTR szFile, CPacket &packet)
 
 	Close();
 	return true;
+}
+
+bool CDataFile::Load()
+{
+	if (strFileName.IsEmpty()) return false;
+	if (!Open()) return false;
+	if (!IsValidFile()) return false;
+	CString strLine;
+	rewind(fData);
+	if (readLine(strLine)!=sizeof(group)) return false;
+	memcpy(&group,(LPCTSTR)strLine,sizeof(group.group));
+	group.CR = '\r';
+	group.LF = '\n';
+	if (readLine(strLine)!=sizeof(title)) return false;
+	memcpy(&title,(LPCTSTR)strLine,sizeof(title));
+	title.CR = '\r';
+	title.LF = '\n';
+	if (readLine(strLine)!=sizeof(data)) return false;
+	memcpy(&data,(LPCTSTR)strLine,sizeof(data));
+	data.CR = '\r';
+	data.LF ='\n';
+	return 4000==GetSpectrumData(nSpectrum,4000);
+}
+
+bool CDataFile::SaveAs(LPCTSTR szFileName)
+{
+	FILE* file = fopen(szFileName,"wb");
+	if (!file) return false;
+	
+	if (fwrite(&group,1,sizeof(group),file)&&
+	fwrite(&title,1,sizeof(title),file)&&
+	fwrite(&data,1,sizeof(data),file))
+	{
+		for(int i=0;i<4000;i++)
+		{
+			if (fprintf(file,"% 6d,",nSpectrum[i])<0)
+			{
+				fclose(file);return false;
+			}
+			if (((i+1)%10) == 0) 
+			{
+				if (fprintf(file,"\r\n")<0)
+				{
+					fclose(file);return false;
+				}
+			}
+		}
+		fclose(file);
+		return true;
+	}
+	fclose(file);
+	return false;
+}
+
+void CDataFile::GetDataLine(Data_Line &data)
+{
+	data = this->data;
+}
+
+void CDataFile::SetEff(CString& strA, CString& strB)
+{
+	double i;
+	i = atof(strA);
+	CString str;
+	str.Format("% 9.2f",i);
+	memcpy(data.data.A_EFF,str,sizeof(data.data.A_EFF));
+	i = atof(strB);
+	str.Format("% 9.2f",i);
+	memcpy(data.data.B_EFF,str,sizeof(data.data.B_EFF));
+	
+}
+
+void CDataFile::SetDPM(CString &strA, CString &strB)
+{
+	double i;
+	i = atof(strA);
+	CString str;
+	str.Format("% 9.2f",i);
+	memcpy(data.data.A_DPM,str,sizeof(data.data.A_DPM));
+	i = atof(strB);
+	str.Format("% 9.2f",i);
+	memcpy(data.data.B_DPM,str,sizeof(data.data.B_DPM));
 }
