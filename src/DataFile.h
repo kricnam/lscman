@@ -9,9 +9,36 @@
 #pragma once
 #endif // _MSC_VER > 1000
 #include "Packet.h"
+
+
+#pragma pack(1)
+typedef struct {
+	Group_Data group;
+	char CR;
+	char LF;
+} Group_Line;
+
+typedef struct {
+	Titles titles;
+	char CR;
+	char LF;
+} Title_Line;
+
+typedef struct {
+	CPMDPM_Field data;
+	char CR;
+	char LF;
+} Data_Line;
+#pragma pack()
+
 class CDataFile  
 {
 public:
+	void SetDPM(CString& strA,CString& strB);
+	void SetEff(CString& strA, CString& strB);
+	void GetDataLine(Data_Line& data);
+	bool SaveAs(LPCTSTR szFileName);
+	bool Load();
 	bool Save(LPCTSTR szFile, CPacket& packet);
 	void Close(void);
 	int GetFieldValue(LPCTSTR szName,CString& strValue);
@@ -29,6 +56,10 @@ protected:
 	bool gotoSpetrumStart(void);
     CString strFileName;
 	FILE* fData;
+	Group_Line group;
+	Title_Line title;
+	Data_Line data;
+	int nSpectrum[4000];
 };
 
 #endif // !defined(AFX_DATAFILE_H__3AF7DAD3_0CA6_4931_A8EB_991ED79F3EE1__INCLUDED_)

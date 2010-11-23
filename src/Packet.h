@@ -16,20 +16,73 @@
 
 
 typedef struct {
+	char Group[2];
+	char sp0[2];
+	char Comment[25];
+	char sp1[3];
+	char Method[4];
+	char sp2[3];
+	char Data[3];
+	char sp3[3];
+	char Label[6];
+	char sp4[2];
+	char Repeat[3];
+	char sp5[2];
+	char ISOTOPE[5];
+	char sp6[3];
+	char Date[10];
+	char sp7[3];
+	char Time[5];
+	char sp8[1];
+} Group_Data;
+
+typedef struct {
 	char head;
 	char type;
 	char sp0;
-	char Group[2+1+25+3+4+3+3+3+6+3+3+1+5+3+10+3+5+2];
+	Group_Data data;
 	char endCR;
 	char endLF;
 	char tail;
 } GroupCondition_Packet;
 
 typedef struct {
+	char GROSS[9];
+	char sp0[3];
+	char CPM[9];
+	char sp1[3];
+	char DPM_BQ[9];
+	char sp2[3];
+	char EFF[9];
+	char sp3[3];
+} Title;
+
+typedef struct {
+	char sp[1];
+	char MYNo[9];
+	char sp0[3];
+	char SN[9];
+	char sp1[3];
+	char RN[9];
+	char sp2[3];
+	char ESCR_SCCR[9];
+	char sp3[3];
+	char NN;
+	char sp4[3];
+	char TIME[9];
+	char sp5[3];
+	Title A;
+	Title B;
+	Title C;
+	char SCCR[9];
+	char sp6[1];
+} Titles;
+
+typedef struct {
 	char head;
 	char type;
 	char sp0;
-	char Title[9+3+9+3+9+3+1+3+13*(9+3)+9+2];
+	Titles title;
 	char endCR;
 	char endLF;
 	char tail;
@@ -139,6 +192,7 @@ typedef struct
 #define TYPE_UNKNOW 0
 
 #pragma pack()
+
 
 class CPacket  
 {

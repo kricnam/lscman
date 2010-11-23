@@ -332,10 +332,40 @@ void CSpectrumDlg::OnButtonFileOpen()
 
 void CSpectrumDlg::OnButtonFileSave() 
 {
+	UpdateData();
+	RawData& data = GetListItem(nActiveIndex);
+	CDataFile Data;
+	CString strPath = data.strPath;
+	char ext[_MAX_EXT]={0};
 	
-	CFileDialog dlg(FALSE,"awd",NULL, OFN_OVERWRITEPROMPT,szAWSFilter,this->GetParent());
-	dlg.DoModal();
+	_splitpath(strPath, NULL, NULL, NULL, ext );
+	strPath = strPath.Left(strPath.GetLength()-strlen(ext));
+	strPath += "_AWS";
+	strPath += ext;
 	
+	CFileDialog dlg(FALSE,ext,strPath,OFN_OVERWRITEPROMPT,NULL,this->GetParent());
+	
+	if (dlg.DoModal()!=IDOK) return;
+    strPath = dlg.GetPathName();
+	if (Data.Open(data.strPath))
+	{
+		if (Data.Load())
+		{
+			Data.SetDPM(m_strADPM,m_strBDPM);
+			Data.SetEff(m_strAEFF,m_strBEFF);
+
+			if (Data.SaveAs(strPath))
+				AfxMessageBox("Successfully saved " + strPath);
+			else
+				AfxMessageBox("Failed to save " + strPath);
+		}
+		else
+			AfxMessageBox(CString("Failed to load data from ") + data.strPath);
+	}
+	else
+	{
+		AfxMessageBox("Failed to open raw data file" + data.strPath);
+	}
 }
 
 void CSpectrumDlg::OnButtonSelect() 
