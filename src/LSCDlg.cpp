@@ -144,6 +144,7 @@ void CLSCDlg::OnOpenDlg(WPARAM wParam, LPARAM lParam)
 		case OPEN_FILE_SETTING:
 			m_FileSettingDlg.ShowWindow(SW_SHOW);
 			this->SetWindowText("File Setting");
+			m_FileSettingDlg.m_btnConf.EnableWindow(m_DataCollectionDlg.m_bStop);
 			m_FileSettingDlg.GetClientRect(&rect);
 			m_FileSettingDlg.SetFocus();
 			break;

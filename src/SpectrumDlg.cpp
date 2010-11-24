@@ -316,7 +316,7 @@ void CSpectrumDlg::OnButtonFileOpen()
 			int n;
 			if (isOpenedAt(fileName[i],n))
 				deleteData(n);
-			LoadData(fileName[i++]);
+			if (!LoadData(fileName[i++])) return;
 		};
 
 		if (i)
@@ -332,6 +332,7 @@ void CSpectrumDlg::OnButtonFileOpen()
 
 void CSpectrumDlg::OnButtonFileSave() 
 {
+	if (0==listData.size()) return;
 	UpdateData();
 	RawData& data = GetListItem(nActiveIndex);
 	CDataFile Data;
@@ -342,8 +343,10 @@ void CSpectrumDlg::OnButtonFileSave()
 	strPath = strPath.Left(strPath.GetLength()-strlen(ext));
 	strPath += "_AWS";
 	strPath += ext;
+	CString strExt = ext;
+	strExt.TrimLeft(".");
 	
-	CFileDialog dlg(FALSE,ext,strPath,OFN_OVERWRITEPROMPT,NULL,this->GetParent());
+	CFileDialog dlg(FALSE,strExt,strPath,OFN_OVERWRITEPROMPT,NULL,this->GetParent());
 	
 	if (dlg.DoModal()!=IDOK) return;
     strPath = dlg.GetPathName();

@@ -24,6 +24,7 @@ public:
 // Dialog Data
 	//{{AFX_DATA(CFileSettingDlg)
 	enum { IDD = IDD_DIALOG_FILE_SETTING };
+	CButton	m_btnConf;
 	CSpinButtonCtrl	m_spinExt;
 	CComboBoxEx	m_ComboComNo;
 	CListCtrl	m_ListSet;
