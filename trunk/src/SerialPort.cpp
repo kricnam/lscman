@@ -56,6 +56,10 @@ bool CSerialPort::SetCom(void)
 	if (handle == INVALID_HANDLE_VALUE)
 		return false;
 
+	//Set buffer size
+	if (!SetupComm(handle,2048,2048)) return false;
+
+	//Set baud rate, etc.
 	DCB dcb;
 	BOOL fSuccess = GetCommState(handle, &dcb);
 	
@@ -72,6 +76,7 @@ bool CSerialPort::SetCom(void)
 		m_strErr.GetErrorMsg("SetCom");
 		return false;
     }
+	
 	SetTimeOut(1000000);
 	return true;
 }
