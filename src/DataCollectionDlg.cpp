@@ -191,7 +191,7 @@ void CDataCollectionDlg::OnShowWindow(BOOL bShow, UINT nStatus)
 	
 	if (bShow && !m_strDev.IsEmpty() && !pWorking)
 	{
-		m_port.m_dcb = m_dcb;
+		m_port.m_dcb.BaudRate = m_dcb.BaudRate;
 		if (m_port.Open(m_strDev)<0)
 		{
 			AfxMessageBox(m_port.m_strErr+" for "+m_strDev);
