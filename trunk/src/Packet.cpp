@@ -102,7 +102,7 @@ void CPacket::SendAck(CSerialPort &port)
 	port.Write(strData,1);
 }
 
-void CPacket::SendCmd(CSerialPort &port)
+void CPacket::SendSCmd(CSerialPort &port)
 {
 	strData.Empty();
 	Command_Packet cmd;
@@ -111,7 +111,19 @@ void CPacket::SendCmd(CSerialPort &port)
 	cmd.endCR = 0x0D;
 	cmd.endLF = 0x0A;
 	cmd.tail = ETX;
-	port.Write((const char*)&cmd,4);
+	port.Write((const char*)&cmd,sizeof(cmd));
+}
+
+void CPacket::SendNCmd(CSerialPort &port)
+{
+	strData.Empty();
+	Command_Packet cmd;
+	cmd.head = STX;
+	cmd.type = 'N';
+	cmd.endCR = 0x0D;
+	cmd.endLF = 0x0A;
+	cmd.tail = ETX;
+	port.Write((const char*)&cmd,sizeof(cmd));
 }
 
 CString CPacket::GetData()
@@ -159,9 +171,9 @@ CString CPacket::GetDMPData()
 CString CPacket::GetSpetrumData()
 {
 	CString str;
-	if (GetPacketType()==TYPE_DATA)
+	if (GetPacketType()==TYPE_SPECTRUM)
 	{
-		str = strData.Mid(6,strData.GetLength()-9);
+		str = strData.Mid(7,strData.GetLength()-9);
 	}
 	return str;
 }

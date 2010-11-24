@@ -7,6 +7,7 @@
 #include "SerialPort.h"
 #include "Packet.h"
 #include "DataFile.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -33,8 +34,12 @@ UINT CommThreadProc( LPVOID pParam )
 					send.SendAck(UI.m_port);
 					if (UI.NeedCollect(packet.GetMYNo()))
 					{
-						send.SendCmd(UI.m_port);
+						send.SendSCmd(UI.m_port);
 						UI.SendMessage(WM_UPDATE_DATA,(WPARAM)&packet,1);						
+					}
+					else
+					{
+						send.SendNCmd(UI.m_port);
 					}
 				    break;
 				case TYPE_TITLE:
@@ -231,6 +236,7 @@ void CDataCollectionDlg::SetStatus(CPacket &packet)
 		m_strMYNo.Empty();
 		m_strStatus = "Unreceived";
 		m_strStartTime.Empty();
+		m_strFileName.Empty();
 	}
 
 	if (IsWindowVisible())	UpdateData(FALSE);
@@ -244,18 +250,14 @@ void CDataCollectionDlg::SaveData(CPacket& packet)
 	{
 		m_strMYNo = packet.GetMYNo();
 		m_strFileName.Empty();
-		for(int i=0;i<12;i++)
+
+		if (NeedCollect(m_strMYNo))
 		{
-			if (g_SetArray[i].m_strID == m_strMYNo &&
-				g_SetArray[i].m_DataCollection)
-			{
-				m_strFileName = g_SetArray[i].m_strFileName+"."+
+			int i = atoi(m_strMYNo);
+			m_strFileName = g_SetArray[i].m_strFileName+"."+
 					g_SetArray[i].m_Extension;
-				g_SetArray[i].m_Extension.Format("%.03d",
-					atoi(g_SetArray[i].m_Extension));
-				
-				break;
-			}
+			g_SetArray[i].m_Extension.Format("%.03d",
+				atoi(g_SetArray[i].m_Extension)+1);
 		}
 		UpdateData(FALSE);
 	}
@@ -278,9 +280,9 @@ void CDataCollectionDlg::OnTimer(UINT nIDEvent)
 
 bool CDataCollectionDlg::NeedCollect(CString &strMYNo)
 {
-		for(int i=0;i<12;i++)
+		for(int i=1;i<13;i++)
 		{
-			if (g_SetArray[i].m_strID == strMYNo)
+			if ((!strMYNo.IsEmpty()) && (!g_SetArray[i].m_strID.IsEmpty()) && atoi(g_SetArray[i].m_strID) == atoi(strMYNo))
 			{
 				return g_SetArray[i].m_DataCollection==TRUE;
 			}

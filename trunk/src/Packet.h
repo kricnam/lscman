@@ -149,12 +149,18 @@ typedef struct {
 
 typedef struct
 {
+	char count[6];
+	char sp;
+} Channel_Data;
+
+typedef struct
+{
 	char head;
 	char type;
 	char sp0;
 	char No[3];
 	char sp1;
-	char Data[70];
+	Channel_Data Data[10];
 	char endCR;
 	char endLF;
 	char tail;
@@ -205,7 +211,8 @@ public:
 	CString GetTitleData();
 	CString GetGroupData();
 	CString GetData();
-	void SendCmd(CSerialPort& port);
+	void SendSCmd(CSerialPort& port);
+	void SendNCmd(CSerialPort& port);
 	void SendAck(CSerialPort& port);
 	bool IsValid(void);
 	char GetPacketType(void);

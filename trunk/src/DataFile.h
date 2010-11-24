@@ -29,6 +29,13 @@ typedef struct {
 	char CR;
 	char LF;
 } Data_Line;
+
+typedef struct {
+	Channel_Data data;
+	char CR;
+	char LF;
+} Spectrum_Line;
+
 #pragma pack()
 
 class CDataFile  
