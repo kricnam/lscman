@@ -136,6 +136,7 @@ BOOL CAWSFactorDlg::OnInitDialog()
 		  editSample[j][i].Create(style,
 		  rect0,this,IDC_EDIT_SAMPLE+j*10+i);
 	      editSample[j][i].SetFont(m_stcOrg.GetFont());
+		  
 		  rect0.OffsetRect(rect.Width()+1,0);
 		  switch(i)
 		  {
@@ -150,6 +151,10 @@ BOOL CAWSFactorDlg::OnInitDialog()
 
 	  };
 	}
+
+
+	EnableItems(FALSE);
+
 	RegisterHotKey(this->m_hWnd, 0x2000, MOD_CONTROL | MOD_ALT, 'C');
 
 	return TRUE;  // return TRUE unless you set the focus to a control
@@ -168,6 +173,7 @@ LONG CAWSFactorDlg::OnHotKey(WPARAM wParam,LPARAM lParam)
 	GetParent()->SetWindowText("AWS Factor Setting");
 	m_btnSet.ShowWindow(TRUE);
 	m_btnSave.ShowWindow(TRUE);
+	EnableItems(TRUE);
     return 0;     
 }
 
@@ -196,6 +202,7 @@ void CAWSFactorDlg::OnShowWindow(BOOL bShow, UINT nStatus)
 	
 	if (bShow)
 	{
+
 		if(!m_strCurveName.IsEmpty())
 			OpenFile();
 	}
@@ -203,6 +210,7 @@ void CAWSFactorDlg::OnShowWindow(BOOL bShow, UINT nStatus)
 	{
 		m_btnSet.ShowWindow(bShow);
 		m_btnSave.ShowWindow(bShow);
+		EnableItems(FALSE);
 	}
 }
 
@@ -328,4 +336,17 @@ void CAWSFactorDlg::OpenFile(void)
 			MessageBox("Calculate coefficients fail! only sample data loaded.");
 			LoadData(set);
 		}
+}
+
+void CAWSFactorDlg::EnableItems(BOOL bEnable)
+{
+	for(int j=0;j<10;j++)
+		for(int i=0;i<4;i++)
+			editSample[j][i].SetReadOnly(!bEnable);
+	((CEdit*)GetDlgItem(IDC_EDIT_ALL))->SetReadOnly(!bEnable);
+	((CEdit*)GetDlgItem(IDC_EDIT_BLL))->SetReadOnly(!bEnable);
+	((CEdit*)GetDlgItem(IDC_EDIT_AUL))->SetReadOnly(!bEnable);
+	((CEdit*)GetDlgItem(IDC_EDIT_BUL))->SetReadOnly(!bEnable);
+	((CEdit*)GetDlgItem(IDC_EDIT_ADPM))->SetReadOnly(!bEnable);
+	((CEdit*)GetDlgItem(IDC_EDIT_BDPM))->SetReadOnly(!bEnable);
 }
