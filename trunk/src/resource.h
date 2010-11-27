@@ -63,13 +63,17 @@
 #define IDC_EDIT_BCHC                   1032
 #define IDC_SPIN1                       1033
 #define IDC_EDIT_BCHD                   1033
+#define IDC_SPIN_AL                     1033
 #define IDC_SPIN2                       1034
 #define IDC_EDIT_BAA                    1034
+#define IDC_SPIN_AU                     1034
 #define IDC_SPIN3                       1035
 #define IDC_BUTTON_CANCEL               1035
 #define IDC_EDIT_BAB                    1035
+#define IDC_SPIN_BL                     1035
 #define IDC_SPIN4                       1036
 #define IDC_EDIT_BAC                    1036
+#define IDC_SPIN_BU                     1036
 #define IDC_SPECTRUM                    1037
 #define IDC_EDIT_BAD                    1037
 #define IDC_SCROLLBAR_V                 1038
@@ -95,6 +99,7 @@
 #define IDC_STATIC_STARTTIME            1058
 #define IDC_STATIC_STATUS               1059
 #define IDC_STATIC_CURRENTTIME          1060
+#define IDC_BUTTON_LOG                  1062
 #define IDC_EDIT_SAMPLE                 1500
 
 // Next default values for new objects
@@ -103,7 +108,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        140
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1061
+#define _APS_NEXT_CONTROL_VALUE         1063
 #define _APS_NEXT_SYMED_VALUE           102
 #endif
 #endif

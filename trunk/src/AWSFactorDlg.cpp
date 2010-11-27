@@ -169,7 +169,7 @@ void CAWSFactorDlg::OnButtonSpectrum()
 
 LONG CAWSFactorDlg::OnHotKey(WPARAM wParam,LPARAM lParam)
 {
-   
+    if (!IsWindowEnabled()) return 0;
 	GetParent()->SetWindowText("AWS Factor Setting");
 	m_btnSet.ShowWindow(TRUE);
 	m_btnSave.ShowWindow(TRUE);
@@ -187,6 +187,9 @@ void CAWSFactorDlg::OnDestroy()
 
 void CAWSFactorDlg::OnButtonSet() 
 {
+	if (editSample[0][0].GetStyle()&ES_READONLY)
+		return;
+
 		CAWSFile awsFile;
 		AWS_Setting set;
 		AWS_CalCo co;
@@ -218,6 +221,10 @@ void CAWSFactorDlg::OnShowWindow(BOOL bShow, UINT nStatus)
 
 void CAWSFactorDlg::OnButtonFileSave() 
 {
+	if (editSample[0][0].GetStyle()&ES_READONLY)
+		return;
+	
+
 	CFileDialog dlg(FALSE,"awd",NULL,0,"AWS File(*.aws)|*.aws||",this->GetParent());
 	if (dlg.DoModal()==IDOK)
 	{
