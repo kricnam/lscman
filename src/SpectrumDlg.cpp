@@ -48,11 +48,12 @@ CSpectrumDlg::CSpectrumDlg(CWnd* pParent /*=NULL*/)
 	pSpectrumWnd = NULL;
 	setMF();
 	nActiveIndex = 0;
-	rgb.push_back(RGB(200,200,155));
-	rgb.push_back(RGB(255,155,255));
-	rgb.push_back(RGB(155,255,255));
-	rgb.push_back(RGB(200,255,200));
-	rgb.push_back(RGB(255,200,200));
+	rgb.push_back(RGB(200,200,100));
+	rgb.push_back(RGB(200,155,200));
+	rgb.push_back(RGB(100,200,200));
+	rgb.push_back(RGB(100,200,100));
+	rgb.push_back(RGB(200,100,100));
+	bLog = false;
 }
 
 
@@ -61,6 +62,11 @@ void CSpectrumDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CSpectrumDlg)
+	DDX_Control(pDX, IDC_BUTTON_LOG, m_btnLog);
+	DDX_Control(pDX, IDC_SPIN_BU, m_spinBU);
+	DDX_Control(pDX, IDC_SPIN_BL, m_spinBL);
+	DDX_Control(pDX, IDC_SPIN_AU, m_spinAU);
+	DDX_Control(pDX, IDC_SPIN_AL, m_spinAL);
 	DDX_Text(pDX, IDC_EDIT_AGROSS, m_strAGROSS);
 	DDV_MaxChars(pDX, m_strAGROSS, 20);
 	DDX_Text(pDX, IDC_EDIT_BGROSS, m_strBGROSS);
@@ -97,6 +103,7 @@ BEGIN_MESSAGE_MAP(CSpectrumDlg, CDialog)
 	ON_BN_CLICKED(IDC_BUTTON_SELECT, OnButtonSelect)
 	ON_BN_CLICKED(IDC_BUTTON_DELETE, OnButtonDelete)
 	ON_BN_CLICKED(IDC_BUTTON_AWS, OnButtonAws)
+	ON_BN_CLICKED(IDC_BUTTON_LOG, OnButtonLog)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -126,7 +133,10 @@ BOOL CSpectrumDlg::OnInitDialog()
 	CDialog::OnInitDialog();
 	
 	pSpectrumWnd = GetDlgItem(IDC_SPECTRUM);
-	
+	m_spinAL.SetRange(1,4000);
+	m_spinAU.SetRange(1,4000);
+	m_spinBL.SetRange(1,4000);
+	m_spinBU.SetRange(1,4000);
 	
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
@@ -175,15 +185,19 @@ void CSpectrumDlg::DrawGraph(CDC *pDC, int x, int y, int cx, int cy)
 	CRect rect = DrawAxis(pDC,x,y,cx,cy);
 	if (listData.size())
 	{
-		DrawData(pDC,rect.left,rect.top,rect.Width(),rect.Height());
+		if (bLog)
+			DrawDataLog(pDC,rect.left,rect.top,rect.Width(),rect.Height());
+		else
+			DrawData(pDC,rect.left,rect.top,rect.Width(),rect.Height());
 	}
 }
 
 CRect CSpectrumDlg::DrawAxis(CDC *pDC, int x, int y, int cx, int cy)
 {
+	if (bLog) return DrawLogAxis(pDC,x,y,cx,cy);
 	CRect rect(x,y,cx,cy);
 	pDC->FillSolidRect(&rect,RGB(250,250,150));
-	CSize size = pDC->GetTextExtent("000",3);
+	CSize size = pDC->GetTextExtent("0000",4);
 	rect.DeflateRect(size.cx,size.cy+size.cy/2);
 	pDC->FillSolidRect(&rect,RGB(0,0,0));
 
@@ -194,7 +208,7 @@ CRect CSpectrumDlg::DrawAxis(CDC *pDC, int x, int y, int cx, int cy)
 	CString title;
 	for(int i =0;i< 6;i++)
 	{
-		title.Format("%d",(5-i)*10);
+		title.Format("%2d",(5-i)*10);
 		pDC->TextOut(x+dx,rect.top - size.cy/2 +dy * i, title );
 	}
     
@@ -205,6 +219,41 @@ CRect CSpectrumDlg::DrawAxis(CDC *pDC, int x, int y, int cx, int cy)
 		size = pDC->GetTextExtent(title);
 		pDC->TextOut(rect.left + i * dx - size.cx/2, rect.bottom , title);
 	}
+	pDC->TextOut(rect.left + 4 * dx + size.cx/2, rect.bottom,"ch");
+
+	return rect;
+
+}
+
+CRect CSpectrumDlg::DrawLogAxis(CDC *pDC, int x, int y, int cx, int cy)
+{
+	CRect rect(x,y,cx,cy);
+	pDC->FillSolidRect(&rect,RGB(250,250,150));
+	CSize size = pDC->GetTextExtent("0000",4);
+	rect.DeflateRect(size.cx,size.cy+size.cy/2);
+	pDC->FillSolidRect(&rect,RGB(0,0,0));
+
+	pDC->SetTextColor(RGB(0,0,0));
+	pDC->SetBkColor(RGB(250,250,150));
+	double nLogCount = log10(50);
+	
+	int dx = size.cx/6; //space to border
+	double dy = rect.Height()/nLogCount;
+	CString title;
+	for(int i =0;i< 6;i++)
+	{
+		title.Format("%2d",(i==5)?1:(5-i)*10);
+		pDC->TextOut(x+dx,rect.bottom - dy * ((i==5)?0:log10((5-i)*10))- size.cy/2, title );
+	}
+    
+	dx = rect.Width() / 4;
+	for( i=0;i<5;i++)
+	{
+		title.Format("%d",i*1000);
+		size = pDC->GetTextExtent(title);
+		pDC->TextOut(rect.left + i * dx - size.cx/2, rect.bottom , title);
+	}
+	pDC->TextOut(rect.left + 4 * dx + size.cx/2, rect.bottom,"ch");
 
 	return rect;
 
@@ -227,6 +276,37 @@ void CSpectrumDlg::DrawData(CDC *pDC, int x,int y, int cx, int cy)
 			{
 				nx = x + j * cx/4000;
 				ny = y + cy - (*it).nSpetrum[j] * cy / 50;
+				pDC->MoveTo(nx,ny);
+				pDC->LineTo(nx,ny);
+			}
+		pDC->SelectObject(&pen);
+		pPen->DeleteObject();
+		delete pPen;
+	}
+	
+	if (old_pen) pDC->SelectObject(old_pen);
+	DrawLegend(pDC,x,y,cx,cy);
+}
+
+void CSpectrumDlg::DrawDataLog(CDC *pDC, int x,int y, int cx, int cy)
+{
+	CPen pen, *old_pen;
+	pen.CreatePen(PS_SOLID,3,RGB(0,255,0));
+	old_pen = pDC->SelectObject(&pen);
+	list<RawData>::iterator it;
+
+	double dy = cy / log(50);
+	int nx,ny;
+	for(it=listData.begin();it!=listData.end();it++)
+	{
+		CPen* pPen = new CPen;
+		pPen->CreatePen(PS_SOLID,3,(*it).rgb);
+		pDC->SelectObject(pPen);
+			for(int j=0;j<4000;j++)
+			{
+				if ((*it).nSpetrum[j]==0) continue;
+				nx = x + j * cx/4000;
+				ny = y + cy - log10((*it).nSpetrum[j]) * dy;
 				pDC->MoveTo(nx,ny);
 				pDC->LineTo(nx,ny);
 			}
@@ -548,15 +628,20 @@ void CSpectrumDlg::OnButtonAws()
 	CAWSFile awsFile;
 	AWS_Setting set;
 	AWS_CalCo co;
-	
+	UpdateData();
 	awsFile.ReadData(m_strCurveName,set);
 	if (awsFile.CalculateCoefficient(set,co))
 	{
 		double factor = Factor(atof(m_strESCR));
-		m_strAchLL.Format("%d",set.nAch_LL);
-		m_strAchUL.Format("%d", round(set.nAch_UL * factor));
-		m_strBchLL.Format("%d", round(set.nBch_LL * factor));
-		m_strBchUL.Format("%d",round(set.nBch_UL * factor));
+
+		if (m_strAchLL.IsEmpty())
+		{
+			m_strAchLL.Format("%d",set.nAch_LL);
+			m_strAchUL.Format("%d", round(set.nAch_UL * factor));
+			m_strBchLL.Format("%d", round(set.nBch_LL * factor));
+			m_strBchUL.Format("%d",round(set.nBch_UL * factor));
+		}
+		
 
 		factor = atof(m_strESCR);
 		double y,fAEff,fBEff;
@@ -570,9 +655,12 @@ void CSpectrumDlg::OnButtonAws()
 		fBEff = y;
 
 		y = co.d_BA_co[0] + factor * co.d_BA_co[1] + pow(factor,2) * co.d_BA_co[2] + pow(factor,3)*co.d_BA_co[3];
-
-		Z = ChanelSum(atoi(m_strAchLL),atoi(m_strAchUL))/m_nTime;
-		z = ChanelSum(atoi(m_strBchLL),atoi(m_strBchUL))/m_nTime;
+        DWORD sum = ChanelSum(atoi(m_strAchLL),atoi(m_strAchUL));
+		m_strAGROSS.Format("%d",sum);
+		Z = sum/m_nTime;
+		sum = ChanelSum(atoi(m_strBchLL),atoi(m_strBchUL));
+		m_strBGROSS.Format("%d",sum);
+		z = sum/m_nTime;
 		
 		Z = (Z-(1/y)*z)/fAEff;	
 		z = z/fBEff;
@@ -599,10 +687,22 @@ void CSpectrumDlg::formatString(CString &str,int dx, int cx)
 	pDX = dx / str.GetLength();
 	int n = cx / pDX;
 	CString strF;
-	strF = str.SpanExcluding(".");
-	strF = strF.Left(n-5);
-	strF += ".";
-	strF += str.Right(4);
+	strF = str;
+	LPCTSTR pChar = strF;
+	for(int i=0;i<n-5;i++)
+	{
+		pChar = CharNext(pChar);
+		if ((pChar - (LPCTSTR)strF)> (n-5))
+		{
+			pChar = CharPrev(strF,pChar);
+			break;
+		}
+		if ((pChar - (LPCTSTR)strF)== (n-5))
+			break;
+	}
+	strF = strF.Left(pChar-strF);
+	strF += "~";
+	strF += str.Right(n - strF.GetLength());
 	str = strF;
 }
 
@@ -658,19 +758,35 @@ bool CSpectrumDlg::isOpenedAt(LPCTSTR szPath,int& n)
 	return false;
 }
 
-double CSpectrumDlg::ChanelSum(int nLL, int nLU)
+DWORD CSpectrumDlg::ChanelSum(int nLL, int nLU)
 {
 	RawData& data = GetListItem(nActiveIndex);
 
-	if (nLL < 0) nLL = 0;
+	if (nLL < 0) nLL = 1;
 	if (nLU > 3999) nLU = 3999;
 
-	double sum = 0;
+	int sum = 0;
 
-	for(int i = nLL;i<nLU;i++)
+	for(int i = nLL-1;i<=nLU;i++)
 	{
 		sum+=data.nSpetrum[i];
 	}
 
 	return sum;
+}
+
+void CSpectrumDlg::OnButtonLog() 
+{
+	if (bLog)
+	{
+		bLog = false;
+		m_btnLog.SetWindowText("&LOG");
+	}
+	else
+	{
+		bLog = true;
+		m_btnLog.SetWindowText("&LIN");
+	}
+	Invalidate();
+	UpdateWindow();
 }

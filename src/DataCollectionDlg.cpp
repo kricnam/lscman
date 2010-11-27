@@ -194,13 +194,16 @@ void CDataCollectionDlg::OnShowWindow(BOOL bShow, UINT nStatus)
 		m_port.m_dcb.BaudRate = m_dcb.BaudRate;
 		if (m_port.Open(m_strDev)<0)
 		{
-			AfxMessageBox(m_port.m_strErr+" for "+m_strDev);
+			MessageBox("Failed to open COM port " +m_strDev + "\n"+
+				m_port.m_strErr + "Please check you COM port and settings in File Setting.",
+				"Error",MB_ICONERROR);
+			m_strDev.Empty();
 			return;
 		}
 		pWorking = AfxBeginThread(CommThreadProc,this);
 	}
 
-	if (bShow)
+	if (bShow && pWorking)
 	{
 		SetTimer(1,1000,0);
 	}

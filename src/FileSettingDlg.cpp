@@ -135,8 +135,11 @@ void CFileSettingDlg::OnButtonOpenFiledia()
 
 void CFileSettingDlg::InitListCtrl()
 {
-	int nWidth = 30;
-	
+	int nWidth = 35;
+	CRect rect;
+	m_ListSet.GetClientRect(&rect);
+	if (rect.Width()) nWidth=rect.Width()/17;
+
 	LV_COLUMN lvcColumn;
 	lvcColumn.mask = LVCF_FMT | LVCF_SUBITEM | LVCF_TEXT | LVCF_WIDTH;
 	lvcColumn.fmt  = LVCFMT_LEFT;
@@ -149,19 +152,19 @@ void CFileSettingDlg::InitListCtrl()
 	lvcColumn.fmt  = LVCFMT_CENTER;
 	lvcColumn.pszText	= "Data collection";
 	lvcColumn.iSubItem	= 1;
-	lvcColumn.cx		= 4*nWidth;
+	lvcColumn.cx		= 3*nWidth;
 	m_ListSet.InsertColumn(1, &lvcColumn );
 	
 	lvcColumn.fmt  = LVCFMT_LEFT;
 	lvcColumn.pszText	= "File Name";
-	lvcColumn.iSubItem	= 2;
-	lvcColumn.cx		= 11*nWidth;
+	lvcColumn.iSubItem	= 4;
+	lvcColumn.cx		= 10*nWidth;
 	m_ListSet.InsertColumn(2, &lvcColumn );
 	
 	lvcColumn.fmt  = LVCFMT_CENTER;
 	lvcColumn.pszText	= "Extension";
 	lvcColumn.iSubItem	= 2;
-	lvcColumn.cx		= 80;
+	lvcColumn.cx		= 2*nWidth;
 	m_ListSet.InsertColumn(3, &lvcColumn );
 	
 	m_ListSet.SetExtendedStyle(LVS_EX_FULLROWSELECT|LVS_EX_GRIDLINES);
@@ -244,7 +247,7 @@ void CFileSettingDlg::OnButtonDataCollection()
 	if (m_strDev.IsEmpty())
 		AfxMessageBox("COM port not selected, Please select one, \nor the data can not be collected");
 
-	::PostMessage(this->GetParent()->m_hWnd,WM_OPEN_DLG,OPEN_DATA_COLLECTION,0);
+	::PostMessage(this->GetParent()->m_hWnd,WM_OPEN_DLG,OPEN_DATA_COLLECTION,OPEN_FILE_SETTING);
 }
 
 void CFileSettingDlg::InitComNo()

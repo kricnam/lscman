@@ -38,6 +38,11 @@ public:
 // Dialog Data
 	//{{AFX_DATA(CSpectrumDlg)
 	enum { IDD = IDD_DIALOG_SPECTRUM };
+	CButton	m_btnLog;
+	CSpinButtonCtrl	m_spinBU;
+	CSpinButtonCtrl	m_spinBL;
+	CSpinButtonCtrl	m_spinAU;
+	CSpinButtonCtrl	m_spinAL;
 	CString	m_strAGROSS;
 	CString	m_strBGROSS;
 	CString	m_strESCR;
@@ -65,7 +70,8 @@ public:
 
 // Implementation
 protected:
-	double ChanelSum(int nLL,int nLU);
+	bool bLog;
+	DWORD ChanelSum(int nLL,int nLU);
 	bool isOpenedAt(LPCTSTR szPath,int& n);
 	void setActiveData(RawData& data);
 	void deleteData(int n);
@@ -79,7 +85,9 @@ protected:
 	
 	//int nSpectrunData[5][4000];
 	void DrawData(CDC *pDC,int x,int y, int cx,int cy);
+	void DrawDataLog(CDC *pDC,int x,int y, int cx,int cy);
 	CRect DrawAxis(CDC *pDC, int x, int y, int cx, int cy);
+	CRect DrawLogAxis(CDC *pDC, int x, int y, int cx, int cy);
 	void DrawGraph(CDC* pDC, int x, int y, int cx, int cy);
 	void DrawLegend(CDC* pDC, int x, int y, int cx, int cy);
 	CWnd * pSpectrumWnd;
@@ -96,6 +104,7 @@ protected:
 	afx_msg void OnButtonSelect();
 	afx_msg void OnButtonDelete();
 	afx_msg void OnButtonAws();
+	afx_msg void OnButtonLog();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 

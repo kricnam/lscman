@@ -73,6 +73,10 @@ BOOL CLSCDlg::OnInitDialog()
 	m_SpectrumDlg.Create(IDD_DIALOG_SPECTRUM,this);
 	m_SpectrumDlg.ShowWindow(SW_HIDE);
 
+	m_DataCollectionDlg.EnableWindow(FALSE);
+	m_AWSFactorDlg.EnableWindow(FALSE);
+	m_SpectrumDlg.EnableWindow(FALSE);
+
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
@@ -137,6 +141,11 @@ void CLSCDlg::OnOpenDlg(WPARAM wParam, LPARAM lParam)
 	m_DataCollectionDlg.ShowWindow(SW_HIDE);
 	m_AWSFactorDlg.ShowWindow(SW_HIDE);
 	m_SpectrumDlg.ShowWindow(SW_HIDE);
+	m_FileSettingDlg.EnableWindow(FALSE);
+	m_DataCollectionDlg.EnableWindow(FALSE);
+	m_AWSFactorDlg.EnableWindow(FALSE);
+	m_SpectrumDlg.EnableWindow(FALSE);
+	
 	
 	CRect rect;
 	switch (wParam)
@@ -146,14 +155,17 @@ void CLSCDlg::OnOpenDlg(WPARAM wParam, LPARAM lParam)
 			this->SetWindowText("File Setting");
 			m_FileSettingDlg.m_btnConf.EnableWindow(m_DataCollectionDlg.m_bStop);
 			m_FileSettingDlg.GetClientRect(&rect);
+			m_FileSettingDlg.EnableWindow();
 			m_FileSettingDlg.SetFocus();
 			break;
 		case OPEN_DATA_COLLECTION:
 			m_DataCollectionDlg.m_dcb.BaudRate = m_FileSettingDlg.m_dcbConf.BaudRate;
-			m_DataCollectionDlg.m_strDev = m_FileSettingDlg.m_strDev;
+			if (lParam == OPEN_FILE_SETTING)
+				m_DataCollectionDlg.m_strDev = m_FileSettingDlg.m_strDev;
 			m_DataCollectionDlg.ShowWindow(SW_SHOW);
 			this->SetWindowText("Data Collection");
 			m_DataCollectionDlg.GetClientRect(&rect);
+			m_DataCollectionDlg.EnableWindow();
 			m_DataCollectionDlg.SetFocus();
 			break;
 		case OPEN_AWS_FACTOR:
@@ -161,6 +173,7 @@ void CLSCDlg::OnOpenDlg(WPARAM wParam, LPARAM lParam)
 			this->SetWindowText("AWS Factor");
 			m_AWSFactorDlg.GetClientRect(&rect);
 			m_AWSFactorDlg.ShowWindow(SW_SHOW);
+			m_AWSFactorDlg.EnableWindow();
 			m_AWSFactorDlg.SetFocus();
 			break;
 		case OPEN_SPECTRUM:
@@ -168,6 +181,7 @@ void CLSCDlg::OnOpenDlg(WPARAM wParam, LPARAM lParam)
 			m_SpectrumDlg.ShowWindow(SW_SHOW);
 			m_SpectrumDlg.UpdateData(FALSE);
 			this->SetWindowText("Spectrum");
+			m_SpectrumDlg.EnableWindow();
 			m_SpectrumDlg.SetFocus();
 			m_SpectrumDlg.GetClientRect(&rect);
 			break;
