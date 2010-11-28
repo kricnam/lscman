@@ -104,6 +104,7 @@ BEGIN_MESSAGE_MAP(CSpectrumDlg, CDialog)
 	ON_BN_CLICKED(IDC_BUTTON_DELETE, OnButtonDelete)
 	ON_BN_CLICKED(IDC_BUTTON_AWS, OnButtonAws)
 	ON_BN_CLICKED(IDC_BUTTON_LOG, OnButtonLog)
+	ON_BN_CLICKED(IDC_BUTTON_PRINT, OnButtonPrint)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -195,21 +196,27 @@ void CSpectrumDlg::DrawGraph(CDC *pDC, int x, int y, int cx, int cy)
 CRect CSpectrumDlg::DrawAxis(CDC *pDC, int x, int y, int cx, int cy)
 {
 	if (bLog) return DrawLogAxis(pDC,x,y,cx,cy);
+
+	int nScaleMax = GetScaleMax();
+	int nScaleCount = AxisYScaleCount(nScaleMax,0);
+	CString title;
 	CRect rect(x,y,cx,cy);
+	title.Format("%d",nScaleMax*100);
 	pDC->FillSolidRect(&rect,RGB(250,250,150));
-	CSize size = pDC->GetTextExtent("0000",4);
+	CSize size = pDC->GetTextExtent(title);
 	rect.DeflateRect(size.cx,size.cy+size.cy/2);
 	pDC->FillSolidRect(&rect,RGB(0,0,0));
 
 	pDC->SetTextColor(RGB(0,0,0));
 	pDC->SetBkColor(RGB(250,250,150));
 	int dx = size.cx/6; //space to border
-	int dy = rect.Height()/5;
-	CString title;
-	for(int i =0;i< 6;i++)
+	int dy = rect.Height()/nScaleCount;
+	
+	
+	for(int i =0;i <= nScaleCount ;i++)
 	{
-		title.Format("%2d",(5-i)*10);
-		pDC->TextOut(x+dx,rect.top - size.cy/2 +dy * i, title );
+		title.Format("%2d",(nScaleCount-i)*(nScaleMax/nScaleCount));
+		pDC->TextOut(x+dx,rect.top - size.cy/2 + dy * i, title );
 	}
     
 	dx = rect.Width() / 4;
@@ -227,23 +234,40 @@ CRect CSpectrumDlg::DrawAxis(CDC *pDC, int x, int y, int cx, int cy)
 
 CRect CSpectrumDlg::DrawLogAxis(CDC *pDC, int x, int y, int cx, int cy)
 {
+	CString title;
+	int nScaleMax = GetScaleMax();
+	int nScaleCount;
+	if (nScaleMax<100)
+		nScaleCount = 5;
+	else
+		nScaleCount = AxisYScaleCount(log10(nScaleMax),(double)0);
+	title.Format("%d",nScaleMax*100);
 	CRect rect(x,y,cx,cy);
 	pDC->FillSolidRect(&rect,RGB(250,250,150));
-	CSize size = pDC->GetTextExtent("0000",4);
+	CSize size = pDC->GetTextExtent(title);
 	rect.DeflateRect(size.cx,size.cy+size.cy/2);
 	pDC->FillSolidRect(&rect,RGB(0,0,0));
 
 	pDC->SetTextColor(RGB(0,0,0));
 	pDC->SetBkColor(RGB(250,250,150));
-	double nLogCount = log10(50);
+	
+	double nLogCount = log10(nScaleMax);
 	
 	int dx = size.cx/6; //space to border
 	double dy = rect.Height()/nLogCount;
-	CString title;
-	for(int i =0;i< 6;i++)
+	int nScale;
+	for(int i =0;i<nScaleCount;i++)
 	{
-		title.Format("%2d",(i==5)?1:(5-i)*10);
-		pDC->TextOut(x+dx,rect.bottom - dy * ((i==5)?0:log10((5-i)*10))- size.cy/2, title );
+		if (nScaleMax < 100)
+		{
+			nScale = (i==nScaleCount)?1:(nScaleCount-i)*(nScaleMax/nScaleCount);
+		}
+		else
+		{
+			nScale = (int)pow(10,(nScaleCount-1-i));
+		}
+		title.Format("%d",nScale);
+		pDC->TextOut(x+dx,rect.bottom - dy * log10(nScale) - size.cy/2, title );
 	}
     
 	dx = rect.Width() / 4;
@@ -267,6 +291,7 @@ void CSpectrumDlg::DrawData(CDC *pDC, int x,int y, int cx, int cy)
 	list<RawData>::iterator it;
 
 	int nx,ny;
+	double dy = (double)cy / GetScaleMax();
 	for(it=listData.begin();it!=listData.end();it++)
 	{
 		CPen* pPen = new CPen;
@@ -275,7 +300,7 @@ void CSpectrumDlg::DrawData(CDC *pDC, int x,int y, int cx, int cy)
 			for(int j=0;j<4000;j++)
 			{
 				nx = x + j * cx/4000;
-				ny = y + cy - (*it).nSpetrum[j] * cy / 50;
+				ny = y + cy - round((*it).nSpetrum[j] * dy);
 				pDC->MoveTo(nx,ny);
 				pDC->LineTo(nx,ny);
 			}
@@ -295,7 +320,7 @@ void CSpectrumDlg::DrawDataLog(CDC *pDC, int x,int y, int cx, int cy)
 	old_pen = pDC->SelectObject(&pen);
 	list<RawData>::iterator it;
 
-	double dy = cy / log(50);
+	double dy = cy / log10(GetScaleMax());
 	int nx,ny;
 	for(it=listData.begin();it!=listData.end();it++)
 	{
@@ -557,8 +582,9 @@ bool CSpectrumDlg::LoadData(LPCTSTR szPath)
 			rawData.strName = szName;
 			rawData.strName+= ext;
 			rawData.strPath = szPath;
+			memset(rawData.nSpetrum,0,4000);
 			int n = data.GetSpectrumData(rawData.nSpetrum,4000); 
-
+			//TODO implement the load process by CDataFile Class
 			if (n<4000)
 			{
 				strMsg.Format("Load %d channel data, maybe not correct file format",n);
@@ -789,4 +815,83 @@ void CSpectrumDlg::OnButtonLog()
 	}
 	Invalidate();
 	UpdateWindow();
+}
+
+int CSpectrumDlg::GetMaxCount(void)
+{
+	list<RawData>::iterator it;
+	int i=0;
+	int nMax = 0;
+	for(it=listData.begin();it!=listData.end();it++)
+	{
+		for(i=0;i<4000;i++)
+			nMax = max((*it).nSpetrum[i],nMax);
+	}
+
+	if (nMax < 50) nMax = 50;
+	return nMax;
+
+}
+
+int CSpectrumDlg::GetScaleMax()
+{
+   int nScaleMax = GetMaxCount();
+
+   if (nScaleMax>50)
+	{
+		//make the Scale 100 times
+		nScaleMax = ((nScaleMax/100) + ((nScaleMax%100)?1:0))*100;
+	}
+   return nScaleMax;
+}
+
+int CSpectrumDlg::AxisYScaleCount(int nMax, int nMin)
+{
+	int count = nMax - nMin;
+	
+	double div = pow(10, floor(log10(count)-1));
+	while (count>10)
+	{
+		count =(nMax-nMin)/div;
+		if (count > 10) div+=div;
+	};
+	if (count * div < 100)
+	{
+		div =10;
+		count = (nMax - nMin)/div;
+	}
+	if (count==0)
+	{
+		count=1;
+	}
+	return count;
+}
+
+int CSpectrumDlg::AxisYScaleCount(double nMax, double nMin)
+{
+	int count = floor(nMax) - ceil(nMin)+1;
+	
+	return count;
+}
+
+void CSpectrumDlg::OnButtonPrint() 
+{
+	CDC dc;
+	CPrintDialog printDlg(FALSE);
+	if (printDlg.DoModal() != IDOK)
+		return;
+	
+	dc.Attach(printDlg.GetPrinterDC());
+	
+	//绑定一个打印机DC到CDC
+	
+	dc.m_bPrinting=TRUE;
+	
+	DOCINFO di; //初始化打印机的DOCINFO
+	memset(&di,0,sizeof (DOCINFO));
+	di.cbSize=sizeof (DOCINFO);
+	
+	BOOL bPrintingOK=dc.StartDoc(&di); //开始一个打印任务
+	
+
 }
