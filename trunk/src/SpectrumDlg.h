@@ -21,7 +21,6 @@ typedef struct
 	CString strBEFF;
 	CString strPath;
 	COLORREF rgb;
-
 } RawData;
 
 /////////////////////////////////////////////////////////////////////////////
@@ -70,6 +69,10 @@ public:
 
 // Implementation
 protected:
+	int AxisYScaleCount(int nMax,int nMin);
+	int AxisYScaleCount(double nMax,double nMin);
+	int GetScaleMax(void);
+	int GetMaxCount(void);
 	bool bLog;
 	DWORD ChanelSum(int nLL,int nLU);
 	bool isOpenedAt(LPCTSTR szPath,int& n);
@@ -105,6 +108,7 @@ protected:
 	afx_msg void OnButtonDelete();
 	afx_msg void OnButtonAws();
 	afx_msg void OnButtonLog();
+	afx_msg void OnButtonPrint();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
