@@ -32,6 +32,7 @@ class CSpectrumDlg : public CDialog
 {
 // Construction
 public:
+	void GetCurrentFileName(CString& str);
 	CSpectrumDlg(CWnd* pParent = NULL);   // standard constructor
 
 // Dialog Data
@@ -69,6 +70,8 @@ public:
 
 // Implementation
 protected:
+	void DrawPage(CDC& dc,int x,int y,int cx,int cy);
+	void DrawGroupCondition(CDC& dc,int x,int y,int cx,int cy);
 	int AxisYScaleCount(int nMax,int nMin);
 	int AxisYScaleCount(double nMax,double nMin);
 	int GetScaleMax(void);

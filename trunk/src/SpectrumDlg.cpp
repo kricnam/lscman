@@ -183,6 +183,7 @@ HBRUSH CSpectrumDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 
 void CSpectrumDlg::DrawGraph(CDC *pDC, int x, int y, int cx, int cy)
 {
+	pDC->SetBkMode(TRANSPARENT);
 	CRect rect = DrawAxis(pDC,x,y,cx,cy);
 	if (listData.size())
 	{
@@ -200,7 +201,7 @@ CRect CSpectrumDlg::DrawAxis(CDC *pDC, int x, int y, int cx, int cy)
 	int nScaleMax = GetScaleMax();
 	int nScaleCount = AxisYScaleCount(nScaleMax,0);
 	CString title;
-	CRect rect(x,y,cx,cy);
+	CRect rect(x,y,x+cx,y+cy);
 	title.Format("%d",nScaleMax*100);
 	pDC->FillSolidRect(&rect,RGB(250,250,150));
 	CSize size = pDC->GetTextExtent(title);
@@ -242,7 +243,7 @@ CRect CSpectrumDlg::DrawLogAxis(CDC *pDC, int x, int y, int cx, int cy)
 	else
 		nScaleCount = AxisYScaleCount(log10(nScaleMax),(double)0);
 	title.Format("%d",nScaleMax*100);
-	CRect rect(x,y,cx,cy);
+	CRect rect(x,y,x+cx,x+cy);
 	pDC->FillSolidRect(&rect,RGB(250,250,150));
 	CSize size = pDC->GetTextExtent(title);
 	rect.DeflateRect(size.cx,size.cy+size.cy/2);
@@ -346,6 +347,7 @@ void CSpectrumDlg::DrawDataLog(CDC *pDC, int x,int y, int cx, int cy)
 
 void CSpectrumDlg::DrawLegend(CDC *pDC, int x,int y, int cx, int cy)
 {
+	if (pDC->IsPrinting()) return;
 	int nx,ny;
 	int spaceX,spaceY;
 	spaceX = pDC->GetTextExtent("M").cx;
@@ -882,16 +884,128 @@ void CSpectrumDlg::OnButtonPrint()
 		return;
 	
 	dc.Attach(printDlg.GetPrinterDC());
-	
-	//绑定一个打印机DC到CDC
-	
 	dc.m_bPrinting=TRUE;
 	
-	DOCINFO di; //初始化打印机的DOCINFO
+	DOCINFO di; 
 	memset(&di,0,sizeof (DOCINFO));
 	di.cbSize=sizeof (DOCINFO);
 	
 	BOOL bPrintingOK=dc.StartDoc(&di); //开始一个打印任务
+	CPrintInfo Info;
+	
+	Info.m_rectDraw.SetRect(10,10,dc.GetDeviceCaps(HORZRES)-20,dc.GetDeviceCaps(VERTRES)-20);
+	Info.SetMinPage(1);
+	Info.SetMaxPage(1);
 	
 
+	dc.StartPage(); //开始一个新的打印页
+	Info.m_nCurPage=1;
+	
+	DrawPage(dc,0,0,Info.m_rectDraw.Width(),Info.m_rectDraw.Height());
+		
+	bPrintingOK=(dc.EndPage() > 0); //打印页结束
+	
+	if (bPrintingOK)
+		dc.EndDoc(); //一个打印任务结束
+	else
+		dc.AbortDoc(); //终止打印任务
+	
+	dc.Detach(); //释放打印机DC
+
+}
+
+void CSpectrumDlg::DrawGroupCondition(CDC &dc, int x, int y, int cx, int cy)
+{
+
+}
+
+void CSpectrumDlg::DrawPage(CDC &dc, int x, int y, int cx, int cy)
+{
+	int nCurrentY = y;
+	dc.TextOut(x,nCurrentY,"<Data>");
+	CSize size = dc.GetTextExtent("<Data>");
+	CString strText;
+	CString strTmp;
+	GetCurrentFileName(strTmp);
+	strText.Format("File Name: %s\n",strTmp);
+
+	nCurrentY+=size.cy;
+	dc.TextOut(x,nCurrentY,strText);
+	size = dc.GetTextExtent(strText);
+    nCurrentY+=size.cy;
+	dc.TextOut(x,nCurrentY,"Group condition");
+	size = dc.GetTextExtent(strText);
+	nCurrentY+=size.cy;
+	int dy=10;
+	int dx=size.cy/3;
+	int nY=nCurrentY;
+	for(int i = 0;i<5;i++)
+	{
+			dc.MoveTo(x,nY);
+			dc.LineTo(x+cx,nY);
+			if (i>0)
+				nY += 2*size.cy+dy;
+			else
+				nY += size.cy+dy;
+	}
+    nY-=2*size.cy+dy;
+	
+	for(i = 0;i<7;i++)
+	{
+		if (i > 3 && i !=6 )
+			dc.MoveTo(x+i*cx/6,nCurrentY+size.cy+dy);
+		else
+			dc.MoveTo(x+i*cx/6,nCurrentY);
+		dc.LineTo(x+i*cx/6,nY);
+	}
+	dc.SetBkMode(TRANSPARENT);
+	dc.TextOut(x+dx,nCurrentY+dy/2,"MY No.");
+	dc.TextOut(x+2*cx/6+dx,nCurrentY+dy/2,"Comment");
+	dc.TextOut(x+dx,nCurrentY+size.cy+dy + dy/2,"Correction");
+	dc.TextOut(x+dx,nCurrentY+2*size.cy+dy + dy/2,"method");
+	dc.TextOut(x+2*cx/6+dx,nCurrentY+size.cy+dy+dy/2,"Data");
+	dc.TextOut(x+4*cx/6+dx,nCurrentY+size.cy+dy+dy/2,"Label");
+	dc.TextOut(x+dx,nCurrentY+3*size.cy+2*dy+dy/2,"Repeat");
+	dc.TextOut(x+2*cx/6+dx,nCurrentY+3*size.cy+2*dy+dy/2,"Isotope");
+	dc.TextOut(x+4*cx/6+dx,nCurrentY+3*size.cy+2*dy+dy/2,"Date/Time");
+	dc.TextOut(x+dx,nCurrentY+5*size.cy+3*dy+dy/2,"SN");
+	dc.TextOut(x+2*cx/6+dx,nCurrentY+5*size.cy+3*dy+dy/2,"RN");
+	dc.TextOut(x+4*cx/6+dx,nCurrentY+5*size.cy+3*dy+dy/2,"Measurement");
+	dc.TextOut(x+4*cx/6+dx,nCurrentY+6*size.cy+3*dy+dy/2,"time");
+
+	CDataFile data;
+	if (!strTmp.IsEmpty())
+	{
+		data.Open(strTmp);
+		if (data.Load())
+		{
+			Group_Line group;
+			data.GetGroup(group);
+	dc.TextOut(x+cx/6+dx,nCurrentY+dy/2,group.group.Group,sizeof(group.group.Group));
+	dc.TextOut(x+3*cx/6+dx,nCurrentY+dy/2,group.group.Comment,sizeof(group.group.Comment));
+	dc.TextOut(x+cx/6+dx,nCurrentY+size.cy+dy + dy/2,group.group.Method,sizeof(group.group.Method));
+	dc.TextOut(x+3*cx/6+dx,nCurrentY+size.cy+dy+dy/2,group.group.Data,sizeof(group.group.Data));
+	
+		}
+	}
+
+	nCurrentY+=nY;
+
+
+	DrawGraph(&dc,0,nCurrentY,cx,cy/3);
+}
+
+void CSpectrumDlg::GetCurrentFileName(CString &str)
+{
+	str.Empty();
+	list<RawData>::iterator it;
+	int i=0;
+	for(it=listData.begin();it!=listData.end();it++)
+	{
+		if(i++==nActiveIndex) 
+		{
+			str = (*it).strPath;
+			return;
+		}
+	}
 }
