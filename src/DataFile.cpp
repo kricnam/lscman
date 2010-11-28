@@ -359,3 +359,9 @@ void CDataFile::SetDPM(CString &strA, CString &strB)
 	str.Format("% 9.2f",i);
 	memcpy(data.data.B_DPM,str,sizeof(data.data.B_DPM));
 }
+
+bool CDataFile::GetGroup(Group_Line &group)
+{
+	group=this->group;
+	return true;
+}

@@ -41,6 +41,7 @@ typedef struct {
 class CDataFile  
 {
 public:
+	bool GetGroup(Group_Line& group);
 	void SetDPM(CString& strA,CString& strB);
 	void SetEff(CString& strA, CString& strB);
 	void GetDataLine(Data_Line& data);
