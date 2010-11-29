@@ -901,7 +901,7 @@ void CSpectrumDlg::OnButtonPrint()
 	dc.StartPage(); //开始一个新的打印页
 	Info.m_nCurPage=1;
 	
-	DrawPage(dc,0,0,Info.m_rectDraw.Width(),Info.m_rectDraw.Height());
+	DrawPage(dc,10,10,Info.m_rectDraw.Width(),Info.m_rectDraw.Height());
 		
 	bPrintingOK=(dc.EndPage() > 0); //打印页结束
 	
@@ -993,7 +993,7 @@ void CSpectrumDlg::DrawPage(CDC &dc, int x, int y, int cx, int cy)
 			dc.TextOut(x+3*cx/6+dx,nCurrentY+3*size.cy+2*dy+dy/2,group.group.ISOTOPE,sizeof(group.group.ISOTOPE));
 			dc.TextOut(x+5*cx/6+dx,nCurrentY+3*size.cy+2*dy+dy/2,group.group.Date,sizeof(group.group.Date));
 			dc.TextOut(x+5*cx/6+dx,nCurrentY+4*size.cy+2*dy+dy/2,group.group.Time,sizeof(group.group.Time));
-			dc.TextOut(x+cx+dx,nCurrentY+5*size.cy+3*dy+dy/2,dline.data.SN,sizeof(dline.data.SN));
+			dc.TextOut(x+cx/6+dx,nCurrentY+5*size.cy+3*dy+dy/2,dline.data.SN,sizeof(dline.data.SN));
 			dc.TextOut(x+3*cx/6+dx,nCurrentY+5*size.cy+3*dy+dy/2,dline.data.RN,sizeof(dline.data.RN));
 			dc.TextOut(x+5*cx/6+dx,nCurrentY+5*size.cy+3*dy+dy/2,dline.data.HOUR_MINUTE,sizeof(dline.data.HOUR_MINUTE));
 			
@@ -1001,9 +1001,11 @@ void CSpectrumDlg::DrawPage(CDC &dc, int x, int y, int cx, int cy)
 	}
 
 	nCurrentY+=nY;
-
-
 	DrawGraph(&dc,0,nCurrentY,cx,cy/3);
+
+	nCurrentY+=cy/3;
+
+	
 }
 
 void CSpectrumDlg::GetCurrentFileName(CString &str)
@@ -1019,4 +1021,37 @@ void CSpectrumDlg::GetCurrentFileName(CString &str)
 			return;
 		}
 	}
+}
+
+void CSpectrumDlg::DrawTable(CDC& dc, int x, int y,int cx,int cy,int row,int column)
+{
+	int ndx,ndy;
+	if (!row || !column) return;
+	ndx = cx / column;
+	ndy = cy / row;
+	for(int i =0; i<=row;i++)
+	{
+		dc.MoveTo(x,y+i*ndy);
+		dc.LineTo(x+cx,y+i*ndy);
+	}
+
+	for(i=0;i<=column;i++)
+	{
+		dc.MoveTo(x+i*ndx,y);
+		dc.LineTo(x+i*ndx,y+cy);
+	}
+}
+
+void CSpectrumDlg::DrawTableText(CDC& dc, int x, int y,int cx,int cy,int dx,int dy,int row,int column,CString str)
+{
+	if (row*dy > cx || column*dx>cy) return;
+	CSize size = dc.GetTextExtent(str);
+	dc.TextOut(x+(column-1)*dx,y+(row-1)*dy+(dy- size.cy)/2,str);
+}
+
+void CSpectrumDlg::DrawTableTextRight(CDC& dc, int x, int y,int cx,int cy,int dx,int dy,int row,int column,CString str)
+{
+	if (row*dy > cx || column*dx>cy) return;
+	CSize size = dc.GetTextExtent(str);
+	dc.TextOut(x+(column-1)*dx + (dx-size.cx), y+(row-1)*dy+(dy- size.cy)/2,str);
 }
