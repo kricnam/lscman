@@ -96,9 +96,9 @@ protected:
 	CRect DrawLogAxis(CDC *pDC, int x, int y, int cx, int cy);
 	void DrawGraph(CDC* pDC, int x, int y, int cx, int cy);
 	void DrawLegend(CDC* pDC, int x, int y, int cx, int cy);
-	void DrawTableText(CDC& dc, int x, int y,int cx,int cy,int dx,int dy,int row,int column,CString str);
-	void DrawTableTextRight(CDC& dc, int x, int y,int cx,int cy,int dx,int dy,int row,int column,CString str);
-	void DrawTable(CDC& dc, int x, int y,int cx,int cy,int row,int column);
+	void DrawTableText(CDC& dc, int x, int y,int dx,int dy,int row,int column,CString str);
+	void DrawTableTextRight(CDC& dc, int x, int y,int dx,int dy,int row,int column,CString str);
+	void DrawTable(CDC& dc, int x, int y,int dx,int dy,int row,int column);
 	CWnd * pSpectrumWnd;
 
 	// Generated message map functions
