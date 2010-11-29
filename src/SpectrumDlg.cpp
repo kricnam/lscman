@@ -1001,11 +1001,55 @@ void CSpectrumDlg::DrawPage(CDC &dc, int x, int y, int cx, int cy)
 	}
 
 	nCurrentY+=nY;
-	DrawGraph(&dc,0,nCurrentY,cx,cy/3);
+	dc.TextOut(x,nCurrentY,"Data");
+	nCurrentY+=size.cy;
+	dc.TextOut(x,nCurrentY,"Spectrum");
+    nCurrentY+=size.cy;
+	DrawGraph(&dc,0,nCurrentY,cx,(cy/5)*2);
 
-	nCurrentY+=cy/3;
+	nCurrentY+=(cy/5)*2+size.cy;
 
+	DrawTable(dc,x,nCurrentY,cx/8,size.cy+dy,1,1);
+	DrawTableText(dc,x,nCurrentY,cx/8,size.cy+dy,1,1,"AWS curve");
+	DrawTable(dc,x+cx/8,nCurrentY,(cx/8)*3,size.cy+dy,1,1);
+	DrawTableText(dc,x+cx/8,nCurrentY,(cx/8)*3,size.cy+dy,1,1,m_strCurveName);
+	DrawTable(dc,x+(cx/8)*3+cx/8,nCurrentY,cx/8,size.cy+dy,1,4);
+	DrawTableText(dc,x+(cx/8)*3+cx/8,nCurrentY,cx/8,size.cy+dy,1,1,"ESCR");
+	DrawTableText(dc,x+(cx/8)*3+cx/8,nCurrentY,cx/8,size.cy+dy,1,2,m_strESCR);
+	DrawTableText(dc,x+(cx/8)*3+cx/8,nCurrentY,cx/8,size.cy+dy,1,3,"SCCR");
+	DrawTableText(dc,x+(cx/8)*3+cx/8,nCurrentY,cx/8,size.cy+dy,1,4,m_strSCCR);
+
+	nCurrentY+=2*(size.cy+dy);
+
+	size = dc.GetTextExtent("Window-A  ");
+	int nCurX = x;
+	DrawTable(dc,nCurX,nCurrentY,size.cx,size.cy+dy,3,1);
+	DrawTableText(dc,nCurX,nCurrentY,size.cx,size.cy+dy,2,1,"Window-A");
+	DrawTableText(dc,nCurX,nCurrentY,size.cx,size.cy+dy,3,1,"Window-B");
+	nCurX+=size.cx;
+	size = dc.GetTextExtent("GROSS(counts)  ");
+	DrawTable(dc,nCurX,nCurrentY,size.cx,size.cy+dy,3,1);
+	DrawTableText(dc,nCurX,nCurrentY,size.cx,size.cy+dy,1,1,"GROSS(counts)");
+	DrawTableTextRight(dc,nCurX,nCurrentY,size.cx,size.cy+dy,2,1,m_strAGROSS);
+	DrawTableTextRight(dc,nCurX,nCurrentY,size.cx,size.cy+dy,3,1,m_strBGROSS);
 	
+	nCurX+=size.cx;
+	size.cx = (cx - nCurX)/5;;
+	DrawTable(dc,nCurX,nCurrentY,size.cx,size.cy+dy,3,5);
+	DrawTableText(dc,nCurX,nCurrentY,size.cx,size.cy+dy,1,1,"Lower(ch)");
+	DrawTableTextRight(dc,nCurX,nCurrentY,size.cx,size.cy+dy,2,1,m_strAchLL);
+	DrawTableTextRight(dc,nCurX,nCurrentY,size.cx,size.cy+dy,3,1,m_strBchLL);
+	DrawTableText(dc,nCurX,nCurrentY,size.cx,size.cy+dy,1,2,"Upper(ch)");
+	DrawTableTextRight(dc,nCurX,nCurrentY,size.cx,size.cy+dy,2,2,m_strAchUL);
+	DrawTableTextRight(dc,nCurX,nCurrentY,size.cx,size.cy+dy,3,2,m_strBchUL);
+	DrawTableText(dc,nCurX,nCurrentY,size.cx,size.cy+dy,1,3,"CPM");
+	DrawTableText(dc,nCurX,nCurrentY,size.cx,size.cy+dy,1,4,"Eff");
+	DrawTableTextRight(dc,nCurX,nCurrentY,size.cx,size.cy+dy,2,4,m_strAEFF);
+	DrawTableTextRight(dc,nCurX,nCurrentY,size.cx,size.cy+dy,3,4,m_strBEFF);
+	DrawTableText(dc,nCurX,nCurrentY,size.cx,size.cy+dy,1,5,"DPM");
+	DrawTableTextRight(dc,nCurX,nCurrentY,size.cx,size.cy+dy,2,5,m_strADPM);
+	DrawTableTextRight(dc,nCurX,nCurrentY,size.cx,size.cy+dy,3,5,m_strBDPM);
+
 }
 
 void CSpectrumDlg::GetCurrentFileName(CString &str)
@@ -1023,12 +1067,15 @@ void CSpectrumDlg::GetCurrentFileName(CString &str)
 	}
 }
 
-void CSpectrumDlg::DrawTable(CDC& dc, int x, int y,int cx,int cy,int row,int column)
+void CSpectrumDlg::DrawTable(CDC& dc, int x, int y,int dx,int dy,int row,int column)
 {
 	int ndx,ndy;
+	int cx,cy;
 	if (!row || !column) return;
-	ndx = cx / column;
-	ndy = cy / row;
+	ndx = dx;
+	ndy = dy;
+	cx = dx*column;
+	cy = dy*row;
 	for(int i =0; i<=row;i++)
 	{
 		dc.MoveTo(x,y+i*ndy);
@@ -1042,16 +1089,14 @@ void CSpectrumDlg::DrawTable(CDC& dc, int x, int y,int cx,int cy,int row,int col
 	}
 }
 
-void CSpectrumDlg::DrawTableText(CDC& dc, int x, int y,int cx,int cy,int dx,int dy,int row,int column,CString str)
+void CSpectrumDlg::DrawTableText(CDC& dc, int x, int y,int dx,int dy,int row,int column,CString str)
 {
-	if (row*dy > cx || column*dx>cy) return;
 	CSize size = dc.GetTextExtent(str);
-	dc.TextOut(x+(column-1)*dx,y+(row-1)*dy+(dy- size.cy)/2,str);
+	dc.TextOut(x+(column-1)*dx+(dx-size.cx)/2,y+(row-1)*dy+(dy- size.cy)/2,str);
 }
 
-void CSpectrumDlg::DrawTableTextRight(CDC& dc, int x, int y,int cx,int cy,int dx,int dy,int row,int column,CString str)
+void CSpectrumDlg::DrawTableTextRight(CDC& dc, int x, int y,int dx,int dy,int row,int column,CString str)
 {
-	if (row*dy > cx || column*dx>cy) return;
 	CSize size = dc.GetTextExtent(str);
-	dc.TextOut(x+(column-1)*dx + (dx-size.cx), y+(row-1)*dy+(dy- size.cy)/2,str);
+	dc.TextOut(x+(column-1)*dx + (dx-size.cx-(dy-size.cy)), y+(row-1)*dy+(dy- size.cy)/2,str);
 }
