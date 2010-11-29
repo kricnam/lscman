@@ -980,12 +980,23 @@ void CSpectrumDlg::DrawPage(CDC &dc, int x, int y, int cx, int cy)
 		if (data.Load())
 		{
 			Group_Line group;
+			Data_Line dline;
 			data.GetGroup(group);
-	dc.TextOut(x+cx/6+dx,nCurrentY+dy/2,group.group.Group,sizeof(group.group.Group));
-	dc.TextOut(x+3*cx/6+dx,nCurrentY+dy/2,group.group.Comment,sizeof(group.group.Comment));
-	dc.TextOut(x+cx/6+dx,nCurrentY+size.cy+dy + dy/2,group.group.Method,sizeof(group.group.Method));
-	dc.TextOut(x+3*cx/6+dx,nCurrentY+size.cy+dy+dy/2,group.group.Data,sizeof(group.group.Data));
-	
+			data.GetDataLine(dline);
+
+			dc.TextOut(x+cx/6+dx,nCurrentY+dy/2,group.group.Group,sizeof(group.group.Group));
+			dc.TextOut(x+3*cx/6+dx,nCurrentY+dy/2,group.group.Comment,sizeof(group.group.Comment));
+			dc.TextOut(x+cx/6+dx,nCurrentY+size.cy+dy + dy/2,group.group.Method,sizeof(group.group.Method));
+			dc.TextOut(x+3*cx/6+dx,nCurrentY+size.cy+dy+dy/2,group.group.Data,sizeof(group.group.Data));
+			dc.TextOut(x+5*cx/6+dx,nCurrentY+size.cy+dy+dy/2,group.group.Label,sizeof(group.group.Label));
+			dc.TextOut(x+cx/6+dx,nCurrentY+3*size.cy+2*dy+dy/2,group.group.Repeat,sizeof(group.group.Repeat));
+			dc.TextOut(x+3*cx/6+dx,nCurrentY+3*size.cy+2*dy+dy/2,group.group.ISOTOPE,sizeof(group.group.ISOTOPE));
+			dc.TextOut(x+5*cx/6+dx,nCurrentY+3*size.cy+2*dy+dy/2,group.group.Date,sizeof(group.group.Date));
+			dc.TextOut(x+5*cx/6+dx,nCurrentY+4*size.cy+2*dy+dy/2,group.group.Time,sizeof(group.group.Time));
+			dc.TextOut(x+cx+dx,nCurrentY+5*size.cy+3*dy+dy/2,dline.data.SN,sizeof(dline.data.SN));
+			dc.TextOut(x+3*cx/6+dx,nCurrentY+5*size.cy+3*dy+dy/2,dline.data.RN,sizeof(dline.data.RN));
+			dc.TextOut(x+5*cx/6+dx,nCurrentY+5*size.cy+3*dy+dy/2,dline.data.HOUR_MINUTE,sizeof(dline.data.HOUR_MINUTE));
+			
 		}
 	}
 
