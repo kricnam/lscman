@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include "LSC.h"
 #include "AWSFactorDlg.h"
-
+#include "Config.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -86,6 +86,7 @@ BEGIN_MESSAGE_MAP(CAWSFactorDlg, CDialog)
 	ON_WM_SHOWWINDOW()
 	ON_BN_CLICKED(IDC_BUTTON_FILE_SAVE, OnButtonFileSave)
 	ON_BN_CLICKED(IDC_BUTTON_FILE_OPEN, OnButtonFileOpen)
+	ON_BN_CLICKED(IDC_BUTTON_PRNT, OnButtonPrnt)
 	//}}AFX_MSG_MAP
 	ON_MESSAGE(WM_HOTKEY,OnHotKey)
 END_MESSAGE_MAP()
@@ -357,3 +358,265 @@ void CAWSFactorDlg::EnableItems(BOOL bEnable)
 	((CEdit*)GetDlgItem(IDC_EDIT_ADPM))->SetReadOnly(!bEnable);
 	((CEdit*)GetDlgItem(IDC_EDIT_BDPM))->SetReadOnly(!bEnable);
 }
+
+void CAWSFactorDlg::OnButtonPrnt() 
+{
+	CDC dc;
+	CPrintDialog printDlg(FALSE);
+	if (printDlg.DoModal() != IDOK)
+		return;
+
+	CWaitCursor wait;
+	
+	dc.Attach(printDlg.GetPrinterDC());
+	dc.m_bPrinting=TRUE;
+	
+	DOCINFO di; 
+	memset(&di,0,sizeof (DOCINFO));
+	di.cbSize=sizeof (DOCINFO);
+	
+	BOOL bPrintingOK=dc.StartDoc(&di); //开始一个打印任务
+	CPrintInfo Info;
+	
+	Info.m_rectDraw.SetRect(10,10,dc.GetDeviceCaps(HORZRES)-20,dc.GetDeviceCaps(VERTRES)-20);
+	Info.SetMinPage(1);
+	Info.SetMaxPage(1);
+		CFont font,*old_pf;
+	int lfH = MulDiv(12, dc.GetDeviceCaps(LOGPIXELSY), 72); 
+	font.CreateFont(
+		lfH,                        // nHeight
+		0,                         // nWidth
+		0,                         // nEscapement
+		0,                         // nOrientation
+		FW_NORMAL,                 // nWeight
+		FALSE,                     // bItalic
+		FALSE,                     // bUnderline
+		0,                         // cStrikeOut
+		ANSI_CHARSET,              // nCharSet
+		OUT_DEFAULT_PRECIS,        // nOutPrecision
+		CLIP_DEFAULT_PRECIS,       // nClipPrecision
+		DEFAULT_QUALITY,           // nQuality
+		DEFAULT_PITCH | FF_SWISS,  // nPitchAndFamily
+		"Times New Roman");                 // lpszFacename
+	old_pf = dc.SelectObject(&font);
+
+
+	dc.StartPage(); //开始一个新的打印页
+	Info.m_nCurPage=1;
+	
+	DrawPage(dc,10,10,Info.m_rectDraw.Width(),Info.m_rectDraw.Height());
+		
+	bPrintingOK=(dc.EndPage() > 0); //打印页结束
+	
+	if (bPrintingOK)
+		dc.EndDoc(); //一个打印任务结束
+	else
+		dc.AbortDoc(); //终止打印任务
+    dc.SelectObject(old_pf);	
+	dc.Detach(); //释放打印机DC
+	
+}
+
+void CAWSFactorDlg::DrawPage(CDC &dc, int x, int y, int cx, int cy)
+{
+	int nCurrentY = y;
+
+	dc.TextOut(x,nCurrentY,"<AWS Factor>");
+	CSize size = dc.GetTextExtent("<AWS Factor>");
+	CString strText;
+	strText.Format("Curve Name: %s\n",m_strCurveName);
+	int dy=size.cy/3;
+	int dx=size.cy/3;
+
+	nCurrentY+=size.cy+dy;
+	
+	dc.TextOut(x,nCurrentY,strText);
+
+	nCurrentY+=size.cy+dy;
+
+	int ndx,ndy;
+	ndx = cx/6;
+	ndy = size.cy+dy;
+	DrawTable(dc,x,nCurrentY,ndx,ndy,3,3);
+	DrawTableText(dc,x,nCurrentY,ndx,ndy,1,2,"LL");
+	DrawTableText(dc,x,nCurrentY,ndx,ndy,1,3,"UL");
+	DrawTableText(dc,x,nCurrentY,ndx,ndy,2,1,"A-ch");
+	DrawTableText(dc,x,nCurrentY,ndx,ndy,3,1,"B-ch");
+	strText.Format("%d",m_nAchLL);
+	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,2,2,strText);
+	strText.Format("%d",m_nAchUL);
+	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,2,3,strText);
+	strText.Format("%d",m_nBchLL);
+	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,3,2,strText);
+	strText.Format("%d",m_nBchUL);
+	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,3,3,strText);
+
+	int nCurX = x + cx/2 + cx/8;
+	DrawTable(dc,nCurX,nCurrentY,ndx,ndy,2,2);
+	DrawTableText(dc,nCurX,nCurrentY,ndx,ndy,1,1,"A-DPM");
+	DrawTableText(dc,nCurX,nCurrentY,ndx,ndy,1,2,"B-DPM");
+	strText.Format("%6.G",m_ADPM);
+	DrawTableTextRight(dc,nCurX,nCurrentY,ndx,ndy,2,1,strText);
+	strText.Format("%6.G",m_BDPM);
+	DrawTableTextRight(dc,nCurX,nCurrentY,ndx,ndy,2,2,strText);
+
+	nCurrentY+= 4*ndy;
+
+	size = dc.GetTextExtent("SAMPLE-10 ");
+	ndx = (size.cx>ndx)?size.cx:ndx;
+	DrawTable(dc,x,nCurrentY,ndx,ndy,11,3);
+	for(int i=1;i<11;i++)
+	{
+		strText.Format("SAMPLE-%d",i);
+		DrawTableText(dc,x,nCurrentY,ndx,ndy,i+1,1,strText);
+	}
+	DrawTableText(dc,x,nCurrentY,ndx,ndy,1,2,"A-RATIO");
+	DrawTableText(dc,x,nCurrentY,ndx,ndy,1,3,"A-CPM");
+
+	for(i=1;i<11;i++)
+	{
+		editSample[i-1][0].GetWindowText(strText);
+		DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,i+1,2,strText.Right(9));
+		editSample[i-1][1].GetWindowText(strText);
+		DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,i+1,3,strText.Right(9));
+	}
+
+	//nCurX = x + 3*ndx + (cx - (5*ndx))/2;
+	DrawTable(dc,nCurX,nCurrentY,ndx,ndy,11,2);
+	DrawTableText(dc,nCurX,nCurrentY,ndx,ndy,1,1,"B-RATIO");
+	DrawTableText(dc,nCurX,nCurrentY,ndx,ndy,1,2,"B-CPM");
+	for(i=1;i<11;i++)
+	{
+		editSample[i-1][2].GetWindowText(strText);
+		DrawTableTextRight(dc,nCurX,nCurrentY,ndx,ndy,i+1,1,strText.Right(9));
+		editSample[i-1][3].GetWindowText(strText);
+		DrawTableTextRight(dc,nCurX,nCurrentY,ndx,ndy,i+1,2,strText.Right(9));
+	}
+
+	nCurrentY+=12*ndy;
+	ndx = cx/5;
+	DrawTable(dc,x,nCurrentY,ndx,ndy,4,5);
+	DrawTableText(dc,x,nCurrentY,ndx,ndy,1,2,"a");
+	DrawTableText(dc,x,nCurrentY,ndx,ndy,1,3,"b");
+	DrawTableText(dc,x,nCurrentY,ndx,ndy,1,4,"c");
+	DrawTableText(dc,x,nCurrentY,ndx,ndy,1,5,"d");
+	DrawTableText(dc,x,nCurrentY,ndx,ndy,2,1,"A-ch");
+	DrawTableText(dc,x,nCurrentY,ndx,ndy,3,1,"B-ch");
+	DrawTableText(dc,x,nCurrentY,ndx,ndy,4,1,"B/A ");
+
+	strText.Format("%G",m_dAch_a);
+	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,2,2,strText);
+	strText.Format("%G",m_dAch_b);
+	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,2,3,strText);
+	strText.Format("%G",m_dAch_c);
+	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,2,4,strText);
+	strText.Format("%G",m_dAch_d);
+	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,2,5,strText);
+	strText.Format("%G",m_dBch_a);
+	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,3,2,strText);
+	strText.Format("%G",m_dBch_b);
+	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,3,3,strText);
+	strText.Format("%G",m_dBch_c);
+	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,3,4,strText);
+	strText.Format("%G",m_dBch_d);
+	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,3,5,strText);
+	strText.Format("%G",m_dBA_a);
+	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,4,2,strText);
+	strText.Format("%G",m_dBA_b);
+	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,4,3,strText);
+	strText.Format("%G",m_dBA_c);
+	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,4,4,strText);
+	strText.Format("%G",m_dBA_d);
+	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,4,5,strText);
+
+	nCurrentY+=5*ndy;
+	ndx = cx/6;
+	DrawTable(dc,x,nCurrentY,ndx,ndy,11,4);
+	for(i=1;i<11;i++)
+	{
+		strText.Format("SAMPLE-%d",i);
+		DrawTableText(dc,x,nCurrentY,ndx,ndy,i+1,1,strText);
+	}
+	DrawTableText(dc,x,nCurrentY,ndx,ndy,1,2,"A-Eff");
+	DrawTableText(dc,x,nCurrentY,ndx,ndy,1,3,"B-Eff");
+	DrawTableText(dc,x,nCurrentY,ndx,ndy,1,4,"B/A-CPM");
+	for(i=1;i<11;i++)
+	{
+		editSample[i-1][4].GetWindowText(strText);
+		DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,i+1,2,strText.Right(9));
+		editSample[i-1][5].GetWindowText(strText);
+		DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,i+1,3,strText.Right(9));
+		editSample[i-1][6].GetWindowText(strText);
+		DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,i+1,4,strText.Right(9));
+	}
+
+	nCurrentY+=12*ndy;
+	ndx = cx/8;
+	dc.TextOut(x,nCurrentY,"Model Factor");
+	nCurrentY+=ndy;
+
+	DrawTable(dc,x,nCurrentY,ndx,ndy,2,8);
+	for(i=0;i<4;i++)
+	{
+		char buf[2]={0};
+		buf[0]='A';
+		buf[0]+=(char)i;
+		DrawTableText(dc,x,nCurrentY,ndx,ndy,1,i+1,buf);
+		buf[0]='a';
+		buf[0]+=(char)i;
+		DrawTableText(dc,x,nCurrentY,ndx,ndy,1,i+5,buf);
+	}
+	
+	Config conf("config.ini");
+	strText.Format("%10G",conf.GetMF_A());
+	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,2,1,strText);	
+	strText.Format("%10G",conf.GetMF_B());
+	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,2,2,strText);	
+	strText.Format("%10G",conf.GetMF_C());
+	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,2,3,strText);	
+	strText.Format("%10G",conf.GetMF_D());
+	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,2,4,strText);	
+	strText.Format("%10G",conf.GetMF_a());
+	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,2,5,strText);	
+	strText.Format("%10G",conf.GetMF_b());
+	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,2,6,strText);	
+	strText.Format("%10G",conf.GetMF_c());
+	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,2,7,strText);	
+	strText.Format("%10G",conf.GetMF_d());
+	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,2,8,strText);	
+}
+
+void CAWSFactorDlg::DrawTable(CDC& dc, int x, int y,int dx,int dy,int row,int column)
+{
+	int ndx,ndy;
+	int cx,cy;
+	if (!row || !column) return;
+	ndx = dx;
+	ndy = dy;
+	cx = dx*column;
+	cy = dy*row;
+	for(int i =0; i<=row;i++)
+	{
+		dc.MoveTo(x,y+i*ndy);
+		dc.LineTo(x+cx,y+i*ndy);
+	}
+
+	for(i=0;i<=column;i++)
+	{
+		dc.MoveTo(x+i*ndx,y);
+		dc.LineTo(x+i*ndx,y+cy);
+	}
+}
+
+void CAWSFactorDlg::DrawTableText(CDC& dc, int x, int y,int dx,int dy,int row,int column,CString str)
+{
+	CSize size = dc.GetTextExtent(str);
+	dc.TextOut(x+(column-1)*dx+(dx-size.cx)/2,y+(row-1)*dy+(dy- size.cy)/2,str);
+}
+
+void CAWSFactorDlg::DrawTableTextRight(CDC& dc, int x, int y,int dx,int dy,int row,int column,CString str)
+{
+	CSize size = dc.GetTextExtent(str);
+	dc.TextOut(x+(column-1)*dx + (dx-size.cx-(dy-size.cy)), y+(row-1)*dy+(dy- size.cy)/2,str);
+}
+
