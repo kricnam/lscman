@@ -206,7 +206,10 @@ CRect CSpectrumDlg::DrawAxis(CDC *pDC, int x, int y, int cx, int cy)
 	pDC->FillSolidRect(&rect,RGB(250,250,150));
 	CSize size = pDC->GetTextExtent(title);
 	rect.DeflateRect(size.cx,size.cy+size.cy/2);
-	pDC->FillSolidRect(&rect,RGB(0,0,0));
+	if(pDC->IsPrinting()) 
+		pDC->FillSolidRect(&rect,RGB(255,255,255));
+	else
+		pDC->FillSolidRect(&rect,RGB(0,0,0));
 
 	pDC->SetTextColor(RGB(0,0,0));
 	pDC->SetBkColor(RGB(250,250,150));
@@ -247,7 +250,10 @@ CRect CSpectrumDlg::DrawLogAxis(CDC *pDC, int x, int y, int cx, int cy)
 	pDC->FillSolidRect(&rect,RGB(250,250,150));
 	CSize size = pDC->GetTextExtent(title);
 	rect.DeflateRect(size.cx,size.cy+size.cy/2);
-	pDC->FillSolidRect(&rect,RGB(0,0,0));
+	if(pDC->IsPrinting())
+		pDC->FillSolidRect(&rect,RGB(255,255,255));
+	else
+		pDC->FillSolidRect(&rect,RGB(0,0,0));
 
 	pDC->SetTextColor(RGB(0,0,0));
 	pDC->SetBkColor(RGB(250,250,150));
@@ -290,13 +296,19 @@ void CSpectrumDlg::DrawData(CDC *pDC, int x,int y, int cx, int cy)
 	pen.CreatePen(PS_SOLID,3,RGB(0,255,0));
 	old_pen = pDC->SelectObject(&pen);
 	list<RawData>::iterator it;
-
+	int nPix = 3;
+	if (pDC->IsPrinting()) nPix = MulDiv(3, pDC->GetDeviceCaps(LOGPIXELSY), 96); ;
 	int nx,ny;
 	double dy = (double)cy / GetScaleMax();
+	int i=0;
 	for(it=listData.begin();it!=listData.end();it++)
 	{
+		if (pDC->IsPrinting() && i++!=nActiveIndex)
+		{
+			continue;
+		}
 		CPen* pPen = new CPen;
-		pPen->CreatePen(PS_SOLID,3,(*it).rgb);
+		pPen->CreatePen(PS_SOLID,nPix,(*it).rgb);
 		pDC->SelectObject(pPen);
 			for(int j=0;j<4000;j++)
 			{
@@ -320,13 +332,19 @@ void CSpectrumDlg::DrawDataLog(CDC *pDC, int x,int y, int cx, int cy)
 	pen.CreatePen(PS_SOLID,3,RGB(0,255,0));
 	old_pen = pDC->SelectObject(&pen);
 	list<RawData>::iterator it;
-
+	int nPix =3;
+	if (pDC->IsPrinting()) nPix = MulDiv(3, pDC->GetDeviceCaps(LOGPIXELSY), 96); 
 	double dy = cy / log10(GetScaleMax());
 	int nx,ny;
+	int i = 0;
 	for(it=listData.begin();it!=listData.end();it++)
 	{
+		if (pDC->IsPrinting() && i++!=nActiveIndex)
+		{
+			continue;
+		}
 		CPen* pPen = new CPen;
-		pPen->CreatePen(PS_SOLID,3,(*it).rgb);
+		pPen->CreatePen(PS_SOLID,nPix,(*it).rgb);
 		pDC->SelectObject(pPen);
 			for(int j=0;j<4000;j++)
 			{
@@ -852,10 +870,11 @@ int CSpectrumDlg::AxisYScaleCount(int nMax, int nMin)
 	int count = nMax - nMin;
 	
 	double div = pow(10, floor(log10(count)-1));
+	int nDivSum=(int)div;
 	while (count>10)
 	{
-		count =(nMax-nMin)/div;
-		if (count > 10) div+=div;
+		count =(nMax-nMin)/nDivSum;
+		if (count > 10) nDivSum+=(int)div;
 	};
 	if (count * div < 100)
 	{
@@ -882,6 +901,8 @@ void CSpectrumDlg::OnButtonPrint()
 	CPrintDialog printDlg(FALSE);
 	if (printDlg.DoModal() != IDOK)
 		return;
+
+	CWaitCursor wait;
 	
 	dc.Attach(printDlg.GetPrinterDC());
 	dc.m_bPrinting=TRUE;
@@ -897,7 +918,24 @@ void CSpectrumDlg::OnButtonPrint()
 	Info.SetMinPage(1);
 	Info.SetMaxPage(1);
 	
-
+	CFont font,*old_pf;
+	int lfH = MulDiv(12, dc.GetDeviceCaps(LOGPIXELSY), 72); 
+	font.CreateFont(
+		lfH,                        // nHeight
+		0,                         // nWidth
+		0,                         // nEscapement
+		0,                         // nOrientation
+		FW_NORMAL,                 // nWeight
+		FALSE,                     // bItalic
+		FALSE,                     // bUnderline
+		0,                         // cStrikeOut
+		ANSI_CHARSET,              // nCharSet
+		OUT_DEFAULT_PRECIS,        // nOutPrecision
+		CLIP_DEFAULT_PRECIS,       // nClipPrecision
+		DEFAULT_QUALITY,           // nQuality
+		DEFAULT_PITCH | FF_SWISS,  // nPitchAndFamily
+		"Times New Roman");                 // lpszFacename
+	old_pf = dc.SelectObject(&font);
 	dc.StartPage(); //开始一个新的打印页
 	Info.m_nCurPage=1;
 	
@@ -909,15 +947,11 @@ void CSpectrumDlg::OnButtonPrint()
 		dc.EndDoc(); //一个打印任务结束
 	else
 		dc.AbortDoc(); //终止打印任务
-	
+	dc.SelectObject(old_pf);
 	dc.Detach(); //释放打印机DC
 
 }
 
-void CSpectrumDlg::DrawGroupCondition(CDC &dc, int x, int y, int cx, int cy)
-{
-
-}
 
 void CSpectrumDlg::DrawPage(CDC &dc, int x, int y, int cx, int cy)
 {
@@ -974,16 +1008,17 @@ void CSpectrumDlg::DrawPage(CDC &dc, int x, int y, int cx, int cy)
 	dc.TextOut(x+4*cx/6+dx,nCurrentY+6*size.cy+3*dy+dy/2,"time");
 
 	CDataFile data;
+	Group_Line group={0};
+	Data_Line dline={0};
+
 	if (!strTmp.IsEmpty())
 	{
 		data.Open(strTmp);
 		if (data.Load())
 		{
-			Group_Line group;
-			Data_Line dline;
 			data.GetGroup(group);
 			data.GetDataLine(dline);
-
+			
 			dc.TextOut(x+cx/6+dx,nCurrentY+dy/2,group.group.Group,sizeof(group.group.Group));
 			dc.TextOut(x+3*cx/6+dx,nCurrentY+dy/2,group.group.Comment,sizeof(group.group.Comment));
 			dc.TextOut(x+cx/6+dx,nCurrentY+size.cy+dy + dy/2,group.group.Method,sizeof(group.group.Method));
@@ -998,6 +1033,7 @@ void CSpectrumDlg::DrawPage(CDC &dc, int x, int y, int cx, int cy)
 			dc.TextOut(x+5*cx/6+dx,nCurrentY+5*size.cy+3*dy+dy/2,dline.data.HOUR_MINUTE,sizeof(dline.data.HOUR_MINUTE));
 			
 		}
+		data.Close();
 	}
 
 	nCurrentY+=nY;
@@ -1005,7 +1041,7 @@ void CSpectrumDlg::DrawPage(CDC &dc, int x, int y, int cx, int cy)
 	nCurrentY+=size.cy;
 	dc.TextOut(x,nCurrentY,"Spectrum");
     nCurrentY+=size.cy;
-	DrawGraph(&dc,0,nCurrentY,cx,(cy/5)*2);
+	DrawGraph(&dc,x,nCurrentY,cx,(cy/5)*2);
 
 	nCurrentY+=(cy/5)*2+size.cy;
 
@@ -1043,6 +1079,12 @@ void CSpectrumDlg::DrawPage(CDC &dc, int x, int y, int cx, int cy)
 	DrawTableTextRight(dc,nCurX,nCurrentY,size.cx,size.cy+dy,2,2,m_strAchUL);
 	DrawTableTextRight(dc,nCurX,nCurrentY,size.cx,size.cy+dy,3,2,m_strBchUL);
 	DrawTableText(dc,nCurX,nCurrentY,size.cx,size.cy+dy,1,3,"CPM");
+	strTmp.Empty();
+	strTmp=CString(dline.data.A_CPM,sizeof(dline.data.A_CPM));
+	DrawTableTextRight(dc,nCurX,nCurrentY,size.cx,size.cy+dy,2,3,strTmp);
+	strTmp.Empty();
+	strTmp = CString(dline.data.A_CPM,sizeof(dline.data.B_CPM));	
+	DrawTableTextRight(dc,nCurX,nCurrentY,size.cx,size.cy+dy,3,3,strTmp);
 	DrawTableText(dc,nCurX,nCurrentY,size.cx,size.cy+dy,1,4,"Eff");
 	DrawTableTextRight(dc,nCurX,nCurrentY,size.cx,size.cy+dy,2,4,m_strAEFF);
 	DrawTableTextRight(dc,nCurX,nCurrentY,size.cx,size.cy+dy,3,4,m_strBEFF);

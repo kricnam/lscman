@@ -58,6 +58,11 @@ public:
 
 // Implementation
 protected:
+	void DrawPage(CDC& dc,int x,int y,int cx,int cy);
+	void DrawTableText(CDC& dc, int x, int y,int dx,int dy,int row,int column,CString str);
+	void DrawTableTextRight(CDC& dc, int x, int y,int dx,int dy,int row,int column,CString str);
+	void DrawTable(CDC& dc, int x, int y,int dx,int dy,int row,int column);
+
 	void EnableItems(BOOL bEnable);
 	void OpenFile(void);
 	void LoadCalCo(AWS_CalCo& co);
@@ -74,6 +79,7 @@ protected:
 	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
 	afx_msg void OnButtonFileSave();
 	afx_msg void OnButtonFileOpen();
+	afx_msg void OnButtonPrnt();
 	//}}AFX_MSG
 	afx_msg LONG OnHotKey(WPARAM wParam,LPARAM lParam);  
 	DECLARE_MESSAGE_MAP()
