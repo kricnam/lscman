@@ -48,11 +48,11 @@ CSpectrumDlg::CSpectrumDlg(CWnd* pParent /*=NULL*/)
 	pSpectrumWnd = NULL;
 	setMF();
 	nActiveIndex = 0;
-	rgb.push_back(RGB(200,200,100));
-	rgb.push_back(RGB(200,155,200));
-	rgb.push_back(RGB(100,200,200));
-	rgb.push_back(RGB(100,200,100));
 	rgb.push_back(RGB(200,100,100));
+	rgb.push_back(RGB(150,100,250));
+	rgb.push_back(RGB(100,150,150));
+	rgb.push_back(RGB(75,250,75));
+	rgb.push_back(RGB(250,75,75));
 	bLog = false;
 }
 
@@ -1080,10 +1080,12 @@ void CSpectrumDlg::DrawPage(CDC &dc, int x, int y, int cx, int cy)
 	DrawTableTextRight(dc,nCurX,nCurrentY,size.cx,size.cy+dy,3,2,m_strBchUL);
 	DrawTableText(dc,nCurX,nCurrentY,size.cx,size.cy+dy,1,3,"CPM");
 	strTmp.Empty();
-	strTmp=CString(dline.data.A_CPM,sizeof(dline.data.A_CPM));
+	if (dline.data.A_CPM[0])
+		strTmp=CString(dline.data.A_CPM,sizeof(dline.data.A_CPM));
 	DrawTableTextRight(dc,nCurX,nCurrentY,size.cx,size.cy+dy,2,3,strTmp);
 	strTmp.Empty();
-	strTmp = CString(dline.data.A_CPM,sizeof(dline.data.B_CPM));	
+	if (dline.data.B_CPM[0])
+		strTmp = CString(dline.data.B_CPM,sizeof(dline.data.B_CPM));	
 	DrawTableTextRight(dc,nCurX,nCurrentY,size.cx,size.cy+dy,3,3,strTmp);
 	DrawTableText(dc,nCurX,nCurrentY,size.cx,size.cy+dy,1,4,"Eff");
 	DrawTableTextRight(dc,nCurX,nCurrentY,size.cx,size.cy+dy,2,4,m_strAEFF);
