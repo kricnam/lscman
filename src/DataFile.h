@@ -31,7 +31,9 @@ typedef struct {
 } Data_Line;
 
 typedef struct {
-	Channel_Data data;
+	char No[3];
+	char sp0;
+	Channel_Data data[10];
 	char CR;
 	char LF;
 } Spectrum_Line;
@@ -59,6 +61,7 @@ public:
 	CDataFile();
 	virtual ~CDataFile();
 protected:
+	void SaveSpectrumData(Spectrum_Line& szData);
 	int chopFirstCSVField(CString& strLine,CString& strField);
 	int readLine(CString& strLine);
 	bool gotoSpetrumStart(void);

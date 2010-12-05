@@ -251,6 +251,7 @@ void CDataCollectionDlg::SaveData(CPacket& packet)
 	CDataFile file;
 	if (packet.GetPacketType() == TYPE_GROUP)
 	{
+		m_GroupPacket = packet;
 		m_strMYNo = packet.GetMYNo();
 		m_strFileName.Empty();
 
@@ -259,10 +260,27 @@ void CDataCollectionDlg::SaveData(CPacket& packet)
 			int i = atoi(m_strMYNo);
 			m_strFileName = g_SetArray[i].m_strFileName+"."+
 					g_SetArray[i].m_Extension;
-			g_SetArray[i].m_Extension.Format("%.03d",
-				atoi(g_SetArray[i].m_Extension)+1);
 		}
 		UpdateData(FALSE);
+		return;
+	}
+
+	if (packet.GetPacketType() == TYPE_TITLE)
+	{
+		m_TitlePacket = packet;
+		return;
+	}
+
+	if (packet.GetPacketType() == TYPE_DATA)
+	{
+		int i = atoi(m_strMYNo);
+		g_SetArray[i].m_Extension.Format("%.03d",
+				atoi(g_SetArray[i].m_Extension)+1);
+		if (NeedCollect(m_strMYNo))
+		{
+			file.Save(m_strFileName,m_GroupPacket);
+			file.Save(m_strFileName,m_TitlePacket);
+		}
 	}
 
 	if (NeedCollect(m_strMYNo))
