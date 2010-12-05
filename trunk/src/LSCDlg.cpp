@@ -77,6 +77,7 @@ BOOL CLSCDlg::OnInitDialog()
 	m_AWSFactorDlg.EnableWindow(FALSE);
 	m_SpectrumDlg.EnableWindow(FALSE);
 
+
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
@@ -211,6 +212,18 @@ void CLSCDlg::OnClose()
 
 	if (MessageBox("Do you really want to quit?","Quit",MB_OKCANCEL) == IDOK)
 	{
+		CString strSec="FileSetting";
+		CString strEnt;
+		for(int i =1;i<=12;i++)
+		{
+			strEnt.Format("Path%d",i);
+			theApp.WriteProfileString(strSec,strEnt,g_SetArray[i].m_strFileName);
+			strEnt.Format("Collect%d",i);
+			theApp.WriteProfileInt(strSec,strEnt,g_SetArray[i].m_DataCollection);
+			strEnt.Format("Ext%d",i);
+			theApp.WriteProfileString(strSec,strEnt,g_SetArray[i].m_Extension);
+		}
+
 		CDialog::OnClose();
 	}
 }

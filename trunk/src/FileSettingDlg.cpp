@@ -60,6 +60,7 @@ BEGIN_MESSAGE_MAP(CFileSettingDlg, CDialog)
 	ON_BN_CLICKED(IDC_BUTTON_COMCONF, OnButtonComconf)
 	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_EXT, OnDeltaposSpinExt)
 	ON_EN_CHANGE(IDC_EDIT_EXT, OnChangeEditExt)
+	ON_CBN_SELCHANGE(IDC_COMBO_MYNO, OnSelchangeComboMyno)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -88,6 +89,8 @@ BOOL CFileSettingDlg::OnInitDialog()
 		m_ComboComNo.SetCurSel(0);
 	}
 	m_ComboMyNo.SetCurSel(0);
+
+	OnSelchangeComboMyno();
 	
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
@@ -172,12 +175,23 @@ void CFileSettingDlg::InitListCtrl()
 
 void CFileSettingDlg::InitListData()
 {
-	for (int i = 0; i < 12; i++)
+	CString strSec="FileSetting";
+	CString strEnt;
+	for(int i =1;i<=12;i++)
+	{
+		strEnt.Format("Path%d",i);
+		g_SetArray[i].m_strFileName=theApp.GetProfileString(strSec,strEnt,"");
+		strEnt.Format("Collect%d",i);
+		g_SetArray[i].m_DataCollection=theApp.GetProfileInt(strSec,strEnt,0);
+		strEnt.Format("Ext%d",i);
+		g_SetArray[i].m_Extension=theApp.GetProfileString(strSec,strEnt,"");
+	}
+	
+
+	for (i = 0; i < 12; i++)
 	{
 		g_SetArray[i+1].m_strID.Format("%d",i+1);
-		g_SetArray[i+1].m_DataCollection = FALSE;
-		g_SetArray[i+1].m_strFileName = "";
-		g_SetArray[i+1].m_Extension = "";
+
 		m_ListSet.InsertItem(i,g_SetArray[i+1].m_strID);
 		if (g_SetArray[i+1].m_DataCollection)
 		{
@@ -287,7 +301,8 @@ void CFileSettingDlg::OnShowWindow(BOOL bShow, UINT nStatus)
 {
 	CDialog::OnShowWindow(bShow, nStatus);
 	UpdateData(FALSE);
-	// TODO: Add your message handler code here
+	for(int i=1;i<=12;i++)
+		UpdateListItem(i);
 	
 }
 
@@ -351,3 +366,16 @@ void CFileSettingDlg::OnChangeEditExt()
 }
 
 
+
+void CFileSettingDlg::OnSelchangeComboMyno() 
+{
+  	int i =m_ComboMyNo.GetCurSel();
+	i++;
+
+	m_strFileName = g_SetArray[i].m_strFileName;
+	m_strExt = g_SetArray[i].m_Extension;
+    m_DataCollectionByNo = (g_SetArray[i].m_DataCollection)?0:1;
+
+	UpdateData(FALSE);
+
+}

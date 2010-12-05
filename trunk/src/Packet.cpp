@@ -173,7 +173,7 @@ CString CPacket::GetSpetrumData()
 	CString str;
 	if (GetPacketType()==TYPE_SPECTRUM)
 	{
-		str = strData.Mid(7,strData.GetLength()-9);
+		str = strData.Mid(3,strData.GetLength()-6);
 	}
 	return str;
 }

@@ -43,13 +43,8 @@ int CDataFile::GetSpectrumData(int *pArray, int len)
 			while(!feof(fData))
 			{
 				readLine(strLine);
-				while(strLine.GetLength())
-				{
-					int index = chopFirstCSVField(strLine,strField);
-					pArray[n++] = atoi(LPCTSTR(strField));
-	
-					if (index == -1 || n > len) break;
-				};
+				pArray[n++] = atoi(LPCTSTR(strField));
+				if (n>3999) break;
 			};
 		}
 		else
@@ -195,7 +190,7 @@ int CDataFile::GetFieldIndex(LPCTSTR szName)
 
 int CDataFile::GetFieldValue(LPCTSTR szName, CString &strValue)
 {
-	strValue.Empty();
+	//strValue.Empty();
 	int n = GetFieldIndex(szName);
 	if (n)
 	{
@@ -268,7 +263,7 @@ bool CDataFile::Save(LPCTSTR szFile, CPacket &packet)
 		}
 		if(!strSpectrum.IsEmpty())
 		{
-			fprintf(fData,"%s\r\n",(LPCTSTR)strSpectrum);
+			SaveSpectrumData(*(Spectrum_Line*)((LPCTSTR)strSpectrum));
 			break;
 		}
 		break;
@@ -364,4 +359,17 @@ bool CDataFile::GetGroup(Group_Line &group)
 {
 	group=this->group;
 	return true;
+}
+
+void CDataFile::SaveSpectrumData(Spectrum_Line& Data)
+{
+	if (fData)
+	{
+		CString data;
+		for(int i=0;i<10;i++)
+		{
+			data=CString(Data.data[i].count,6);
+			fprintf(fData,"%d\r\n",atoi((LPCTSTR)data));
+		}
+	}
 }

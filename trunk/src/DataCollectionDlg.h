@@ -44,6 +44,9 @@ public:
 
 // Implementation
 protected:
+	CPacket m_TitlePacket;
+	CPacket m_GroupPacket;
+
 	CString strCurrentFile;
 	
 	CWinThread *pWorking;

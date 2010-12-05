@@ -654,18 +654,17 @@ bool CSpectrumDlg::LoadData(LPCTSTR szPath)
 
 			if (strMsg.GetLength()) 
 			{
-				strMsg+="fiels not found.";
-				break;
+				strMsg+="fields not found.";
 			}
 			rawData.rgb = rgb.front();
 			rgb.pop_front();
 			listData.push_front(rawData);
-			return true;
+			break;
 		}
 
 		if (strMsg.IsEmpty()) strMsg.Format("Open %s failed.",szPath);
 		MessageBox(strMsg,"Error",MB_OK);
-		return false;
+		return true;
 }
 
 void CSpectrumDlg::OnButtonAws() 

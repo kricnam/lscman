@@ -53,7 +53,7 @@ BOOL CLSCApp::InitInstance()
 #else
 	Enable3dControlsStatic();	// Call this when linking to MFC statically
 #endif
-
+	SetRegistryKey("Aloka");
 	CLSCDlg dlg;
 	m_pMainWnd = &dlg;
 	int nResponse = dlg.DoModal();
@@ -72,3 +72,4 @@ BOOL CLSCApp::InitInstance()
 	//  application, rather than start the application's message pump.
 	return FALSE;
 }
+

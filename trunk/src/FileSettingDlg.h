@@ -6,7 +6,7 @@
 #endif // _MSC_VER > 1000
 // FileSettingDlg.h : header file
 //
-
+extern CLSCApp theApp;
 /////////////////////////////////////////////////////////////////////////////
 // CFileSettingDlg dialog
 
@@ -59,6 +59,7 @@ protected:
 	afx_msg void OnButtonComconf();
 	afx_msg void OnDeltaposSpinExt(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnChangeEditExt();
+	afx_msg void OnSelchangeComboMyno();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 	
