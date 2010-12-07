@@ -22,7 +22,6 @@ UINT CommThreadProc( LPVOID pParam )
 	CPacket send;
 	do
 	{
-		UI.m_bStop = false;
 		if (packet.ReceiveFrame(UI.m_port)>0)
 		{
 			//UI.SetStatus(packet);
@@ -54,8 +53,8 @@ UINT CommThreadProc( LPVOID pParam )
 			}
 		}
 		
-	}while(UI.m_hWnd && UI.m_port.IsOpen());
-	UI.m_bStop = true;
+	}while(!UI.m_bStop);//(UI.m_hWnd && UI.m_port.IsOpen());
+    UI.m_bStop = false;
 	return 0;
 }
 
@@ -74,7 +73,7 @@ CDataCollectionDlg::CDataCollectionDlg(CWnd* pParent /*=NULL*/)
 	m_strCurrentTime = _T("");
 	//}}AFX_DATA_INIT
 	pWorking = NULL;
-	m_bStop = true;
+	m_bStop = false;
 }
 
 
@@ -99,9 +98,10 @@ BEGIN_MESSAGE_MAP(CDataCollectionDlg, CDialog)
 	ON_BN_CLICKED(IDC_BUTTON_SPECTRUM, OnButtonSpectrum)
 	ON_WM_CTLCOLOR()
 	ON_WM_SHOWWINDOW()
-	ON_WM_CLOSE()
 	ON_WM_TIMER()
 	ON_WM_COPYDATA()
+	ON_WM_CLOSE()
+	ON_WM_DESTROY()
 	//}}AFX_MSG_MAP
 	ON_MESSAGE(WM_UPDATE_DATA,OnUpdateData)
 END_MESSAGE_MAP()
@@ -149,11 +149,7 @@ void CDataCollectionDlg::OnButtonAwsFactor()
 
 void CDataCollectionDlg::OnButtonShutDown() 
 {
-	if (MessageBox("Do you really want to quit?","Quit",MB_OKCANCEL) == IDOK)
-	{
-		PostQuitMessage(0);
-	}
-	
+	GetParent()->PostMessage(WM_CLOSE);
 }
 
 void CDataCollectionDlg::OnButtonSpectrum() 
@@ -214,15 +210,6 @@ void CDataCollectionDlg::OnShowWindow(BOOL bShow, UINT nStatus)
 
 }
 
-void CDataCollectionDlg::OnClose() 
-{
-	if (pWorking)
-	{
-		m_port.Close();
-		while(m_bStop) Sleep(10);
-	}
-	CDialog::OnClose();
-}
 
 void CDataCollectionDlg::SetStatus(CPacket &packet)
 {
@@ -274,17 +261,22 @@ void CDataCollectionDlg::SaveData(CPacket& packet)
 	if (packet.GetPacketType() == TYPE_DATA)
 	{
 		int i = atoi(m_strMYNo);
-		g_SetArray[i].m_Extension.Format("%.03d",
-				atoi(g_SetArray[i].m_Extension)+1);
+		
 		if (NeedCollect(m_strMYNo))
 		{
+			m_strFileName = g_SetArray[i].m_strFileName+"."+
+					g_SetArray[i].m_Extension;
 			file.Save(m_strFileName,m_GroupPacket);
 			file.Save(m_strFileName,m_TitlePacket);
+			g_SetArray[i].m_Extension.Format("%.03d",
+				atoi(g_SetArray[i].m_Extension)+1);
 		}
+		
 	}
 
 	if (NeedCollect(m_strMYNo))
 		file.Save(m_strFileName,packet);
+	UpdateData(FALSE);
 }
 
 void CDataCollectionDlg::OnTimer(UINT nIDEvent) 
@@ -324,4 +316,31 @@ LRESULT CDataCollectionDlg::OnUpdateData(WPARAM wParam, LPARAM lParam)
 	SetStatus(packet);
 	if (lParam) SaveData(packet);
 	return 0;
+}
+
+
+
+void CDataCollectionDlg::ClosePort()
+{
+	if (pWorking)
+	{
+		CWaitCursor wait;
+		m_port.Close();
+		pWorking = NULL;
+		int i=10;
+		while(m_bStop&&i--) Sleep(1);
+	}
+}
+
+void CDataCollectionDlg::OnClose() 
+{
+	// TODO: Add your message handler code here and/or call default
+	
+	CDialog::OnClose();
+}
+
+void CDataCollectionDlg::OnDestroy() 
+{
+	CDialog::OnDestroy();
+	ClosePort();
 }
