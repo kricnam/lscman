@@ -35,6 +35,7 @@ BEGIN_MESSAGE_MAP(CLSCDlg, CDialog)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_WM_CLOSE()
+	ON_WM_DESTROY()
 	//}}AFX_MSG_MAP
 	ON_MESSAGE(WM_OPEN_DLG,OnOpenDlg)
 END_MESSAGE_MAP()
@@ -212,18 +213,27 @@ void CLSCDlg::OnClose()
 
 	if (MessageBox("Do you really want to quit?","Quit",MB_OKCANCEL) == IDOK)
 	{
-		CString strSec="FileSetting";
-		CString strEnt;
-		for(int i =1;i<=12;i++)
-		{
-			strEnt.Format("Path%d",i);
-			theApp.WriteProfileString(strSec,strEnt,g_SetArray[i].m_strFileName);
-			strEnt.Format("Collect%d",i);
-			theApp.WriteProfileInt(strSec,strEnt,g_SetArray[i].m_DataCollection);
-			strEnt.Format("Ext%d",i);
-			theApp.WriteProfileString(strSec,strEnt,g_SetArray[i].m_Extension);
-		}
+		m_DataCollectionDlg.m_bStop = true;
+		m_DataCollectionDlg.ClosePort();
 
 		CDialog::OnClose();
 	}
+}
+
+void CLSCDlg::OnDestroy() 
+{
+	CDialog::OnDestroy();
+	
+	CString strSec="FileSetting";
+	CString strEnt;
+	for(int i =1;i<=12;i++)
+	{
+		strEnt.Format("Path%d",i);
+		theApp.WriteProfileString(strSec,strEnt,g_SetArray[i].m_strFileName);
+		strEnt.Format("Collect%d",i);
+		theApp.WriteProfileInt(strSec,strEnt,g_SetArray[i].m_DataCollection);
+		strEnt.Format("Ext%d",i);
+		theApp.WriteProfileString(strSec,strEnt,g_SetArray[i].m_Extension);
+	}
+	
 }
