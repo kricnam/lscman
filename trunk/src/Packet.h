@@ -109,7 +109,7 @@ typedef struct {
 	char sp8;
 	char A_EFF[9];
 	char sp9;
-	char B_CROSS[7];
+	char B_GROSS[7];
 	char sp10;
 	char B_CPM[9];
 	char sp11;

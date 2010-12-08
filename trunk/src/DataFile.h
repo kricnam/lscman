@@ -46,6 +46,7 @@ public:
 	bool GetGroup(Group_Line& group);
 	void SetDPM(CString& strA,CString& strB);
 	void SetEff(CString& strA, CString& strB);
+	void SetGross(CString& strA, CString& strB);
 	void GetDataLine(Data_Line& data);
 	bool SaveAs(LPCTSTR szFileName);
 	bool Load();
@@ -60,6 +61,7 @@ public:
 	
 	CDataFile();
 	virtual ~CDataFile();
+	int nSpectrum[4000];
 protected:
 	void SaveSpectrumData(Spectrum_Line& szData);
 	int chopFirstCSVField(CString& strLine,CString& strField);
@@ -70,7 +72,7 @@ protected:
 	Group_Line group;
 	Title_Line title;
 	Data_Line data;
-	int nSpectrum[4000];
+	
 };
 
 #endif // !defined(AFX_DATAFILE_H__3AF7DAD3_0CA6_4931_A8EB_991ED79F3EE1__INCLUDED_)

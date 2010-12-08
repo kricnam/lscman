@@ -96,7 +96,6 @@ BEGIN_MESSAGE_MAP(CSpectrumDlg, CDialog)
 	//{{AFX_MSG_MAP(CSpectrumDlg)
 	ON_BN_CLICKED(IDC_BUTTON_AWS_FACTOR, OnButtonAwsFactor)
 	ON_WM_PAINT()
-	ON_WM_CTLCOLOR()
 	ON_BN_CLICKED(IDC_BUTTON_OPEN_FILEDIA, OnButtonOpenAWD)
 	ON_BN_CLICKED(IDC_BUTTON_FILE_OPEN, OnButtonFileOpen)
 	ON_BN_CLICKED(IDC_BUTTON_FILE_SAVE, OnButtonFileSave)
@@ -168,18 +167,6 @@ void CSpectrumDlg::OnPaint()
 	
 }
 
-HBRUSH CSpectrumDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor) 
-{
-	HBRUSH hbr = CDialog::OnCtlColor(pDC, pWnd, nCtlColor);
-	
-	if(pWnd->GetDlgCtrlID() == IDC_SPECTRUM)
-	{
-		//pDC->SetBkColor(RGB(0,0,0));
-	}
-	
-	// TODO: Return a different brush if the default is not desired
-	return hbr;
-}
 
 void CSpectrumDlg::DrawGraph(CDC *pDC, int x, int y, int cx, int cy)
 {
@@ -420,6 +407,9 @@ void CSpectrumDlg::OnButtonFileOpen()
 	dlg.m_ofn.nMaxFile = 5*(MAX_PATH+1);
 	if (dlg.DoModal() == IDOK)
 	{
+		if (listData.size())
+			SaveActive(GetListItem(nActiveIndex));
+
 		POSITION fileNamesPosition = dlg.GetStartPosition();
         int iCtr = 0;
 		CString fileName[5];
@@ -441,7 +431,12 @@ void CSpectrumDlg::OnButtonFileOpen()
 			int n;
 			if (isOpenedAt(fileName[i],n))
 				deleteData(n);
-			if (!LoadData(fileName[i++])) return;
+			if (!LoadData(fileName[i++])) 
+			{
+				CString strMsg;
+				strMsg.Format("Load file %s failed.",fileName[i-1]);
+				MessageBox(strMsg);
+			}
 		};
 
 		if (i)
@@ -481,6 +476,7 @@ void CSpectrumDlg::OnButtonFileSave()
 		{
 			Data.SetDPM(m_strADPM,m_strBDPM);
 			Data.SetEff(m_strAEFF,m_strBEFF);
+			Data.SetGross(m_strAGROSS,m_strBGROSS);
 
 			if (Data.SaveAs(strPath))
 				AfxMessageBox("Successfully saved " + strPath);
@@ -507,9 +503,22 @@ void CSpectrumDlg::OnButtonSelect()
 		if (i>4) break;
 	}
 	dlg.m_nSelIndex = nActiveIndex;
+
+	if (listData.size())
+		SaveActive(GetListItem(nActiveIndex));
 	if (dlg.DoModal()==IDOK)
 	{
 		nActiveIndex = dlg.m_nSelIndex;
+		if (listData.size())
+		{
+			setActiveData(GetListItem(nActiveIndex));
+		}
+		else
+		{
+			RawData data;
+			setActiveData(data);
+		}
+		UpdateData(FALSE);
 		Invalidate();
 		UpdateWindow();
 	}
@@ -597,74 +606,60 @@ bool CSpectrumDlg::LoadData(LPCTSTR szPath)
 
 		_splitpath(szPath, NULL, NULL, szName, ext );
 
-		while (data.Open(szPath))
+		while (data.Open(szPath) && data.Load())
 		{
 			rawData.strName = szName;
 			rawData.strName+= ext;
 			rawData.strPath = szPath;
 			memset(rawData.nSpetrum,0,4000);
-			int n = data.GetSpectrumData(rawData.nSpetrum,4000); 
-			//TODO implement the load process by CDataFile Class
-			if (n<4000)
-			{
-				strMsg.Format("Load %d channel data, maybe not correct file format",n);
-				MessageBox(strMsg,"Warning",MB_OK);
-				return false;
-			}
+			Data_Line data_rec={0};
+			memcpy(rawData.nSpetrum,data.nSpectrum,sizeof(rawData.nSpetrum));
+		
+			data.GetDataLine(data_rec);
 
-			if (!data.GetFieldValue("A-GROSS",rawData.strAGROSS))
-				strMsg+="[A-GROSS] ";
-			if (!data.GetFieldValue("B-GROSS",rawData.strBGROSS))
-				strMsg+="[B-GROSS] ";
-			if (!data.GetFieldValue("SCCR",rawData.strSCCR))
-				strMsg+="[SCCR] ";
-			if (!data.GetFieldValue("ESCR",rawData.strESCR))
-				strMsg+="[ESCR] ";
+			rawData.strAGROSS = CString(data_rec.data.A_GROSS,sizeof(data_rec.data.A_GROSS));
+			rawData.strAGROSS.TrimLeft();
+			rawData.strAGROSS.TrimRight();
+		
+			rawData.strBGROSS = CString(data_rec.data.B_GROSS,sizeof(data_rec.data.B_GROSS));
+			rawData.strBGROSS.TrimLeft();
+			rawData.strBGROSS.TrimRight();
 
-			if (data.GetFieldIndex("A-DPM"))
-			{
-				data.GetFieldValue("A-DPM",rawData.strADPM);
-			}
-			else if(data.GetFieldIndex("A-Bq"))
-			{
-				data.GetFieldValue("A-Bq",rawData.strADPM);
-			}
-			else
-				strMsg+="[A-DPM] ";
-
-			if (data.GetFieldIndex("B-DPM"))
-			{
-				data.GetFieldValue("B-DPM",rawData.strBDPM);
-			}
-			else if(data.GetFieldIndex("B-Bq"))
-			{
-				data.GetFieldValue("B-Bq",rawData.strBDPM);
-			}
-			else
-				strMsg+="[B-DPM] ";
+			rawData.strSCCR = CString(data_rec.data.STD_ESCR_SCCR,sizeof(data_rec.data.STD_ESCR_SCCR));
+			rawData.strSCCR.TrimLeft();
+			rawData.strSCCR.TrimRight();
 			
-			if (!data.GetFieldValue("A-EFF",rawData.strAEFF))
-				strMsg+="[A-EFF] ";
+			rawData.strESCR = CString(data_rec.data.ESCR_SCCR,sizeof(data_rec.data.ESCR_SCCR));
+			rawData.strESCR.TrimLeft();
+			rawData.strESCR.TrimRight();
 			
-			if (!data.GetFieldValue("B-EFF",rawData.strBEFF))
-				strMsg+="[B-EFF] ";
+			rawData.strADPM = CString(data_rec.data.A_DPM,sizeof(data_rec.data.A_DPM));
+			rawData.strADPM.TrimLeft();
+			rawData.strADPM.TrimRight();
 
-			if (!data.GetFieldValue("TIME",rawData.strTime))
-				strMsg+="[TIME] ";
+			rawData.strBDPM = CString(data_rec.data.B_DPM,sizeof(data_rec.data.B_DPM));
+			rawData.strBDPM.TrimLeft();
+			rawData.strBDPM.TrimRight();
 
-			if (strMsg.GetLength()) 
-			{
-				strMsg+="fields not found.";
-			}
+			rawData.strAEFF = CString(data_rec.data.A_EFF,sizeof(data_rec.data.A_EFF));
+			rawData.strAEFF.TrimLeft();
+			rawData.strAEFF.TrimRight();
+
+			rawData.strBEFF = CString(data_rec.data.B_EFF,sizeof(data_rec.data.B_EFF));
+			rawData.strBEFF.TrimLeft();
+			rawData.strBEFF.TrimRight();
+			
+			rawData.strTime = CString(data_rec.data.TIME,sizeof(data_rec.data.TIME));
+			rawData.strTime.TrimLeft();
+			rawData.strTime.TrimRight();
+
 			rawData.rgb = rgb.front();
 			rgb.pop_front();
 			listData.push_front(rawData);
-			break;
+			return true;
 		}
 
-		if (strMsg.IsEmpty()) strMsg.Format("Open %s failed.",szPath);
-		MessageBox(strMsg,"Error",MB_OK);
-		return true;
+		return false;
 }
 
 void CSpectrumDlg::OnButtonAws() 
@@ -713,6 +708,8 @@ void CSpectrumDlg::OnButtonAws()
 		m_strBDPM.Format("%G",z);
 	}	
 	UpdateData(FALSE);
+	if (listData.size())
+		SaveActive(GetListItem(nActiveIndex));
 }
 
 RawData& CSpectrumDlg::GetListItem(int n)
@@ -783,7 +780,11 @@ void CSpectrumDlg::setActiveData(RawData &data)
 	m_strBDPM = data.strBDPM;
 	m_strAGROSS =data.strAGROSS;
 	m_strBGROSS=data.strBGROSS;
-	m_nTime = atoi(data.strTime);
+	m_strAchLL = data.strALL;
+	m_strAchUL = data.strAUL;
+	m_strBchLL = data.strBLL;
+	m_strBchUL = data.strBUL;
+	m_nTime = atof(data.strTime);
 }
 
 bool CSpectrumDlg::isOpenedAt(LPCTSTR szPath,int& n)
@@ -1142,4 +1143,19 @@ void CSpectrumDlg::DrawTableTextRight(CDC& dc, int x, int y,int dx,int dy,int ro
 {
 	CSize size = dc.GetTextExtent(str);
 	dc.TextOut(x+(column-1)*dx + (dx-size.cx-(dy-size.cy)), y+(row-1)*dy+(dy- size.cy)/2,str);
+}
+
+void CSpectrumDlg::SaveActive(RawData &data)
+{
+	UpdateData();
+	data.strAEFF=	m_strAEFF ;
+	data.strBEFF=	m_strBEFF ;
+	data.strADPM=	m_strADPM ; 
+	data.strBDPM=	m_strBDPM ;
+	data.strAGROSS=	m_strAGROSS;
+	data.strBGROSS=	m_strBGROSS;
+	data.strALL=	m_strAchLL ;
+	data.strAUL=	m_strAchUL ;
+	data.strBLL=	m_strBchLL ;
+	data.strBUL=	m_strBchUL ;
 }
