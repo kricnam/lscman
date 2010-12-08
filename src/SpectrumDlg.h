@@ -19,6 +19,10 @@ typedef struct
 	CString strBDPM;
 	CString strAEFF;
 	CString strBEFF;
+	CString strALL;
+	CString strAUL;
+	CString strBLL;
+	CString strBUL;
 	CString strPath;
 	COLORREF rgb;
 } RawData;
@@ -57,7 +61,7 @@ public:
 	CString	m_strBchLL;
 	CString	m_strBchUL;
 	//}}AFX_DATA
-	int m_nTime;
+	double m_nTime;
 
 // Overrides
 	// ClassWizard generated virtual function overrides
@@ -70,6 +74,7 @@ public:
 
 // Implementation
 protected:
+	void SaveActive(RawData& data);
 	void DrawPage(CDC& dc,int x,int y,int cx,int cy);
 	int AxisYScaleCount(int nMax,int nMin);
 	int AxisYScaleCount(double nMax,double nMin);
@@ -105,7 +110,6 @@ protected:
 	virtual BOOL OnInitDialog();
 	afx_msg void OnButtonAwsFactor();
 	afx_msg void OnPaint();
-	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 	afx_msg void OnButtonOpenAWD();
 	afx_msg void OnButtonFileOpen();
 	afx_msg void OnButtonFileSave();

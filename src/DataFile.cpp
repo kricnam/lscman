@@ -32,7 +32,6 @@ int CDataFile::GetSpectrumData(int *pArray, int len)
 {
 	if (fData==NULL) return 0;
 	CString strLine;
-	CString strField;
 	int n=0;
 	
 	try
@@ -43,7 +42,7 @@ int CDataFile::GetSpectrumData(int *pArray, int len)
 			while(!feof(fData))
 			{
 				readLine(strLine);
-				pArray[n++] = atoi(LPCTSTR(strField));
+				pArray[n++] = atoi(LPCTSTR(strLine));
 				if (n>3999) break;
 			};
 		}
@@ -306,16 +305,9 @@ bool CDataFile::SaveAs(LPCTSTR szFileName)
 	{
 		for(int i=0;i<4000;i++)
 		{
-			if (fprintf(file,"% 6d,",nSpectrum[i])<0)
+			if (fprintf(file,"%d\r\n",nSpectrum[i])<0)
 			{
 				fclose(file);return false;
-			}
-			if (((i+1)%10) == 0) 
-			{
-				if (fprintf(file,"\r\n")<0)
-				{
-					fclose(file);return false;
-				}
 			}
 		}
 		fclose(file);
@@ -353,6 +345,18 @@ void CDataFile::SetDPM(CString &strA, CString &strB)
 	i = atof(strB);
 	str.Format("% 9.2f",i);
 	memcpy(data.data.B_DPM,str,sizeof(data.data.B_DPM));
+}
+
+void CDataFile::SetGross(CString &strA, CString &strB)
+{
+	int i;
+	i = atoi(strA);
+	CString str;
+	str.Format("% 7d",i);
+	memcpy(data.data.A_GROSS,str,sizeof(data.data.A_GROSS));
+	i = atoi(strB);
+	str.Format("% 7d",i);
+	memcpy(data.data.B_GROSS,str,sizeof(data.data.B_GROSS));
 }
 
 bool CDataFile::GetGroup(Group_Line &group)
