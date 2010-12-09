@@ -441,7 +441,8 @@ void CSpectrumDlg::OnButtonFileOpen()
 
 		if (i)
 		{
-			setActiveData(listData.front());
+			if(listData.size()) 
+				setActiveData(listData.front());
 			nActiveIndex = 0;
 			Invalidate();   
 			UpdateWindow();
