@@ -115,13 +115,15 @@ BOOL CAWSFactorDlg::PreTranslateMessage(MSG* pMsg)
 BOOL CAWSFactorDlg::OnInitDialog() 
 {
 	CDialog::OnInitDialog();
+    ULONG style;
+
 	CRect rect;
+	CRect rect0,rectL;
 	m_stcOrg.GetWindowRect(&rect);
 	ScreenToClient(&rect);
 	
 	for(int j=0;j<10;j++)
 	{
-	  CRect rect0,rectL;
 	  rect.OffsetRect(0,rect.Height()+2);
 	  rect0 = rect;
 	  CString strLabel;
@@ -130,9 +132,8 @@ BOOL CAWSFactorDlg::OnInitDialog()
 	  rectL.OffsetRect(-1*rect.Width()-4,0);
 	  lbl[j].Create(strLabel,WS_CHILD|WS_VISIBLE|SS_RIGHT,rectL,this);
 	  lbl[j].SetFont(m_stcOrg.GetFont());
-	  ULONG style;
 	  style = WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_BORDER | ES_AUTOHSCROLL | ES_RIGHT;
-	  for(int i=0;i<7;i++)
+	  for(int i=0;i<4;i++)
 	  {
 		  editSample[j][i].Create(style,
 		  rect0,this,IDC_EDIT_SAMPLE+j*10+i);
@@ -144,15 +145,27 @@ BOOL CAWSFactorDlg::OnInitDialog()
 		  case 1:
 			  rect0.OffsetRect(rect.Width()/2,0);
 			  break;
-		  case 3:
-			  rect0.OffsetRect(rect.Width(),0);
-			  style |= ES_READONLY;
-			  break;
 		  }
 
 	  };
 	}
-
+  
+	style |= ES_READONLY;
+	rect.OffsetRect(5*rect.Width()+4+rect.Width()/2,0);
+	rect.OffsetRect(0,-10*(rect.Height()+2));
+	for(j=0;j<10;j++)
+	{
+		rect.OffsetRect(0,rect.Height()+2);
+		rect0 = rect;
+		for(int i=4;i<7;i++)
+		{
+			editSample[j][i].Create(style,
+				rect0,this,IDC_EDIT_SAMPLE+j*10+i);
+			editSample[j][i].SetFont(m_stcOrg.GetFont());
+			
+			rect0.OffsetRect(rect.Width()+1,0);
+		};
+	}
 
 	EnableItems(FALSE);
 
