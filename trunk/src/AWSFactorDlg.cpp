@@ -391,7 +391,14 @@ void CAWSFactorDlg::OnButtonPrnt()
 	BOOL bPrintingOK=dc.StartDoc(&di); //开始一个打印任务
 	CPrintInfo Info;
 	
-	Info.m_rectDraw.SetRect(10,10,dc.GetDeviceCaps(HORZRES)-20,dc.GetDeviceCaps(VERTRES)-20);
+	int cx,cy;
+	int mcx,mcy;//margin
+	cx = dc.GetDeviceCaps(HORZRES);
+	mcx = cx/15;
+	cy = dc.GetDeviceCaps(VERTRES);
+	mcy = cy/20;
+	Info.m_rectDraw.SetRect(mcx,mcy,cx-mcx,cy-mcy);
+
 	Info.SetMinPage(1);
 	Info.SetMaxPage(1);
 		CFont font,*old_pf;
@@ -417,7 +424,7 @@ void CAWSFactorDlg::OnButtonPrnt()
 	dc.StartPage(); //开始一个新的打印页
 	Info.m_nCurPage=1;
 	
-	DrawPage(dc,10,10,Info.m_rectDraw.Width(),Info.m_rectDraw.Height());
+	DrawPage(dc,mcx,mcy,Info.m_rectDraw.Width(),Info.m_rectDraw.Height());
 		
 	bPrintingOK=(dc.EndPage() > 0); //打印页结束
 	

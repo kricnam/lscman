@@ -381,7 +381,7 @@ void CSpectrumDlg::DrawLegend(CDC *pDC, int x,int y, int cx, int cy)
 		if (i==nActiveIndex) 
 		{
 			pDC->SetTextColor(RGB(0,0,0));
-			pDC->TextOut(nx - spaceX/2,ny,"*");
+			pDC->TextOut(nx - (spaceX/3)*2,ny+spaceX/4,"*");
 		}
 		pDC->SetTextColor(data.rgb);
 		pDC->TextOut(nx,ny,str);
@@ -688,11 +688,11 @@ void CSpectrumDlg::OnButtonAws()
 		double y,fAEff,fBEff;
 		double z,Z;
 		y = co.dAch_co[0] + factor * co.dAch_co[1] + pow(factor,2) * co.dAch_co[2] + pow(factor,3)*co.dAch_co[3];
-		m_strAEFF.Format("%G",y);
+		m_strAEFF.Format("%.2f",y);
 		fAEff = y;
 		
 		y = co.dBch_co[0] + factor * co.dBch_co[1] + pow(factor,2) * co.dBch_co[2] + pow(factor,3)*co.dBch_co[3];
-		m_strBEFF.Format("%G",y);
+		m_strBEFF.Format("%.2f",y);
 		fBEff = y;
 
 		y = co.d_BA_co[0] + factor * co.d_BA_co[1] + pow(factor,2) * co.d_BA_co[2] + pow(factor,3)*co.d_BA_co[3];
@@ -705,8 +705,8 @@ void CSpectrumDlg::OnButtonAws()
 		
 		Z = (Z-(1/y)*z)/fAEff;	
 		z = z/fBEff;
-		m_strADPM.Format("%G",Z);
-		m_strBDPM.Format("%G",z);
+		m_strADPM.Format("%.2f",Z);
+		m_strBDPM.Format("%.2f",z);
 	}	
 	UpdateData(FALSE);
 	if (listData.size())
@@ -915,7 +915,13 @@ void CSpectrumDlg::OnButtonPrint()
 	BOOL bPrintingOK=dc.StartDoc(&di); //开始一个打印任务
 	CPrintInfo Info;
 	
-	Info.m_rectDraw.SetRect(10,10,dc.GetDeviceCaps(HORZRES)-20,dc.GetDeviceCaps(VERTRES)-20);
+	int cx,cy;
+	int mcx,mcy;//margin
+	cx = dc.GetDeviceCaps(HORZRES);
+	mcx = cx/15;
+	cy = dc.GetDeviceCaps(VERTRES);
+	mcy = cy/20;
+	Info.m_rectDraw.SetRect(mcx,mcy,cx-mcx,cy-mcy);
 	Info.SetMinPage(1);
 	Info.SetMaxPage(1);
 	
@@ -940,7 +946,7 @@ void CSpectrumDlg::OnButtonPrint()
 	dc.StartPage(); //开始一个新的打印页
 	Info.m_nCurPage=1;
 	
-	DrawPage(dc,10,10,Info.m_rectDraw.Width(),Info.m_rectDraw.Height());
+	DrawPage(dc,mcx,mcy,Info.m_rectDraw.Width(),Info.m_rectDraw.Height());
 		
 	bPrintingOK=(dc.EndPage() > 0); //打印页结束
 	

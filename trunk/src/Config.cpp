@@ -103,7 +103,7 @@ double Config::GetMF_A(void)
 	{
 		return atof(tmp);
 	}
-	return 0.001;
+	return 0.000;
 }
 
 double Config::GetMF_B(void)
@@ -113,7 +113,7 @@ double Config::GetMF_B(void)
 	{
 		return atof(tmp);
 	}
-	return 1.000;
+	return 0.000;
 }
 double Config::GetMF_C(void)
 {
@@ -122,7 +122,7 @@ double Config::GetMF_C(void)
 	{
 		return atof(tmp);
 	}
-	return 0.023;
+	return 2.900;
 }
 
 double Config::GetMF_D(void)
@@ -132,7 +132,7 @@ double Config::GetMF_D(void)
 	{
 		return atof(tmp);
 	}
-	return 0.001;
+	return 1.491;
 }
 
 double Config::GetMF_a(void)
@@ -142,7 +142,7 @@ double Config::GetMF_a(void)
 	{
 		return atof(tmp);
 	}
-	return 2.001;
+	return 0.000;
 }
 double Config::GetMF_b(void)
 {
@@ -151,7 +151,7 @@ double Config::GetMF_b(void)
 	{
 		return atof(tmp);
 	}
-	return 2.003;
+	return 0.000;
 }
 double Config::GetMF_c(void)
 {
@@ -160,7 +160,7 @@ double Config::GetMF_c(void)
 	{
 		return atof(tmp);
 	}
-	return 0.001;
+	return -2.0;
 }
 
 double Config::GetMF_d(void)
@@ -170,7 +170,7 @@ double Config::GetMF_d(void)
 	{
 		return atof(tmp);
 	}
-	return 1.001;
+	return -1.0;
 }
 
 bool Config::ReadKey(LPCTSTR szKey, LPCTSTR szVal, int nLen)
