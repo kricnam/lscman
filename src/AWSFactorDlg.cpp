@@ -210,6 +210,9 @@ void CAWSFactorDlg::OnButtonSet()
 		GetSetting(set);
 		if (awsFile.CalculateCoefficient(set,co))
 			LoadCalCo(co);
+		m_btnSet.ShowWindow(FALSE);
+		
+		EnableItems(FALSE);
 
 }
 
