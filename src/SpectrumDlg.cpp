@@ -1043,7 +1043,7 @@ void CSpectrumDlg::DrawPage(CDC &dc, int x, int y, int cx, int cy)
 		data.Close();
 	}
 
-	nCurrentY+=nY;
+	nCurrentY=nY+2*size.cy;;
 	dc.TextOut(x,nCurrentY,"Data");
 	nCurrentY+=size.cy;
 	dc.TextOut(x,nCurrentY,"Spectrum");
