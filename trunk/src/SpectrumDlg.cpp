@@ -19,7 +19,7 @@ static char THIS_FILE[] = __FILE__;
 int round(double x)
 {
 	double i = ceil(x);
-	return ((i-x)>0.5)?(int)i:(int)(i-1);
+	return ((i-x)<0.5)?(int)i:(int)(i-1);
 }
 
 /////////////////////////////////////////////////////////////////////////////
