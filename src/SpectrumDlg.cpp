@@ -233,7 +233,7 @@ CRect CSpectrumDlg::DrawLogAxis(CDC *pDC, int x, int y, int cx, int cy)
 	else
 		nScaleCount = AxisYScaleCount(log10(nScaleMax),(double)0);
 	title.Format("%d",nScaleMax*100);
-	CRect rect(x,y,x+cx,x+cy);
+	CRect rect(x,y,x+cx,y+cy);
 	pDC->FillSolidRect(&rect,RGB(250,250,150));
 	CSize size = pDC->GetTextExtent(title);
 	rect.DeflateRect(size.cx,size.cy+size.cy/2);
