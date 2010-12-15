@@ -29,8 +29,8 @@ typedef struct
 	int nAch_UL;
 	int nBch_LL;
 	int nBch_UL;
-	double dA_DPM;
-	double dB_DPM;
+	unsigned int nA_DPM;
+	unsigned int nB_DPM;
 	AWS_Sample sample;
 } AWS_Setting;
 

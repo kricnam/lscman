@@ -19,10 +19,8 @@ CAWSFactorDlg::CAWSFactorDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CAWSFactorDlg::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CAWSFactorDlg)
-	m_ADPM = 0.0;
 	m_nAchUL = 0;
 	m_nAchLL = 0;
-	m_BDPM = 0.0;
 	m_nBchLL = 0;
 	m_nBchUL = 0;
 	m_dBA_a = 0.0;
@@ -38,6 +36,8 @@ CAWSFactorDlg::CAWSFactorDlg(CWnd* pParent /*=NULL*/)
 	m_dAch_c = 0.0;
 	m_dAch_d = 0.0;
 	m_strCurveName = _T("");
+	m_ADPM = 0;
+	m_BDPM = 0;
 	//}}AFX_DATA_INIT
 }
 
@@ -51,13 +51,15 @@ void CAWSFactorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_FILE_SAVE, m_btnSave);
 	DDX_Control(pDX, IDC_BUTTON_FILE_OPEN, m_btnOpen);
 	DDX_Control(pDX, IDC_BUTTON_SET, m_btnSet);
-	DDX_Text(pDX, IDC_EDIT_ADPM, m_ADPM);
 	DDX_Text(pDX, IDC_EDIT_AUL, m_nAchUL);
 	DDX_Text(pDX, IDC_EDIT_ALL, m_nAchLL);
-	DDX_Text(pDX, IDC_EDIT_BDPM, m_BDPM);
 	DDX_Text(pDX, IDC_EDIT_BLL, m_nBchLL);
 	DDX_Text(pDX, IDC_EDIT_BUL, m_nBchUL);
 	DDX_Text(pDX, IDC_EDIT_CURVENAME, m_strCurveName);
+	DDX_Text(pDX, IDC_EDIT_ADPM, m_ADPM);
+	DDV_MinMaxUInt(pDX, m_ADPM, 0, 9999999);
+	DDX_Text(pDX, IDC_EDIT_BDPM, m_BDPM);
+	DDV_MinMaxUInt(pDX, m_BDPM, 0, 9999999);
 	//}}AFX_DATA_MAP
 	if (!pDX->m_bSaveAndValidate)
 	{
@@ -259,8 +261,8 @@ void CAWSFactorDlg::GetSetting(AWS_Setting &set)
 	set.nAch_UL = m_nAchUL;
 	set.nBch_LL = m_nBchLL;
 	set.nBch_UL = m_nBchUL;
-	set.dA_DPM = m_ADPM;
-	set.dB_DPM = m_BDPM;
+	set.nA_DPM = m_ADPM;
+	set.nB_DPM = m_BDPM;
 
 	CString strVal;
 	for(int i=0;i<10;i++)
@@ -293,8 +295,8 @@ void CAWSFactorDlg::LoadData(AWS_Setting &set)
 	m_nAchUL = 	set.nAch_UL;
 	m_nBchLL = set.nBch_LL;
 	m_nBchUL = set.nBch_UL;
-	m_ADPM = set.dA_DPM ;
-	m_BDPM = set.dB_DPM; 
+	m_ADPM = set.nA_DPM ;
+	m_BDPM = set.nB_DPM; 
 	
 	CString strVal;
 	for(int i=0;i<10;i++)
@@ -478,9 +480,9 @@ void CAWSFactorDlg::DrawPage(CDC &dc, int x, int y, int cx, int cy)
 	DrawTable(dc,nCurX,nCurrentY,ndx,ndy,2,2);
 	DrawTableText(dc,nCurX,nCurrentY,ndx,ndy,1,1,"A-DPM");
 	DrawTableText(dc,nCurX,nCurrentY,ndx,ndy,1,2,"B-DPM");
-	strText.Format("%6.G",m_ADPM);
+	strText.Format("%u",m_ADPM);
 	DrawTableTextRight(dc,nCurX,nCurrentY,ndx,ndy,2,1,strText);
-	strText.Format("%6.G",m_BDPM);
+	strText.Format("%u",m_BDPM);
 	DrawTableTextRight(dc,nCurX,nCurrentY,ndx,ndy,2,2,strText);
 
 	nCurrentY+= 4*ndy;
