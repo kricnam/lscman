@@ -5,6 +5,7 @@
 #include "LSC.h"
 #include "AWSFactorDlg.h"
 #include "Config.h"
+#include <math.h>
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -13,7 +14,11 @@ static char THIS_FILE[] = __FILE__;
 
 /////////////////////////////////////////////////////////////////////////////
 // CAWSFactorDlg dialog
-
+double round(double x)
+{
+	double i = ceil(x);
+	return ((i-x)<0.5)?i:i-1;
+}
 
 CAWSFactorDlg::CAWSFactorDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CAWSFactorDlg::IDD, pParent)
@@ -333,18 +338,18 @@ void CAWSFactorDlg::LoadCalCo(AWS_CalCo &co)
 		editSample[i][6].SetWindowText(strVal);
 	}
 
-	m_dAch_a = co.dAch_co[3];
-	m_dAch_b = co.dAch_co[2];
-	m_dAch_c = co.dAch_co[1];
-	m_dAch_d = co.dAch_co[0];
-	m_dBch_a = co.dBch_co[3];
-	m_dBch_b = co.dBch_co[2];
-	m_dBch_c = co.dBch_co[1];
-	m_dBch_d = co.dBch_co[0];
-	m_dBA_a = co.d_BA_co[3];
-	m_dBA_b = co.d_BA_co[2];
-	m_dBA_c = co.d_BA_co[1];
-	m_dBA_d = co.d_BA_co[0];
+	m_dAch_a = round(co.dAch_co[3]*10000.0)/10000.0;
+	m_dAch_b = round(co.dAch_co[2]*10000.0)/10000.0;
+	m_dAch_c = round(co.dAch_co[1]*10000.0)/10000.0;
+	m_dAch_d = round(co.dAch_co[0]*10000.0)/10000.0;
+	m_dBch_a = round(co.dBch_co[3]*10000.0)/10000.0;
+	m_dBch_b = round(co.dBch_co[2]*10000.0)/10000.0;
+	m_dBch_c = round(co.dBch_co[1]*10000.0)/10000.0;
+	m_dBch_d = round(co.dBch_co[0]*10000.0)/10000.0;
+	m_dBA_a = round(co.d_BA_co[3]*10000.0)/10000.0;
+	m_dBA_b = round(co.d_BA_co[2]*10000.0)/10000.0;
+	m_dBA_c = round(co.d_BA_co[1]*10000.0)/10000.0;
+	m_dBA_d = round(co.d_BA_co[0]*10000.0)/10000.0;
 	UpdateData(FALSE);
 }
 
