@@ -133,11 +133,11 @@ bool CAWSFile::ReadData(LPCTSTR szFile,AWS_Setting& set)
 	else return false;
 
 	if (conf.ReadKey("A_DPM",buf,1024))
-		set.dA_DPM = atof(buf);
+		set.nA_DPM = atoi(buf);
 	else return false;
 
 	if (conf.ReadKey("B_DPM",buf,1024))
-		set.dB_DPM = atof(buf);
+		set.nB_DPM = atoi(buf);
 	else return false;
 
 	CString strKey;
@@ -177,8 +177,8 @@ bool CAWSFile::WriteFile(LPCTSTR szPath, AWS_Setting &set)
 	strLine.Format("ACH_LL=%d\nACH_UL=%d\nBCH_LL=%d\nBCH_UL=%d\n",
 		set.nAch_LL,set.nAch_UL,set.nBch_LL,set.nBch_UL);
 	fputs((LPCTSTR)strLine,file);
-	strLine.Format("A_DPM=%G\nB_DPM=%G\n",
-		set.dA_DPM,set.dB_DPM);
+	strLine.Format("A_DPM=%u\nB_DPM=%u\n",
+		set.nA_DPM,set.nB_DPM);
 	fputs((LPCTSTR)strLine,file);
 
 	for(int i=0;i<10;i++)
@@ -199,8 +199,8 @@ bool CAWSFile::CalculateCoefficient(AWS_Setting &set, AWS_CalCo &co)
 {
 	for(int i=0;i<10;i++)
 	{
-		co.cal.dA_Eff[i] = set.sample.dA_CPM[i] / set.dA_DPM;
-		co.cal.dB_Eff[i] = set.sample.dB_CPM[i] / set.dB_DPM;
+		co.cal.dA_Eff[i] = set.sample.dA_CPM[i] / set.nA_DPM;
+		co.cal.dB_Eff[i] = set.sample.dB_CPM[i] / set.nB_DPM;
 		co.cal.dBA_CPM[i]= set.sample.dB_CPM[i]/set.sample.dA_CPM[i];
 	}
 	try

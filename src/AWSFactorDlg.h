@@ -25,10 +25,8 @@ public:
 	CButton	m_btnSave;
 	CButton	m_btnOpen;
 	CButton	m_btnSet;
-	double	m_ADPM;
 	int		m_nAchUL;
 	int		m_nAchLL;
-	double	m_BDPM;
 	int		m_nBchLL;
 	int		m_nBchUL;
 	double	m_dBA_a;
@@ -44,6 +42,8 @@ public:
 	double	m_dAch_c;
 	double	m_dAch_d;
 	CString	m_strCurveName;
+	UINT	m_ADPM;
+	UINT	m_BDPM;
 	//}}AFX_DATA
 
 
