@@ -656,7 +656,7 @@ bool CSpectrumDlg::LoadData(LPCTSTR szPath)
 
 			rawData.rgb = rgb.front();
 			rgb.pop_front();
-			listData.push_front(rawData);
+			listData.push_back(rawData);
 			return true;
 		}
 
