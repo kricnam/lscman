@@ -172,6 +172,7 @@ void CLSCDlg::OnOpenDlg(WPARAM wParam, LPARAM lParam)
 			break;
 		case OPEN_AWS_FACTOR:
 			m_AWSFactorDlg.m_strCurveName = m_SpectrumDlg.m_strCurveName;
+			m_AWSFactorDlg.m_strCurvePath = m_SpectrumDlg.m_strCurvePath;
 			this->SetWindowText("AWS Factor");
 			m_AWSFactorDlg.GetClientRect(&rect);
 			m_AWSFactorDlg.ShowWindow(SW_SHOW);
@@ -180,6 +181,7 @@ void CLSCDlg::OnOpenDlg(WPARAM wParam, LPARAM lParam)
 			break;
 		case OPEN_SPECTRUM:
 			m_SpectrumDlg.m_strCurveName = m_AWSFactorDlg.m_strCurveName;
+			m_SpectrumDlg.m_strCurvePath = m_AWSFactorDlg.m_strCurvePath;
 			m_SpectrumDlg.ShowWindow(SW_SHOW);
 			m_SpectrumDlg.UpdateData(FALSE);
 			this->SetWindowText("Spectrum");

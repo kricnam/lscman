@@ -14,6 +14,7 @@ class CAWSFactorDlg : public CDialog
 {
 // Construction
 public:
+	CString m_strCurvePath;
 	CAWSFactorDlg(CWnd* pParent = NULL);   // standard constructor
 
 	CEdit editSample[10][7];

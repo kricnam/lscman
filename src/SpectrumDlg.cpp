@@ -48,11 +48,11 @@ CSpectrumDlg::CSpectrumDlg(CWnd* pParent /*=NULL*/)
 	pSpectrumWnd = NULL;
 	setMF();
 	nActiveIndex = 0;
-	rgb.push_back(RGB(200,100,100));
-	rgb.push_back(RGB(150,100,250));
-	rgb.push_back(RGB(100,150,150));
-	rgb.push_back(RGB(75,250,75));
-	rgb.push_back(RGB(250,75,75));
+	rgb[0]=(RGB(200,100,100));
+	rgb[1]=(RGB(150,100,250));
+	rgb[2]=(RGB(100,150,150));
+	rgb[3]=(RGB(75,250,75));
+	rgb[4]=(RGB(250,75,75));
 	bLog = false;
 }
 
@@ -174,10 +174,7 @@ void CSpectrumDlg::DrawGraph(CDC *pDC, int x, int y, int cx, int cy)
 	CRect rect = DrawAxis(pDC,x,y,cx,cy);
 	if (listData.size())
 	{
-		if (bLog)
-			DrawDataLog(pDC,rect.left,rect.top,rect.Width(),rect.Height());
-		else
-			DrawData(pDC,rect.left,rect.top,rect.Width(),rect.Height());
+		DrawData(pDC,rect.left,rect.top,rect.Width(),rect.Height());
 	}
 }
 
@@ -277,78 +274,63 @@ CRect CSpectrumDlg::DrawLogAxis(CDC *pDC, int x, int y, int cx, int cy)
 
 }
 
+void CSpectrumDlg::DrawPix(CDC *pDC, int rgbIndex,int nPix, int x, int y, double dx, double dy, RawData &data)
+{
+	CPen Pen;
+	Pen.CreatePen(PS_SOLID,nPix,rgb[rgbIndex]);
+	CPen* pen = pDC->SelectObject(&Pen);
+	for(int j=0;j<4000;j++)
+	{
+		int nx = x + round(j * dx);
+		int ny ;
+		if  (bLog)
+			ny = y - round(log10(data.nSpetrum[j]) * dy);
+		else
+			ny = y - round(data.nSpetrum[j] * dy);
+		pDC->MoveTo(nx,ny);
+		pDC->LineTo(nx,ny);
+	}
+	pDC->SelectObject(pen);
+	Pen.DeleteObject();
+}
+
 void CSpectrumDlg::DrawData(CDC *pDC, int x,int y, int cx, int cy)
 {
+	if (!listData.size()) return;
 	CPen pen, *old_pen;
 	pen.CreatePen(PS_SOLID,3,RGB(0,255,0));
 	old_pen = pDC->SelectObject(&pen);
 	list<RawData>::iterator it;
 	int nPix = 3;
-	if (pDC->IsPrinting()) nPix = MulDiv(3, pDC->GetDeviceCaps(LOGPIXELSY), 96); ;
-	int nx,ny;
-	double dy = (double)cy / GetScaleMax();
+	if (pDC->IsPrinting()) 
+		nPix = MulDiv(3, pDC->GetDeviceCaps(LOGPIXELSY), 96); 
+
+	double dy;
+	if (bLog)
+		dy = cy / log10(GetScaleMax());
+	else
+		dy = (double)cy / GetScaleMax();
+	double dx = (double)cx / 4000.0;
 	int i=0;
+	RawData& curData = GetListItem(nActiveIndex);
 	for(it=listData.begin();it!=listData.end();it++)
 	{
-		if (pDC->IsPrinting() && i++!=nActiveIndex)
+		if (nActiveIndex==i++)
 		{
-			continue;
+			if (pDC->IsPrinting())	break;
+			else continue;
 		}
-		CPen* pPen = new CPen;
-		pPen->CreatePen(PS_SOLID,nPix,(*it).rgb);
-		pDC->SelectObject(pPen);
-			for(int j=0;j<4000;j++)
-			{
-				nx = x + j * cx/4000;
-				ny = y + cy - round((*it).nSpetrum[j] * dy);
-				pDC->MoveTo(nx,ny);
-				pDC->LineTo(nx,ny);
-			}
-		pDC->SelectObject(&pen);
-		pPen->DeleteObject();
-		delete pPen;
+
+		DrawPix(pDC,i-1,nPix,x,y+cy,dx,dy,*it);
 	}
+	
+	DrawPix(pDC,nActiveIndex,nPix,x,y+cy,dx,dy,curData);
 	
 	if (old_pen) pDC->SelectObject(old_pen);
 	DrawLegend(pDC,x,y,cx,cy);
 }
 
-void CSpectrumDlg::DrawDataLog(CDC *pDC, int x,int y, int cx, int cy)
-{
-	CPen pen, *old_pen;
-	pen.CreatePen(PS_SOLID,3,RGB(0,255,0));
-	old_pen = pDC->SelectObject(&pen);
-	list<RawData>::iterator it;
-	int nPix =3;
-	if (pDC->IsPrinting()) nPix = MulDiv(3, pDC->GetDeviceCaps(LOGPIXELSY), 96); 
-	double dy = cy / log10(GetScaleMax());
-	int nx,ny;
-	int i = 0;
-	for(it=listData.begin();it!=listData.end();it++)
-	{
-		if (pDC->IsPrinting() && i++!=nActiveIndex)
-		{
-			continue;
-		}
-		CPen* pPen = new CPen;
-		pPen->CreatePen(PS_SOLID,nPix,(*it).rgb);
-		pDC->SelectObject(pPen);
-			for(int j=0;j<4000;j++)
-			{
-				if ((*it).nSpetrum[j]==0) continue;
-				nx = x + j * cx/4000;
-				ny = y + cy - log10((*it).nSpetrum[j]) * dy;
-				pDC->MoveTo(nx,ny);
-				pDC->LineTo(nx,ny);
-			}
-		pDC->SelectObject(&pen);
-		pPen->DeleteObject();
-		delete pPen;
-	}
-	
-	if (old_pen) pDC->SelectObject(old_pen);
-	DrawLegend(pDC,x,y,cx,cy);
-}
+
 
 void CSpectrumDlg::DrawLegend(CDC *pDC, int x,int y, int cx, int cy)
 {
@@ -383,7 +365,7 @@ void CSpectrumDlg::DrawLegend(CDC *pDC, int x,int y, int cx, int cy)
 			pDC->SetTextColor(RGB(0,0,0));
 			pDC->TextOut(nx - (spaceX/3)*2,ny+spaceX/4,"*");
 		}
-		pDC->SetTextColor(data.rgb);
+		pDC->SetTextColor(rgb[i]);
 		pDC->TextOut(nx,ny,str);
 		ny += dy;
 	}
@@ -391,10 +373,11 @@ void CSpectrumDlg::DrawLegend(CDC *pDC, int x,int y, int cx, int cy)
 
 void CSpectrumDlg::OnButtonOpenAWD() 
 {
-	CFileDialog dlg(TRUE,"awd",NULL,0,"AWS File(*.aws)|*.aws||",this->GetParent());
+	CFileDialog dlg(TRUE,"awd",NULL,OFN_FILEMUSTEXIST,"AWS File(*.aws)|*.aws||",this->GetParent());
 	if (dlg.DoModal()==IDOK)
 	{
-		m_strCurveName = dlg.GetPathName();
+		m_strCurvePath = dlg.GetPathName();
+		m_strCurveName = dlg.GetFileName();
 		UpdateData(FALSE);
 	}
 }
@@ -654,8 +637,6 @@ bool CSpectrumDlg::LoadData(LPCTSTR szPath)
 			rawData.strTime.TrimLeft();
 			rawData.strTime.TrimRight();
 
-			rawData.rgb = rgb.front();
-			rgb.pop_front();
 			listData.push_back(rawData);
 			return true;
 		}
@@ -758,7 +739,6 @@ void CSpectrumDlg::deleteData(int n)
 	{
 		if(i++==n) 
 		{
-			rgb.push_back((*it).rgb);
 			listData.erase(it);
 			break;
 		}
@@ -1166,3 +1146,5 @@ void CSpectrumDlg::SaveActive(RawData &data)
 	data.strBLL=	m_strBchLL ;
 	data.strBUL=	m_strBchUL ;
 }
+
+
