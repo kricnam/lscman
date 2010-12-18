@@ -245,7 +245,8 @@ void CAWSFactorDlg::OnShowWindow(BOOL bShow, UINT nStatus)
 
 void CAWSFactorDlg::OnButtonFileSave() 
 {
-	if (editSample[0][0].GetStyle()&ES_READONLY)
+	if ((editSample[0][0].GetStyle()&ES_READONLY) && 
+		 !m_btnSave.IsWindowVisible())
 		return;
 	
 
@@ -256,6 +257,9 @@ void CAWSFactorDlg::OnButtonFileSave()
 		AWS_Setting set;
 		GetSetting(set);
 		awsFile.WriteFile(dlg.GetPathName(),set);
+		m_strCurveName = dlg.GetFileName();
+		m_strCurvePath = dlg.GetPathName();
+		UpdateData(FALSE);
 	}
 }
 
@@ -285,10 +289,11 @@ void CAWSFactorDlg::GetSetting(AWS_Setting &set)
 
 void CAWSFactorDlg::OnButtonFileOpen() 
 {
-	CFileDialog dlg(TRUE,"awd",NULL,0,"AWS File(*.aws)|*.aws||",this->GetParent());
+	CFileDialog dlg(TRUE,"awd",NULL,OFN_FILEMUSTEXIST,"AWS File(*.aws)|*.aws||",this->GetParent());
 	if (dlg.DoModal()==IDOK)
 	{
-		m_strCurveName = dlg.GetPathName();
+		m_strCurvePath = dlg.GetPathName();
+		m_strCurveName = dlg.GetFileName();
 		OpenFile();
 	}
 }

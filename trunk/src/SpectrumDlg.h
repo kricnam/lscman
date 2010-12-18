@@ -24,7 +24,6 @@ typedef struct
 	CString strBLL;
 	CString strBUL;
 	CString strPath;
-	COLORREF rgb;
 } RawData;
 
 /////////////////////////////////////////////////////////////////////////////
@@ -36,6 +35,7 @@ class CSpectrumDlg : public CDialog
 {
 // Construction
 public:
+	CString m_strCurvePath;
 	void GetCurrentFileName(CString& str);
 	CSpectrumDlg(CWnd* pParent = NULL);   // standard constructor
 
@@ -74,6 +74,7 @@ public:
 
 // Implementation
 protected:
+	void DrawPix(CDC *pDC, int rgbIndex,int nPix, int x,int y, double dx, double dy, RawData& data);
 	void SaveActive(RawData& data);
 	void DrawPage(CDC& dc,int x,int y,int cx,int cy);
 	int AxisYScaleCount(int nMax,int nMin);
@@ -95,7 +96,6 @@ protected:
 	
 	//int nSpectrunData[5][4000];
 	void DrawData(CDC *pDC,int x,int y, int cx,int cy);
-	void DrawDataLog(CDC *pDC,int x,int y, int cx,int cy);
 	CRect DrawAxis(CDC *pDC, int x, int y, int cx, int cy);
 	CRect DrawLogAxis(CDC *pDC, int x, int y, int cx, int cy);
 	void DrawGraph(CDC* pDC, int x, int y, int cx, int cy);
@@ -125,7 +125,7 @@ protected:
 	static char szAWSFilter[];
 	int nActiveIndex;
 	
-	list<COLORREF> rgb;
+	COLORREF rgb[5];
 	//Model Factor
 	double MF_A,MF_B,MF_C,MF_D,MF_a,MF_b,MF_c,MF_d;
 };
