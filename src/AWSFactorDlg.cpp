@@ -230,7 +230,7 @@ void CAWSFactorDlg::OnShowWindow(BOOL bShow, UINT nStatus)
 	if (bShow)
 	{
 
-		if(!m_strCurveName.IsEmpty())
+		if(!m_strCurvePath.IsEmpty())
 			OpenFile();
 	}
 	else
@@ -364,7 +364,7 @@ void CAWSFactorDlg::OpenFile(void)
 		AWS_Setting set;
 		AWS_CalCo co;
 		
-		awsFile.ReadData(m_strCurveName,set);
+		awsFile.ReadData(m_strCurvePath,set);
 		if (awsFile.CalculateCoefficient(set,co))
 			LoadData(set,co);
 		else

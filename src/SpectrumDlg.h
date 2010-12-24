@@ -24,6 +24,7 @@ typedef struct
 	CString strBLL;
 	CString strBUL;
 	CString strPath;
+	COLORREF rgb;
 } RawData;
 
 /////////////////////////////////////////////////////////////////////////////
@@ -74,11 +75,12 @@ public:
 
 // Implementation
 protected:
-	void DrawPix(CDC *pDC, int rgbIndex,int nPix, int x,int y, double dx, double dy, RawData& data);
+	void initColorList();
+	void DrawPix(CDC *pDC,int nPix, int x,int y, double dx, double dy, RawData& data);
 	void SaveActive(RawData& data);
 	void DrawPage(CDC& dc,int x,int y,int cx,int cy);
-	int AxisYScaleCount(int nMax,int nMin);
-	int AxisYScaleCount(double nMax,double nMin);
+	int AxisYScaleCount(int& nMax,int nMin);
+	int AxisYScaleCountLog(double nMax,double nMin);
 	int GetScaleMax(void);
 	int GetMaxCount(void);
 	bool bLog;
@@ -125,7 +127,7 @@ protected:
 	static char szAWSFilter[];
 	int nActiveIndex;
 	
-	COLORREF rgb[5];
+	list<COLORREF> rgb;
 	//Model Factor
 	double MF_A,MF_B,MF_C,MF_D,MF_a,MF_b,MF_c,MF_d;
 };
