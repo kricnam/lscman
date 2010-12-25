@@ -1066,7 +1066,7 @@ void CSpectrumDlg::DrawPage(CDC &dc, int x, int y, int cx, int cy)
 	DrawTableTextRight(dc,nCurX,nCurrentY,size.cx,size.cy+dy,3,1,m_strBGROSS);
 	
 	nCurX+=size.cx;
-	size.cx = (cx - nCurX)/5;;
+	size.cx = (cx - (nCurX-x))/5;;
 	DrawTable(dc,nCurX,nCurrentY,size.cx,size.cy+dy,3,5);
 	DrawTableText(dc,nCurX,nCurrentY,size.cx,size.cy+dy,1,1,"Lower(ch)");
 	DrawTableTextRight(dc,nCurX,nCurrentY,size.cx,size.cy+dy,2,1,m_strAchLL);
