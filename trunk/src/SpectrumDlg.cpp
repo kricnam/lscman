@@ -411,20 +411,27 @@ void CSpectrumDlg::OnButtonFileOpen()
 			}
 			int n;
 			if (isOpenedAt(fileName[i],n))
-				deleteData(n);
-			if (!LoadData(fileName[i++])) 
 			{
-				CString strMsg;
-				strMsg.Format("Load file %s failed.",fileName[i-1]);
-				MessageBox(strMsg);
+				readData(fileName[i],GetListItem(n));
+				nActiveIndex = n;
+				i++;
+			}
+			else
+			{
+				if (!LoadData(fileName[i++])) 
+				{
+					CString strMsg;
+					strMsg.Format("Load file %s failed.",fileName[i-1]);
+					MessageBox(strMsg);
+				}
 			}
 		};
 
 		if (i)
 		{
 			if(listData.size()) 
-				setActiveData(listData.front());
-			nActiveIndex = 0;
+				setActiveData(GetListItem(nActiveIndex));
+
 			Invalidate();   
 			UpdateWindow();
 			UpdateData(FALSE);
@@ -641,6 +648,7 @@ bool CSpectrumDlg::LoadData(LPCTSTR szPath)
 			rawData.rgb = rgb.front();
 			rgb.pop_front();
 			listData.push_back(rawData);
+			nActiveIndex = listData.size()-1;
 			return true;
 		}
 
@@ -1174,4 +1182,63 @@ void CSpectrumDlg::initColorList()
 	rgb.push_back(RGB(100,150,150));
 	rgb.push_back(RGB(75,250,75));
 	rgb.push_back(RGB(250,75,75));
+}
+
+void CSpectrumDlg::readData(LPCTSTR szFile, RawData &rawData)
+{
+		CDataFile data;
+		char szName[_MAX_FNAME]={0};
+		char ext[_MAX_EXT]={0};
+
+		_splitpath(szFile, NULL, NULL, szName, ext );
+
+	while (data.Open(szFile) && data.Load())
+		{
+			rawData.strName = szName;
+			rawData.strName+= ext;
+			rawData.strPath = szFile;
+			memset(rawData.nSpetrum,0,4000);
+			Data_Line data_rec={0};
+			memcpy(rawData.nSpetrum,data.nSpectrum,sizeof(rawData.nSpetrum));
+		
+			data.GetDataLine(data_rec);
+
+			rawData.strAGROSS = CString(data_rec.data.A_GROSS,sizeof(data_rec.data.A_GROSS));
+			rawData.strAGROSS.TrimLeft();
+			rawData.strAGROSS.TrimRight();
+		
+			rawData.strBGROSS = CString(data_rec.data.B_GROSS,sizeof(data_rec.data.B_GROSS));
+			rawData.strBGROSS.TrimLeft();
+			rawData.strBGROSS.TrimRight();
+
+			rawData.strSCCR = CString(data_rec.data.STD_ESCR_SCCR,sizeof(data_rec.data.STD_ESCR_SCCR));
+			rawData.strSCCR.TrimLeft();
+			rawData.strSCCR.TrimRight();
+			
+			rawData.strESCR = CString(data_rec.data.ESCR_SCCR,sizeof(data_rec.data.ESCR_SCCR));
+			rawData.strESCR.TrimLeft();
+			rawData.strESCR.TrimRight();
+			
+			rawData.strADPM = CString(data_rec.data.A_DPM,sizeof(data_rec.data.A_DPM));
+			rawData.strADPM.TrimLeft();
+			rawData.strADPM.TrimRight();
+
+			rawData.strBDPM = CString(data_rec.data.B_DPM,sizeof(data_rec.data.B_DPM));
+			rawData.strBDPM.TrimLeft();
+			rawData.strBDPM.TrimRight();
+
+			rawData.strAEFF = CString(data_rec.data.A_EFF,sizeof(data_rec.data.A_EFF));
+			rawData.strAEFF.TrimLeft();
+			rawData.strAEFF.TrimRight();
+
+			rawData.strBEFF = CString(data_rec.data.B_EFF,sizeof(data_rec.data.B_EFF));
+			rawData.strBEFF.TrimLeft();
+			rawData.strBEFF.TrimRight();
+			
+			rawData.strTime = CString(data_rec.data.TIME,sizeof(data_rec.data.TIME));
+			rawData.strTime.TrimLeft();
+			rawData.strTime.TrimRight();
+
+			return;
+		}
 }

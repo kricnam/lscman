@@ -17,7 +17,7 @@ public:
 	CString m_strCurvePath;
 	CAWSFactorDlg(CWnd* pParent = NULL);   // standard constructor
 
-	CEdit editSample[10][7];
+	CEdit editSample[10][8];
 	CStatic lbl[10];
 // Dialog Data
 	//{{AFX_DATA(CAWSFactorDlg)
@@ -30,18 +30,18 @@ public:
 	int		m_nAchLL;
 	int		m_nBchLL;
 	int		m_nBchUL;
-	double	m_dBA_a;
-	double	m_dBA_b;
-	double	m_dBA_d;
-	double	m_dBA_c;
-	double	m_dBch_a;
-	double	m_dBch_b;
-	double	m_dBch_c;
-	double	m_dBch_d;
-	double	m_dAch_a;
-	double	m_dAch_b;
-	double	m_dAch_c;
-	double	m_dAch_d;
+	CString	m_dBA_a;
+	CString	m_dBA_b;
+	CString	m_dBA_d;
+	CString	m_dBA_c;
+	CString	m_dBch_a;
+	CString	m_dBch_b;
+	CString	m_dBch_c;
+	CString	m_dBch_d;
+	CString	m_dAch_a;
+	CString	m_dAch_b;
+	CString	m_dAch_c;
+	CString	m_dAch_d;
 	CString	m_strCurveName;
 	UINT	m_ADPM;
 	UINT	m_BDPM;

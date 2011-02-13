@@ -13,6 +13,7 @@ typedef struct
 	double dA_ratio[10];
 	double dA_CPM[10];
 	double dB_ratio[10];
+	double dB_A_CPM[10];
 	double dB_CPM[10];
 } AWS_Sample;
 
