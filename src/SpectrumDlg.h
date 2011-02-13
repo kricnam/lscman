@@ -75,6 +75,7 @@ public:
 
 // Implementation
 protected:
+	void readData(LPCTSTR szFile, RawData& rawData);
 	void initColorList();
 	void DrawPix(CDC *pDC,int nPix, int x,int y, double dx, double dy, RawData& data);
 	void SaveActive(RawData& data);

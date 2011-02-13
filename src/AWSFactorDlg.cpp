@@ -28,18 +28,18 @@ CAWSFactorDlg::CAWSFactorDlg(CWnd* pParent /*=NULL*/)
 	m_nAchLL = 0;
 	m_nBchLL = 0;
 	m_nBchUL = 0;
-	m_dBA_a = 0.0;
-	m_dBA_b = 0.0;
-	m_dBA_d = 0.0;
-	m_dBA_c = 0.0;
-	m_dBch_a = 0.0;
-	m_dBch_b = 0.0;
-	m_dBch_c = 0.0;
-	m_dBch_d = 0.0;
-	m_dAch_a = 0.0;
-	m_dAch_b = 0.0;
-	m_dAch_c = 0.0;
-	m_dAch_d = 0.0;
+	m_dBA_a = "";
+	m_dBA_b = "";
+	m_dBA_d = "";
+	m_dBA_c = "";
+	m_dBch_a = "";
+	m_dBch_b = "";
+	m_dBch_c = "";
+	m_dBch_d = "";
+	m_dAch_a = "";
+	m_dAch_b = "";
+	m_dAch_c = "";
+	m_dAch_d = "";
 	m_strCurveName = _T("");
 	m_ADPM = 0;
 	m_BDPM = 0;
@@ -140,7 +140,7 @@ BOOL CAWSFactorDlg::OnInitDialog()
 	  lbl[j].Create(strLabel,WS_CHILD|WS_VISIBLE|SS_RIGHT,rectL,this);
 	  lbl[j].SetFont(m_stcOrg.GetFont());
 	  style = WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_BORDER | ES_AUTOHSCROLL | ES_RIGHT;
-	  for(int i=0;i<4;i++)
+	  for(int i=0;i<5;i++)
 	  {
 		  editSample[j][i].Create(style,
 		  rect0,this,IDC_EDIT_SAMPLE+j*10+i);
@@ -150,7 +150,7 @@ BOOL CAWSFactorDlg::OnInitDialog()
 		  switch(i)
 		  {
 		  case 1:
-			  rect0.OffsetRect(rect.Width()/2,0);
+			  rect0.OffsetRect(rect.Width()/5,0);
 			  break;
 		  }
 
@@ -164,7 +164,7 @@ BOOL CAWSFactorDlg::OnInitDialog()
 	{
 		rect.OffsetRect(0,rect.Height()+2);
 		rect0 = rect;
-		for(int i=4;i<7;i++)
+		for(int i=5;i<8;i++)
 		{
 			editSample[j][i].Create(style,
 				rect0,this,IDC_EDIT_SAMPLE+j*10+i);
@@ -283,6 +283,8 @@ void CAWSFactorDlg::GetSetting(AWS_Setting &set)
 		editSample[i][2].GetWindowText(strVal);
 		set.sample.dB_ratio[i] = atof((LPCTSTR)strVal);
 		editSample[i][3].GetWindowText(strVal);
+		set.sample.dB_A_CPM[i] = atof((LPCTSTR)strVal);
+		editSample[i][4].GetWindowText(strVal);
 		set.sample.dB_CPM[i] = atof((LPCTSTR)strVal);
 	}
 }
@@ -317,8 +319,10 @@ void CAWSFactorDlg::LoadData(AWS_Setting &set)
 		editSample[i][1].SetWindowText(strVal);
 		strVal.Format("%G",set.sample.dB_ratio[i]);
 		editSample[i][2].SetWindowText(strVal);
-		strVal.Format("%G",set.sample.dB_CPM[i] );
+		strVal.Format("%G",set.sample.dB_A_CPM[i] );
 		editSample[i][3].SetWindowText(strVal);
+		strVal.Format("%G",set.sample.dB_CPM[i] );
+		editSample[i][4].SetWindowText(strVal);
 	}
 
 	UpdateData(FALSE);
@@ -336,25 +340,25 @@ void CAWSFactorDlg::LoadCalCo(AWS_CalCo &co)
 	for(int i=0;i<10;i++)
 	{
 		strVal.Format("%10G",co.cal.dA_Eff[i]);
-		editSample[i][4].SetWindowText(strVal);
-		strVal.Format("%10G",co.cal.dB_Eff[i]);
 		editSample[i][5].SetWindowText(strVal);
-		strVal.Format("%10G",co.cal.dBA_CPM[i]);
+		strVal.Format("%10G",co.cal.dB_Eff[i]);
 		editSample[i][6].SetWindowText(strVal);
+		strVal.Format("%10G",co.cal.dBA_CPM[i]);
+		editSample[i][7].SetWindowText(strVal);
 	}
 
-	m_dAch_a = round(co.dAch_co[3]*10000.0)/10000.0;
-	m_dAch_b = round(co.dAch_co[2]*10000.0)/10000.0;
-	m_dAch_c = round(co.dAch_co[1]*10000.0)/10000.0;
-	m_dAch_d = round(co.dAch_co[0]*10000.0)/10000.0;
-	m_dBch_a = round(co.dBch_co[3]*10000.0)/10000.0;
-	m_dBch_b = round(co.dBch_co[2]*10000.0)/10000.0;
-	m_dBch_c = round(co.dBch_co[1]*10000.0)/10000.0;
-	m_dBch_d = round(co.dBch_co[0]*10000.0)/10000.0;
-	m_dBA_a = round(co.d_BA_co[3]*10000.0)/10000.0;
-	m_dBA_b = round(co.d_BA_co[2]*10000.0)/10000.0;
-	m_dBA_c = round(co.d_BA_co[1]*10000.0)/10000.0;
-	m_dBA_d = round(co.d_BA_co[0]*10000.0)/10000.0;
+	m_dAch_a.Format("%.4G",co.dAch_co[3]);
+	m_dAch_b.Format("%.4G",co.dAch_co[2]);
+	m_dAch_c.Format("%.4G",co.dAch_co[1]);
+	m_dAch_d.Format("%.4G",co.dAch_co[0]);
+	m_dBch_a.Format("%.4G",co.dBch_co[3]);
+	m_dBch_b.Format("%.4G",co.dBch_co[2]);
+	m_dBch_c.Format("%.4G",co.dBch_co[1]);
+	m_dBch_d.Format("%.4G",co.dBch_co[0]);
+	m_dBA_a.Format("%.4G",co.d_BA_co[3]);
+	m_dBA_b.Format("%.4G",co.d_BA_co[2]);
+	m_dBA_c.Format("%.4G",co.d_BA_co[1]);
+	m_dBA_d.Format("%.4G",co.d_BA_co[0]);
 	UpdateData(FALSE);
 }
 
@@ -377,7 +381,7 @@ void CAWSFactorDlg::OpenFile(void)
 void CAWSFactorDlg::EnableItems(BOOL bEnable)
 {
 	for(int j=0;j<10;j++)
-		for(int i=0;i<4;i++)
+		for(int i=0;i<5;i++)
 			editSample[j][i].SetReadOnly(!bEnable);
 	((CEdit*)GetDlgItem(IDC_EDIT_ALL))->SetReadOnly(!bEnable);
 	((CEdit*)GetDlgItem(IDC_EDIT_BLL))->SetReadOnly(!bEnable);
