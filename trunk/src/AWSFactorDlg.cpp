@@ -6,6 +6,10 @@
 #include "AWSFactorDlg.h"
 #include "Config.h"
 #include <math.h>
+#include <float.h>
+#include <limits>
+
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -265,27 +269,29 @@ void CAWSFactorDlg::OnButtonFileSave()
 
 void CAWSFactorDlg::GetSetting(AWS_Setting &set)
 {
-	UpdateData();
+	UpdateData();    
 	set.nAch_LL = m_nAchLL;
 	set.nAch_UL = m_nAchUL;
 	set.nBch_LL = m_nBchLL;
 	set.nBch_UL = m_nBchUL;
 	set.nA_DPM = m_ADPM;
 	set.nB_DPM = m_BDPM;
+	double dbNaN = std::numeric_limits<double>::quiet_NaN();
+
 
 	CString strVal;
 	for(int i=0;i<10;i++)
 	{
 		editSample[i][0].GetWindowText(strVal);
-		set.sample.dA_ratio[i] = atof((LPCTSTR)strVal);
+		set.sample.dA_ratio[i] = strVal.IsEmpty()?dbNaN:atof((LPCTSTR)strVal);
 		editSample[i][1].GetWindowText(strVal);
-		set.sample.dA_CPM[i] = atof((LPCTSTR)strVal);
+		set.sample.dA_CPM[i] = strVal.IsEmpty()?dbNaN:atof((LPCTSTR)strVal);
 		editSample[i][2].GetWindowText(strVal);
-		set.sample.dB_ratio[i] = atof((LPCTSTR)strVal);
+		set.sample.dB_ratio[i] = strVal.IsEmpty()?dbNaN:atof((LPCTSTR)strVal);
 		editSample[i][3].GetWindowText(strVal);
-		set.sample.dB_A_CPM[i] = atof((LPCTSTR)strVal);
+		set.sample.dB_A_CPM[i] = strVal.IsEmpty()?dbNaN:atof((LPCTSTR)strVal);
 		editSample[i][4].GetWindowText(strVal);
-		set.sample.dB_CPM[i] = atof((LPCTSTR)strVal);
+		set.sample.dB_CPM[i] = strVal.IsEmpty()?dbNaN:atof((LPCTSTR)strVal);
 	}
 }
 
@@ -339,11 +345,11 @@ void CAWSFactorDlg::LoadCalCo(AWS_CalCo &co)
 	CString strVal;
 	for(int i=0;i<10;i++)
 	{
-		strVal.Format("%10G",co.cal.dA_Eff[i]);
+		_isnan(co.cal.dA_Eff[i])?strVal.Empty():strVal.Format("%10G",co.cal.dA_Eff[i]);
 		editSample[i][5].SetWindowText(strVal);
-		strVal.Format("%10G",co.cal.dB_Eff[i]);
+		_isnan(co.cal.dB_Eff[i])?strVal.Empty():strVal.Format("%10G",co.cal.dB_Eff[i]);
 		editSample[i][6].SetWindowText(strVal);
-		strVal.Format("%10G",co.cal.dBA_CPM[i]);
+		_isnan(co.cal.dBA_CPM[i])?strVal.Empty():strVal.Format("%10G",co.cal.dBA_CPM[i]);
 		editSample[i][7].SetWindowText(strVal);
 	}
 
