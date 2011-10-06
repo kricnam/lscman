@@ -7,6 +7,7 @@
 #include "AWSFile.h"
 #include "Config.h"
 #include <math.h>
+#include <float.h>
 #ifdef _DEBUG
 #undef THIS_FILE
 static char THIS_FILE[]=__FILE__;
@@ -203,17 +204,26 @@ bool CAWSFile::WriteFile(LPCTSTR szPath, AWS_Setting &set)
 
 bool CAWSFile::CalculateCoefficient(AWS_Setting &set, AWS_CalCo &co)
 {
+	int n = 0;
 	for(int i=0;i<10;i++)
 	{
+		if (n==0 && (_isnan(set.sample.dA_ratio[i]) || _isnan(set.sample.dB_ratio[i])))
+		{
+			n = i;
+		}
+
 		co.cal.dA_Eff[i] = set.sample.dA_CPM[i] / set.nA_DPM;
 		co.cal.dB_Eff[i] = set.sample.dB_CPM[i] / set.nB_DPM;
 		co.cal.dBA_CPM[i]= set.sample.dB_CPM[i]/set.sample.dB_A_CPM[i];
 	}
+
+	if (n==0) n = 10;
+	if (n < 4) return false;
 	try
 	{
-		polyfit(set.sample.dA_ratio,co.cal.dA_Eff,co.dAch_co,10,4);
-		polyfit(set.sample.dB_ratio,co.cal.dB_Eff,co.dBch_co,10,4);
-		polyfit(set.sample.dB_ratio,co.cal.dBA_CPM,co.d_BA_co,10,4);
+		polyfit(set.sample.dA_ratio,co.cal.dA_Eff,co.dAch_co,n,4);
+		polyfit(set.sample.dB_ratio,co.cal.dB_Eff,co.dBch_co,n,4);
+		polyfit(set.sample.dB_ratio,co.cal.dBA_CPM,co.d_BA_co,n,4);
 	}
 	catch(...)
 	{
