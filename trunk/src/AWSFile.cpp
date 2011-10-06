@@ -213,7 +213,7 @@ bool CAWSFile::CalculateCoefficient(AWS_Setting &set, AWS_CalCo &co)
 	{
 		polyfit(set.sample.dA_ratio,co.cal.dA_Eff,co.dAch_co,10,4);
 		polyfit(set.sample.dB_ratio,co.cal.dB_Eff,co.dBch_co,10,4);
-		polyfit(set.sample.dA_ratio,co.cal.dBA_CPM,co.d_BA_co,10,4);
+		polyfit(set.sample.dB_ratio,co.cal.dBA_CPM,co.d_BA_co,10,4);
 	}
 	catch(...)
 	{
