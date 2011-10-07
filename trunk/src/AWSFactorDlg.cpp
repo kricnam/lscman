@@ -319,15 +319,15 @@ void CAWSFactorDlg::LoadData(AWS_Setting &set)
 	CString strVal;
 	for(int i=0;i<10;i++)
 	{
-		strVal.Format("%G",set.sample.dA_ratio[i]);
+		(_isnan(set.sample.dA_ratio[i]))?strVal.Empty():strVal.Format("%G",set.sample.dA_ratio[i]);
 		editSample[i][0].SetWindowText(strVal);
-		strVal.Format("%G",set.sample.dA_CPM[i]);
+		(_isnan(set.sample.dA_CPM[i]))?strVal.Empty():strVal.Format("%G",set.sample.dA_CPM[i]);
 		editSample[i][1].SetWindowText(strVal);
-		strVal.Format("%G",set.sample.dB_ratio[i]);
+		(_isnan(set.sample.dB_ratio[i]))?strVal.Empty():strVal.Format("%G",set.sample.dB_ratio[i]);
 		editSample[i][2].SetWindowText(strVal);
-		strVal.Format("%G",set.sample.dB_A_CPM[i] );
+		(_isnan(set.sample.dB_A_CPM[i]))?strVal.Empty():strVal.Format("%G",set.sample.dB_A_CPM[i] );
 		editSample[i][3].SetWindowText(strVal);
-		strVal.Format("%G",set.sample.dB_CPM[i] );
+		(_isnan(set.sample.dB_CPM[i] ))?strVal.Empty():strVal.Format("%G",set.sample.dB_CPM[i] );
 		editSample[i][4].SetWindowText(strVal);
 	}
 
@@ -353,18 +353,18 @@ void CAWSFactorDlg::LoadCalCo(AWS_CalCo &co)
 		editSample[i][7].SetWindowText(strVal);
 	}
 
-	m_dAch_a.Format("%.4G",co.dAch_co[3]);
-	m_dAch_b.Format("%.4G",co.dAch_co[2]);
-	m_dAch_c.Format("%.4G",co.dAch_co[1]);
-	m_dAch_d.Format("%.4G",co.dAch_co[0]);
-	m_dBch_a.Format("%.4G",co.dBch_co[3]);
-	m_dBch_b.Format("%.4G",co.dBch_co[2]);
-	m_dBch_c.Format("%.4G",co.dBch_co[1]);
-	m_dBch_d.Format("%.4G",co.dBch_co[0]);
-	m_dBA_a.Format("%.4G",co.d_BA_co[3]);
-	m_dBA_b.Format("%.4G",co.d_BA_co[2]);
-	m_dBA_c.Format("%.4G",co.d_BA_co[1]);
-	m_dBA_d.Format("%.4G",co.d_BA_co[0]);
+	m_dAch_a.Format("%.2e",co.dAch_co[3]);
+	m_dAch_b.Format("%.2e",co.dAch_co[2]);
+	m_dAch_c.Format("%.2e",co.dAch_co[1]);
+	m_dAch_d.Format("%.2e",co.dAch_co[0]);
+	m_dBch_a.Format("%.2e",co.dBch_co[3]);
+	m_dBch_b.Format("%.2e",co.dBch_co[2]);
+	m_dBch_c.Format("%.2e",co.dBch_co[1]);
+	m_dBch_d.Format("%.2e",co.dBch_co[0]);
+	m_dBA_a.Format("%.2e",co.d_BA_co[3]);
+	m_dBA_b.Format("%.2e",co.d_BA_co[2]);
+	m_dBA_c.Format("%.2e",co.d_BA_co[1]);
+	m_dBA_d.Format("%.2e",co.d_BA_co[0]);
 	UpdateData(FALSE);
 }
 
