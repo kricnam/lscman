@@ -22,6 +22,7 @@ int round(double x)
 	return ((i-x)<0.5)?(int)i:(int)(i-1);
 }
 
+extern CLSCApp theApp;
 /////////////////////////////////////////////////////////////////////////////
 // CSpectrumDlg dialog
 char CSpectrumDlg::szDataFilter[] = "Data File|*.???||";
@@ -572,7 +573,11 @@ double CSpectrumDlg::Factor(double Y)
 
 void CSpectrumDlg::setMF()
 {
-	Config conf(CONF_FILENAME);
+	CString strPath;
+	GetModuleFileName(NULL,strPath.GetBuffer(MAX_PATH),MAX_PATH); 
+	strPath.ReleaseBuffer();
+	strPath=strPath.Left(strPath.ReverseFind( '\\')+1);
+	Config conf(strPath+CONF_FILENAME);
 	MF_A = conf.GetMF_A();
 	MF_B = conf.GetMF_B();
 	MF_C = conf.GetMF_C();

@@ -97,7 +97,7 @@ BEGIN_MESSAGE_MAP(CAWSFactorDlg, CDialog)
 	ON_WM_SHOWWINDOW()
 	ON_BN_CLICKED(IDC_BUTTON_FILE_SAVE, OnButtonFileSave)
 	ON_BN_CLICKED(IDC_BUTTON_FILE_OPEN, OnButtonFileOpen)
-	ON_BN_CLICKED(IDC_BUTTON_PRNT, OnButtonPrnt)
+	ON_BN_CLICKED(IDC_BUTTON_PRNT, OnButtonPrint)
 	//}}AFX_MSG_MAP
 	ON_MESSAGE(WM_HOTKEY,OnHotKey)
 END_MESSAGE_MAP()
@@ -397,7 +397,7 @@ void CAWSFactorDlg::EnableItems(BOOL bEnable)
 	((CEdit*)GetDlgItem(IDC_EDIT_BDPM))->SetReadOnly(!bEnable);
 }
 
-void CAWSFactorDlg::OnButtonPrnt() 
+void CAWSFactorDlg::OnButtonPrint() 
 {
 	CDC dc;
 	CPrintDialog printDlg(FALSE);
@@ -526,16 +526,20 @@ void CAWSFactorDlg::DrawPage(CDC &dc, int x, int y, int cx, int cy)
 		DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,i+1,3,strText.Right(9));
 	}
 
-	//nCurX = x + 3*ndx + (cx - (5*ndx))/2;
-	DrawTable(dc,nCurX,nCurrentY,ndx,ndy,11,2);
+	nCurX = x + 3*ndx + 15;
+	ndx -=5;
+	DrawTable(dc,nCurX,nCurrentY,ndx,ndy,11,3);
 	DrawTableText(dc,nCurX,nCurrentY,ndx,ndy,1,1,"B-RATIO");
-	DrawTableText(dc,nCurX,nCurrentY,ndx,ndy,1,2,"B-CPM");
+	DrawTableText(dc,nCurX,nCurrentY,ndx,ndy,1,2,"A-CPM");
+	DrawTableText(dc,nCurX,nCurrentY,ndx,ndy,1,3,"B-CPM");
 	for(i=1;i<11;i++)
 	{
 		editSample[i-1][2].GetWindowText(strText);
 		DrawTableTextRight(dc,nCurX,nCurrentY,ndx,ndy,i+1,1,strText.Right(9));
 		editSample[i-1][3].GetWindowText(strText);
 		DrawTableTextRight(dc,nCurX,nCurrentY,ndx,ndy,i+1,2,strText.Right(9));
+		editSample[i-1][4].GetWindowText(strText);
+		DrawTableTextRight(dc,nCurX,nCurrentY,ndx,ndy,i+1,3,strText.Right(9));
 	}
 
 	nCurrentY+=12*ndy;
@@ -549,30 +553,22 @@ void CAWSFactorDlg::DrawPage(CDC &dc, int x, int y, int cx, int cy)
 	DrawTableText(dc,x,nCurrentY,ndx,ndy,3,1,"B-ch");
 	DrawTableText(dc,x,nCurrentY,ndx,ndy,4,1,"B/A ");
 
-	strText.Format("%G",m_dAch_a);
-	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,2,2,strText);
-	strText.Format("%G",m_dAch_b);
-	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,2,3,strText);
-	strText.Format("%G",m_dAch_c);
-	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,2,4,strText);
-	strText.Format("%G",m_dAch_d);
-	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,2,5,strText);
-	strText.Format("%G",m_dBch_a);
-	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,3,2,strText);
-	strText.Format("%G",m_dBch_b);
-	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,3,3,strText);
-	strText.Format("%G",m_dBch_c);
-	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,3,4,strText);
-	strText.Format("%G",m_dBch_d);
-	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,3,5,strText);
-	strText.Format("%G",m_dBA_a);
-	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,4,2,strText);
-	strText.Format("%G",m_dBA_b);
-	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,4,3,strText);
-	strText.Format("%G",m_dBA_c);
-	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,4,4,strText);
-	strText.Format("%G",m_dBA_d);
-	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,4,5,strText);
+
+	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,2,2,m_dAch_a);
+	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,2,3,m_dAch_b);
+	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,2,4,m_dAch_c);
+	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,2,5,m_dAch_d);
+
+	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,3,2,m_dBch_a);
+	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,3,3,m_dBch_b);
+	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,3,4,m_dBch_c);
+	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,3,5,m_dBch_d);
+	
+
+	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,4,2,m_dBA_a);
+	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,4,3,m_dBA_b);
+	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,4,4,m_dBA_c);
+	DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,4,5,m_dBA_d);
 
 	nCurrentY+=5*ndy;
 	ndx = cx/6;
@@ -587,11 +583,11 @@ void CAWSFactorDlg::DrawPage(CDC &dc, int x, int y, int cx, int cy)
 	DrawTableText(dc,x,nCurrentY,ndx,ndy,1,4,"B/A-CPM");
 	for(i=1;i<11;i++)
 	{
-		editSample[i-1][4].GetWindowText(strText);
-		DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,i+1,2,strText.Right(9));
 		editSample[i-1][5].GetWindowText(strText);
-		DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,i+1,3,strText.Right(9));
+		DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,i+1,2,strText.Right(9));
 		editSample[i-1][6].GetWindowText(strText);
+		DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,i+1,3,strText.Right(9));
+		editSample[i-1][7].GetWindowText(strText);
 		DrawTableTextRight(dc,x,nCurrentY,ndx,ndy,i+1,4,strText.Right(9));
 	}
 
@@ -653,13 +649,13 @@ void CAWSFactorDlg::DrawTable(CDC& dc, int x, int y,int dx,int dy,int row,int co
 	}
 }
 
-void CAWSFactorDlg::DrawTableText(CDC& dc, int x, int y,int dx,int dy,int row,int column,CString str)
+void CAWSFactorDlg::DrawTableText(CDC& dc, int x, int y,int dx,int dy,int row,int column,LPCTSTR str)
 {
 	CSize size = dc.GetTextExtent(str);
 	dc.TextOut(x+(column-1)*dx+(dx-size.cx)/2,y+(row-1)*dy+(dy- size.cy)/2,str);
 }
 
-void CAWSFactorDlg::DrawTableTextRight(CDC& dc, int x, int y,int dx,int dy,int row,int column,CString str)
+void CAWSFactorDlg::DrawTableTextRight(CDC& dc, int x, int y,int dx,int dy,int row,int column,LPCTSTR str)
 {
 	CSize size = dc.GetTextExtent(str);
 	dc.TextOut(x+(column-1)*dx + (dx-size.cx-(dy-size.cy)), y+(row-1)*dy+(dy- size.cy)/2,str);
