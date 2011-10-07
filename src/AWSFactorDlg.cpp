@@ -353,18 +353,18 @@ void CAWSFactorDlg::LoadCalCo(AWS_CalCo &co)
 		editSample[i][7].SetWindowText(strVal);
 	}
 
-	m_dAch_a.Format("%.2e",co.dAch_co[3]);
-	m_dAch_b.Format("%.2e",co.dAch_co[2]);
-	m_dAch_c.Format("%.2e",co.dAch_co[1]);
-	m_dAch_d.Format("%.2e",co.dAch_co[0]);
-	m_dBch_a.Format("%.2e",co.dBch_co[3]);
-	m_dBch_b.Format("%.2e",co.dBch_co[2]);
-	m_dBch_c.Format("%.2e",co.dBch_co[1]);
-	m_dBch_d.Format("%.2e",co.dBch_co[0]);
-	m_dBA_a.Format("%.2e",co.d_BA_co[3]);
-	m_dBA_b.Format("%.2e",co.d_BA_co[2]);
-	m_dBA_c.Format("%.2e",co.d_BA_co[1]);
-	m_dBA_d.Format("%.2e",co.d_BA_co[0]);
+	m_dAch_a.Format("%#4.4e",co.dAch_co[3]);
+	m_dAch_b.Format("%#4.4e",co.dAch_co[2]);
+	m_dAch_c.Format("%#4.4e",co.dAch_co[1]);
+	m_dAch_d.Format("%#4.4e",co.dAch_co[0]);
+	m_dBch_a.Format("%#4.4e",co.dBch_co[3]);
+	m_dBch_b.Format("%#4.4e",co.dBch_co[2]);
+	m_dBch_c.Format("%#4.4e",co.dBch_co[1]);
+	m_dBch_d.Format("%#4.4e",co.dBch_co[0]);
+	m_dBA_a.Format("%#4.4e",co.d_BA_co[3]);
+	m_dBA_b.Format("%#4.4e",co.d_BA_co[2]);
+	m_dBA_c.Format("%#4.4e",co.d_BA_co[1]);
+	m_dBA_d.Format("%#4.4e",co.d_BA_co[0]);
 	UpdateData(FALSE);
 }
 
