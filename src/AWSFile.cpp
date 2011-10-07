@@ -8,6 +8,7 @@
 #include "Config.h"
 #include <math.h>
 #include <float.h>
+#include <limits>
 #ifdef _DEBUG
 #undef THIS_FILE
 static char THIS_FILE[]=__FILE__;
@@ -142,31 +143,32 @@ bool CAWSFile::ReadData(LPCTSTR szFile,AWS_Setting& set)
 	else return false;
 
 	CString strKey;
+    double dbNaN = std::numeric_limits<double>::quiet_NaN();
 	for(int i=0;i<10;i++)
 	{
 		strKey.Format("A_RATIO_%d",i);
 		if (conf.ReadKey(strKey,buf,1024))
-			set.sample.dA_ratio[i] = atof(buf);
+			set.sample.dA_ratio[i] = strlen(buf)?atof(buf):dbNaN;
 		else return false;
 
 		strKey.Format("A_CPM_%d",i);
 		if (conf.ReadKey(strKey,buf,1024))
-			set.sample.dA_CPM[i] = atof(buf);
+			set.sample.dA_CPM[i] = strlen(buf)?atof(buf):dbNaN;
 		else return false;
 
 		strKey.Format("B_RATIO_%d",i);
 		if (conf.ReadKey(strKey,buf,1024))
-			set.sample.dB_ratio[i] = atof(buf);
+			set.sample.dB_ratio[i] = strlen(buf)?atof(buf):dbNaN;
 		else return false;
 
 		strKey.Format("B_A_CPM_%d",i);
 		if (conf.ReadKey(strKey,buf,1024))
-			set.sample.dB_A_CPM[i] = atof(buf);
+			set.sample.dB_A_CPM[i] =strlen(buf)?atof(buf):dbNaN;
 		
 
 		strKey.Format("B_CPM_%d",i);
 		if (conf.ReadKey(strKey,buf,1024))
-			set.sample.dB_CPM[i] = atof(buf);
+			set.sample.dB_CPM[i] = strlen(buf)?atof(buf):dbNaN;
 		else return false;
 	}
 
@@ -186,9 +188,16 @@ bool CAWSFile::WriteFile(LPCTSTR szPath, AWS_Setting &set)
 	strLine.Format("A_DPM=%u\nB_DPM=%u\n",
 		set.nA_DPM,set.nB_DPM);
 	fputs((LPCTSTR)strLine,file);
-
+	bool bOver = false;
 	for(int i=0;i<10;i++)
 	{
+		if (bOver || _isnan(set.sample.dA_ratio[i])||_isnan(set.sample.dB_ratio[i]))
+		{
+			strLine.Format("A_RATIO_%d=\nA_CPM_%d=\nB_RATIO_%d=\nB_A_CPM_%d=\nB_CPM_%d=\n",i,i,i,i,i);
+			fputs((LPCTSTR)strLine,file);
+			bOver = true;
+			continue;
+		}
 		strLine.Format("A_RATIO_%d=%G\nA_CPM_%d=%G\nB_RATIO_%d=%G\nB_A_CPM_%d=%G\nB_CPM_%d=%G\n",
 			i,set.sample.dA_ratio[i],
 			i,set.sample.dA_CPM[i],

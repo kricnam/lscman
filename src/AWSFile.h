@@ -8,13 +8,27 @@
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
-typedef struct 
+#include <limits>
+typedef struct _AWS_Sample
 {
 	double dA_ratio[10];
 	double dA_CPM[10];
 	double dB_ratio[10];
 	double dB_A_CPM[10];
 	double dB_CPM[10];
+	_AWS_Sample()
+	{
+		double dbNaN = std::numeric_limits<double>::quiet_NaN();
+		for(int i=0;i<10;i++) 
+		{
+			dA_ratio[i] = dbNaN;
+			dA_CPM[i] = dbNaN;
+			dB_ratio[i]=dbNaN;
+			dB_A_CPM[i]=dbNaN;
+			dB_CPM[i]=dbNaN;
+		}
+	};
+
 } AWS_Sample;
 
 typedef struct 
