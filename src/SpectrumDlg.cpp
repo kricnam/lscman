@@ -22,7 +22,6 @@ int round(double x)
 	return ((i-x)<0.5)?(int)i:(int)(i-1);
 }
 
-extern CLSCApp theApp;
 /////////////////////////////////////////////////////////////////////////////
 // CSpectrumDlg dialog
 char CSpectrumDlg::szDataFilter[] = "Data File|*.???||";
