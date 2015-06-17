@@ -1,0 +1,1 @@
+read data from lsc and display it, it is GUI
