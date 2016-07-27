@@ -26,6 +26,9 @@ UINT CommThreadProc( LPVOID pParam )
 		{
 			//UI.SetStatus(packet);
 			UI.SendMessage(WM_UPDATE_DATA,(WPARAM)&packet,NULL);
+			
+			CSerialPort::DUMP("GET",(LPCTSTR)packet.GetData(),packet.GetData().GetLength());
+
 			if (!UI.m_port.IsOpen()) return 0;
 			switch(packet.GetPacketType())
 			{
